@@ -9,6 +9,7 @@ import "react-resizable/css/styles.css";
 
 import App from "./App";
 import { theme } from "./styles/theme";
+import WidgetBuilderProvider from "./library/contexts/WidgetBuilderContext";
 
 
 ReactDOM.render(
@@ -16,7 +17,9 @@ ReactDOM.render(
     <ThemeProvider theme={theme}>
       <CssBaseline/>
       <NoSsr>
-        <App/>
+        <WidgetBuilderProvider>
+          <App/>
+        </WidgetBuilderProvider>
       </NoSsr>
     </ThemeProvider>
   </React.StrictMode>,
