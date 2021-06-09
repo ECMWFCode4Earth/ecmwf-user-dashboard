@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse, HttpResponseNotFound
 
-from backend.lib.helpers.get_service_status import get_service_status
+from backend.library.helpers.get_service_status import get_service_status
 
 
 # Create your views here.
