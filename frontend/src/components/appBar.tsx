@@ -22,7 +22,7 @@ interface AppBarProps {
 }
 
 
-const AppBar = ({}: AppBarProps) => {
+const AppBar: React.FC<AppBarProps> = ({}) => {
 
   const classes = useStyles();
 
