@@ -1,10 +1,10 @@
 /**
- *
+ * App Bar
  * */
 
 import React from "react";
 import MaterialAppBar from "@material-ui/core/AppBar";
-import { makeStyles, Toolbar, Typography } from "@material-ui/core";
+import { makeStyles, Toolbar } from "@material-ui/core";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -17,12 +17,12 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-interface AppBarProps {
+interface AppBar {
 
 }
 
 
-const AppBar: React.FC<AppBarProps> = ({}) => {
+const AppBar: React.FC<AppBar> = ({}) => {
 
   const classes = useStyles();
 
@@ -37,6 +37,7 @@ const AppBar: React.FC<AppBarProps> = ({}) => {
       </div>
     </>
   );
+
 };
 
 

@@ -4,13 +4,14 @@
  * - User can customise dashboards
  * */
 
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import { makeStyles } from "@material-ui/core";
 
-import AppBar from "../components/appBar";
-import WidgetCanvas from "../components/widgetCanvas";
+import AppBar from "../components/AppBar";
+import WidgetCanvas from "../components/WidgetCanvas";
 
-import ServiceStatusWidget from "../components/widgets/serviceStatusWidget";
+import { ServiceStatusWidgetBuilder } from "../models/ServiceStatusWidgetBuilder";
+import { WidgetBuilderContext } from "../library/contexts/WidgetBuilderContext";
 
 
 const useStyles = makeStyles(
@@ -20,22 +21,32 @@ const useStyles = makeStyles(
 );
 
 
-interface DashboardPageProps {
+interface DashboardPage {
 
 }
 
 
-const DashboardPage: React.FC<DashboardPageProps> = ({}) => {
+const DashboardPage: React.FC<DashboardPage> = ({}) => {
 
   const classes = useStyles();
+  const {widgetBuilders, setWidgetBuilders} = useContext(WidgetBuilderContext);
+
+  useEffect(() => {
+    setWidgetBuilders([...widgetBuilders, new ServiceStatusWidgetBuilder()])
+  }, [])
+
+  useEffect(() => console.log(widgetBuilders), [widgetBuilders])
+
+
+  const buildAllWidgets = () => {
+    return widgetBuilders.map((builder) => builder.build());
+  };
 
   return (
     <>
       <AppBar/>
       <WidgetCanvas>
-        <div key="b">
-          <ServiceStatusWidget/>
-        </div>
+        {buildAllWidgets()}
       </WidgetCanvas>
     </>
   );

@@ -1,12 +1,14 @@
 /**
- * Body of Service Status Widget.
+ * Blueprint of Service Status Widget.
+ * - Builder class uses this to build widget
  * */
 
 import React, { useEffect, useState } from "react";
 import { makeStyles, Box, Grid, Typography, IconButton } from "@material-ui/core";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import axios from "axios";
-import { ServiceStatusWidget } from "../../models/ServiceStatusWidget";
+
+import { ServiceStatusWidgetBuilder } from "../../models/ServiceStatusWidgetBuilder";
 
 
 const useStyles = makeStyles(
@@ -41,12 +43,12 @@ interface BackendDataType {
   "Last notification": string
 }
 
-interface Props {
-  widget: ServiceStatusWidget
+interface ServiceStatusWidgetBlueprint {
+  builder: ServiceStatusWidgetBuilder
 }
 
 
-const ServiceStatusWidgetBody: React.FC<Props> = ({widget}) => {
+const ServiceStatusWidgetBlueprint: React.FC<ServiceStatusWidgetBlueprint> = ({builder}) => {
 
   const classes = useStyles();
   const [loading, setLoading] = useState(true);
@@ -121,4 +123,4 @@ const ServiceStatusWidgetBody: React.FC<Props> = ({widget}) => {
 };
 
 
-export default ServiceStatusWidgetBody;
+export default ServiceStatusWidgetBlueprint;
