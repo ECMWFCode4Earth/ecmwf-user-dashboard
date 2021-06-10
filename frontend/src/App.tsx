@@ -5,7 +5,7 @@ import DashboardPage from "./pages/dashboard";
 
 const App = () => {
   return (
-    <Box width={"100vw"}>
+    <Box width={"100vw"} minHeight={"100vh"} style={{overflowX: "scroll"}}>
       <DashboardPage />
     </Box>
   );

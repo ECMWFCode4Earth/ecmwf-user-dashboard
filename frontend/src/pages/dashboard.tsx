@@ -31,12 +31,10 @@ const DashboardPage: React.FC<DashboardPage> = ({}) => {
   const classes = useStyles();
   const {widgetBuilders, setWidgetBuilders} = useContext(WidgetBuilderContext);
 
+  // TODO Remove this useEffect block
   useEffect(() => {
     setWidgetBuilders([...widgetBuilders, new ServiceStatusWidgetBuilder()])
   }, [])
-
-  useEffect(() => console.log(widgetBuilders), [widgetBuilders])
-
 
   const buildAllWidgets = () => {
     return widgetBuilders.map((builder) => builder.build());
