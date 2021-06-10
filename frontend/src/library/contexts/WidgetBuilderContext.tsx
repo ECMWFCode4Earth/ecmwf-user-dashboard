@@ -3,18 +3,18 @@
  * */
 
 import React, { createContext, useState } from "react";
-import { IWidgetBuilder } from "../../models/IWidgetBuilder";
+import { WidgetBuilder } from "../../models/WidgetBuilder";
 
 
 const useWidgetBuilder = () => {
-  const [widgetBuilders, setWidgetBuilders] = useState<IWidgetBuilder[]>([]);
+  const [widgetBuilders, setWidgetBuilders] = useState<WidgetBuilder[]>([]);
   return { widgetBuilders, setWidgetBuilders };
 };
 
 
 interface WidgetBuilderContext {
-  widgetBuilders: IWidgetBuilder[],
-  setWidgetBuilders: React.Dispatch<React.SetStateAction<IWidgetBuilder[]>>
+  widgetBuilders: WidgetBuilder[],
+  setWidgetBuilders: React.Dispatch<React.SetStateAction<WidgetBuilder[]>>
 }
 
 const WidgetBuilderContext = createContext<WidgetBuilderContext>({

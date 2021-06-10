@@ -9,26 +9,56 @@ import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import axios from "axios";
 
 import { ServiceStatusWidgetBuilder } from "../../models/ServiceStatusWidgetBuilder";
+import WidgetLoading from "../common/WidgetLoading";
+import WidgetError from "../common/WidgetError";
+import { kBorder } from "../../library/constants/constants";
+import { useForceUpdate } from "../../library/hooks/useForceUpdate";
 
 
 const useStyles = makeStyles(
   (theme) => (
     {
-      title: {
-        backgroundColor: "black",
-        color: "white",
-        padding: `${theme.spacing(0.5)}px 0`,
+      root: {
+        height: "100%",
+        overflowY: "scroll",
+        overflowX: "hidden",
+        position: "relative",
+        border: kBorder.WIDGET_BORDER,
+        borderRadius: theme.shape.borderRadius,
+      },
+      titleBar: {
         position: "sticky",
         top: 0,
         left: 0,
+        color: "white",
+        backgroundColor: theme.palette.common.black,
+        opacity: 0.95,
+        cursor: "grab",
+        "& .title": {
+          padding: `${theme.spacing(0.5)}px 0`,
+          textAlign: "center",
+        },
+        "& .externalLink": {
+          position: "absolute",
+          margin: 0,
+          padding: 0,
+          top: "3px",
+          right: "8px"
+        }
       },
-      externalButton: {
-        position: "absolute",
-        top: "5px",
-        right: "16px",
-        padding: 0
-      },
-      statusGlowBox: {}
+      gridItem: {
+        "& .container": {
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        },
+        "& .title": {
+          fontWeight: 600
+        },
+        "& .status": {
+          fontWeight: 600
+        }
+      }
     }
   )
 );
@@ -44,80 +74,80 @@ interface BackendDataType {
 }
 
 interface ServiceStatusWidgetBlueprint {
-  builder: ServiceStatusWidgetBuilder
+  builder: ServiceStatusWidgetBuilder;
 }
 
 
-const ServiceStatusWidgetBlueprint: React.FC<ServiceStatusWidgetBlueprint> = ({builder}) => {
+const ServiceStatusWidgetBlueprint: React.FC<ServiceStatusWidgetBlueprint> = ({ builder }) => {
 
   const classes = useStyles();
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [serviceStatusData, setServiceStatusData] = useState<BackendDataType[]>([]);
 
+  const rebuildTrigger = useForceUpdate();
+  builder.setRebuildTrigger(rebuildTrigger)
+
   useEffect(() => {
-    axios.get(`http://127.0.0.1:8000/backend/service_status`)
-      .then(res => {
-        const nodes = res.data.nodes;
-        const data: BackendDataType[] = [];
-        nodes.forEach(
-          (edge: { node: BackendDataType }) => data.push(edge.node)
-        );
-        setServiceStatusData(data);
-        setLoading(false);
-      });
+    fetchQuery().catch(() => setError("An error has occurred"));
   }, []);
 
-  const countOK = () => {
-    let OK = 0;
-    const total = serviceStatusData.length;
-    serviceStatusData.forEach((data) => data.Status === "Ok" && OK++);
-    return { OK, total };
+  const fetchQuery = async () => {
+    const res = await axios.get(builder.QUERY_URL.toString());
+    const nodes = res.data.nodes;
+    const serviceStatusData: BackendDataType[] = [];
+    nodes.forEach((edge: { node: BackendDataType }) => serviceStatusData.push(edge.node));
+    setServiceStatusData(serviceStatusData);
+    setLoading(false);
   };
 
-  if (loading) {
-    return (
-      <>
-        <Box width={"100%"} height={"100%"} border={"2px solid black"} display={"flex"} alignItems={"center"}
-             justifyContent={"center"}>
-          Loading...
-        </Box>
-      </>
-    );
-  }
+  const countOk = () => {
+    let Ok = 0;
+    serviceStatusData.forEach((data) => data.Status === "Ok" && Ok++);
+    return Ok;
+  };
+
+  if (error) return <WidgetError message={error} border={kBorder.WIDGET_BORDER}/>;
+
+  if (loading) return <WidgetLoading border={kBorder.WIDGET_BORDER}/>;
 
   return (
-      <Box
-        border={"2px solid black"}
-        height={"100%"}
-        overflow={"scroll"}
-        position={"relative"}
-      >
-        <Box position={"sticky"} top={0} left={0} color={"white"}>
-          <Typography display={"block"} align={"center"} className={classes.title}>Service Status
-            ({countOK().OK}/{countOK().total} Ok)</Typography>
-          <a href={"https://www.ecmwf.int/en/service-status"} target={"_blank"}>
-            <IconButton color={"inherit"} aria-label="upload picture" component="span"
-                        className={classes.externalButton}>
-              <ExitToAppIcon fontSize={"small"}/>
-            </IconButton>
-          </a>
-        </Box>
-        <Grid container>
-          {serviceStatusData.map(
-            (data) => {
-              return (
-                <Grid item xs={6}>
-                  <Box key={data.Title} p={1} display={"flex"} alignItems={"center"}>
-                    <Box width={"16px"} height={"16px"} mr={1} borderRadius={"50%"} bgcolor={"success.main"}
-                         flexShrink={0}/>
-                    <Typography variant={"body1"}>{data.Title}</Typography>
-                  </Box>
-                </Grid>
-              );
-            }
-          )}
-        </Grid>
+    <Box className={classes.root}>
+
+      <Box className={classes.titleBar}>
+        <Typography className={"title"}>
+          Service Status ({countOk()}/{serviceStatusData.length} Ok)
+        </Typography>
+        <a href={builder.REFERENCE_URL.toString()} target={"_blank"}>
+          <IconButton
+            color={"inherit"}
+            aria-label={"Link to Service Status Page"}
+            component={"span"}
+            className={"externalLink"}
+          >
+            <ExitToAppIcon fontSize={"small"}/>
+          </IconButton>
+        </a>
       </Box>
+
+      <Grid container alignItems={"center"}>
+        {serviceStatusData.map(
+          (data) => {
+            return (
+              <Grid item xs={6} key={data.Title} className={classes.gridItem}>
+                <Box p={1} className={"container"}>
+                  <Typography variant={"body2"} className={"title"}>{data.Title}</Typography>
+                  <Box color={data.Status === "Ok" ? "success.main" : "error.main"}>
+                    <Typography variant={"body2"} className={"status"} color={"inherit"}>{data.Status}</Typography>
+                  </Box>
+                </Box>
+              </Grid>
+            );
+          }
+        )}
+      </Grid>
+
+    </Box>
   );
 
 };
