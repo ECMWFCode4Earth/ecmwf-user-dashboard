@@ -32,7 +32,7 @@ const useStyles = makeStyles(
         left: 0,
         color: "white",
         backgroundColor: theme.palette.common.black,
-        opacity: 0.95,
+        opacity: 1,
         cursor: "grab",
         "& .title": {
           padding: `${theme.spacing(0.5)}px 0`,
@@ -112,7 +112,7 @@ const ServiceStatusWidgetBlueprint: React.FC<ServiceStatusWidgetBlueprint> = ({ 
   if (loading) return <WidgetLoading border={kBorder.WIDGET_BORDER}/>;
 
   return (
-    <Box className={classes.root}>
+    <Box className={classes.root} boxShadow={2}>
 
       <Box className={classes.titleBar}>
         <Typography className={"title"}>
