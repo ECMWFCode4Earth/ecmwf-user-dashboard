@@ -12,6 +12,7 @@ import WidgetCanvas from "../components/WidgetCanvas";
 
 import { ServiceStatusWidgetBuilder } from "../models/ServiceStatusWidgetBuilder";
 import { WidgetBuilderContext } from "../library/contexts/WidgetBuilderContext";
+import ChartsBrowser from "../components/ChartsBrowser";
 
 
 const useStyles = makeStyles(
@@ -46,6 +47,7 @@ const DashboardPage: React.FC<DashboardPage> = ({}) => {
       <WidgetCanvas>
         {buildAllWidgets()}
       </WidgetCanvas>
+      <ChartsBrowser />
     </>
   );
 
