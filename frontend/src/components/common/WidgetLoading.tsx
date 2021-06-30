@@ -1,17 +1,13 @@
-/**
- * WidgetLoading component
- * */
-
 import React from "react";
-import { Box } from "@material-ui/core";
+import { Box, CircularProgress } from "@material-ui/core";
 
 
-interface WidgetLoading {
+interface WidgetLoadingProps {
   border?: string;
 }
 
 
-const WidgetLoading: React.FC<WidgetLoading> = ({ border }) => {
+const WidgetLoading: React.FC<WidgetLoadingProps> = ({ border }) => {
   return (
     <Box
       width={"100%"}
@@ -22,7 +18,7 @@ const WidgetLoading: React.FC<WidgetLoading> = ({ border }) => {
       alignItems={"center"}
       justifyContent={"center"}
     >
-      Loading...
+      <CircularProgress />
     </Box>
   );
 

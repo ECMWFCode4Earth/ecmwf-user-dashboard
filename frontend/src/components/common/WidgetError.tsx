@@ -1,18 +1,14 @@
-/**
- * WidgetError component
- * */
-
 import React from "react";
 import { Box } from "@material-ui/core";
 
 
-interface WidgetError {
+interface WidgetErrorProps {
   message: string;
   border?: string;
 }
 
 
-const WidgetError: React.FC<WidgetError> = ({ message, border }) => {
+const WidgetError: React.FC<WidgetErrorProps> = ({message, border}) => {
   return (
     <Box
       width={"100%"}
