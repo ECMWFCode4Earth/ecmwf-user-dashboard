@@ -7,7 +7,7 @@ const useStyles = makeStyles(
   (theme) => (
     {
       root: {
-        height: `calc(100% - ${kSize.WIDGET_TITLE_BAR})`,
+        flexGrow: 1,
         overflow: "scroll"
       }
     }
@@ -16,22 +16,29 @@ const useStyles = makeStyles(
 
 
 interface WidgetBodyProps {
-
+  px?: number;
+  py?: number;
 }
 
 
-const WidgetBody: React.FC<WidgetBodyProps> = ({children}) => {
+const WidgetBody: React.FC<WidgetBodyProps> = ({children, px, py}) => {
 
   const classes = useStyles();
 
   return (
     // noDrag is special className - can't click and drag element across grid.
-    <Box className={`${classes.root} noDrag`}>
+    <Box className={`${classes.root} noDrag`} px={px} py={py}>
       {children}
     </Box>
   );
 
 };
+
+
+WidgetBody.defaultProps = {
+  px: 0,
+  py: 0,
+}
 
 
 export default WidgetBody;
