@@ -1,10 +1,13 @@
-/**
- *
- * */
+import React, { useContext, useState } from "react";
+import { makeStyles } from "@material-ui/core";
 
-import React from "react";
-import { makeStyles, Box } from "@material-ui/core";
+import WidgetContainer from "../common/WidgetContainer";
+import WidgetTitleBar from "../common/WidgetTitleBar";
+import WidgetBody from "../common/WidgetBody";
+
 import { ChartWidgetBuilder } from "../../models/ChartWidgetBuilder";
+
+import { WidgetBuilderContext } from "../../library/contexts/WidgetBuilderContext";
 
 
 const useStyles = makeStyles(
@@ -14,38 +17,37 @@ const useStyles = makeStyles(
 );
 
 
-interface ChartWidgetBlueprint {
+interface ChartWidgetBlueprintProps {
   builder: ChartWidgetBuilder;
 }
 
 
-const ChartWidgetBlueprint: React.FC<ChartWidgetBlueprint> = ({ builder }) => {
+const ChartWidgetBlueprint: React.FC<ChartWidgetBlueprintProps> = ({builder}) => {
 
   const classes = useStyles();
+  const [chartName, setChartName] = useState(builder.chartName);
+
+  const {removeWidgetBuilder} = useContext(WidgetBuilderContext);
+
+  const removeWidget = () => removeWidgetBuilder(builder);
 
   return (
-    <>
-      <Box style={{
-        border: "2px solid black",
-        backgroundColor: "black",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "100%",
-        width: "100%"
-      }}>
-        <p style={{ padding: "8px", margin: 0, color: "white" }}>{builder.chartTitle}</p>
+    <WidgetContainer>
+
+      <WidgetTitleBar title={builder.chartTitle} onClose={removeWidget}/>
+
+      <WidgetBody>
         <iframe
           width="100%"
           height="100%"
-          src={`https://apps-dev.ecmwf.int/webapps/opencharts/embed/opencharts/${builder.chartName}?controls_overlay=1&player_dimension=valid_time&projection=opencharts_europe`}
+          src={`https://apps-dev.ecmwf.int/webapps/opencharts/embed/opencharts/${chartName}?controls_overlay=1&player_dimension=valid_time&projection=opencharts_europe`}
           allow="autoplay;"
           frameBorder="0"
           allowFullScreen
         />
-      </Box>
-    </>
+      </WidgetBody>
+
+    </WidgetContainer>
   );
 
 };
