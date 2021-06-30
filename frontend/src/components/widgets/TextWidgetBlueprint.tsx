@@ -52,7 +52,7 @@ const TextWidgetBlueprint: React.FC<TextWidgetBlueprintProps> = ({builder}) => {
 
       <WidgetTitleBar title={"Text Widget"} onClose={removeWidget}/>
 
-      <WidgetBody>
+      <WidgetBody px={1} py={1}>
         <Editor editorState={editorState} onChange={setEditorState} handleKeyCommand={handleKeyCommand}/>
       </WidgetBody>
 
