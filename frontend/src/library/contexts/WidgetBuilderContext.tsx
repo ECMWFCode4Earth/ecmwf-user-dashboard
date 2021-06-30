@@ -3,27 +3,29 @@
  * */
 
 import React, { createContext, useState } from "react";
+
 import { WidgetBuilder } from "../../models/WidgetBuilder";
 
 
 const useWidgetBuilder = () => {
   const [widgetBuilders, setWidgetBuilders] = useState<WidgetBuilder[]>([]);
-  return { widgetBuilders, setWidgetBuilders };
+
+  const removeWidgetBuilder = (builderToRemove: WidgetBuilder) => {
+    setWidgetBuilders(widgetBuilders.filter(widgetBuilder => widgetBuilder.key !== builderToRemove.key));
+  };
+
+  return {widgetBuilders, setWidgetBuilders, removeWidgetBuilder};
 };
 
 
-interface WidgetBuilderContext {
-  widgetBuilders: WidgetBuilder[],
-  setWidgetBuilders: React.Dispatch<React.SetStateAction<WidgetBuilder[]>>
-}
-
-const WidgetBuilderContext = createContext<WidgetBuilderContext>({
-    widgetBuilders: [], setWidgetBuilders: () => null
-  })
-;
+const WidgetBuilderContext = createContext<ReturnType<typeof useWidgetBuilder>>(
+  {
+    widgetBuilders: [], setWidgetBuilders: () => null, removeWidgetBuilder: () => null
+  }
+);
 
 
-const WidgetBuilderProvider: React.FC = ({ children }) => {
+const WidgetBuilderProvider: React.FC = ({children}) => {
 
   const value = useWidgetBuilder();
 
