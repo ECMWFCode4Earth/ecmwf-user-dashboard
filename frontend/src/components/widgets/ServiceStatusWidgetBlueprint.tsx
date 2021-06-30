@@ -1,51 +1,24 @@
-/**
- * Blueprint of Service Status Widget.
- * - Builder class uses this to build widget
- * */
-
-import React, { useEffect, useState } from "react";
-import { makeStyles, Box, Grid, Typography, IconButton } from "@material-ui/core";
+import React, { useContext, useEffect, useState } from "react";
+import { Box, Grid, IconButton, makeStyles, Typography } from "@material-ui/core";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import axios from "axios";
 
-import { ServiceStatusWidgetBuilder } from "../../models/ServiceStatusWidgetBuilder";
+import WidgetContainer from "../common/WidgetContainer";
+import WidgetTitleBar from "../common/WidgetTitleBar";
+import WidgetBody from "../common/WidgetBody";
 import WidgetLoading from "../common/WidgetLoading";
 import WidgetError from "../common/WidgetError";
+
+import { ServiceStatusWidgetBuilder } from "../../models/ServiceStatusWidgetBuilder";
+
 import { kBorder } from "../../library/constants/constants";
 import { useForceUpdate } from "../../library/hooks/useForceUpdate";
+import { WidgetBuilderContext } from "../../library/contexts/WidgetBuilderContext";
 
 
 const useStyles = makeStyles(
   (theme) => (
     {
-      root: {
-        height: "100%",
-        overflowY: "scroll",
-        overflowX: "hidden",
-        position: "relative",
-        border: kBorder.WIDGET_BORDER,
-        borderRadius: theme.shape.borderRadius,
-      },
-      titleBar: {
-        position: "sticky",
-        top: 0,
-        left: 0,
-        color: "white",
-        backgroundColor: theme.palette.common.black,
-        opacity: 1,
-        cursor: "grab",
-        "& .title": {
-          padding: `${theme.spacing(0.5)}px 0`,
-          textAlign: "center",
-        },
-        "& .externalLink": {
-          position: "absolute",
-          margin: 0,
-          padding: 0,
-          top: "3px",
-          right: "8px"
-        }
-      },
       gridItem: {
         "& .container": {
           display: "flex",
@@ -65,7 +38,7 @@ const useStyles = makeStyles(
 
 
 /**
- * Structure of incoming data from the backend.
+ * Structure of incoming data from the backend. TODO
  * */
 interface BackendDataType {
   Title: string,
@@ -73,20 +46,22 @@ interface BackendDataType {
   "Last notification": string
 }
 
-interface ServiceStatusWidgetBlueprint {
+
+interface ServiceStatusWidgetBlueprintProps {
   builder: ServiceStatusWidgetBuilder;
 }
 
 
-const ServiceStatusWidgetBlueprint: React.FC<ServiceStatusWidgetBlueprint> = ({ builder }) => {
+const ServiceStatusWidgetBlueprint: React.FC<ServiceStatusWidgetBlueprintProps> = ({builder}) => {
 
   const classes = useStyles();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [serviceStatusData, setServiceStatusData] = useState<BackendDataType[]>([]);
+  const {removeWidgetBuilder} = useContext(WidgetBuilderContext);
 
   const rebuildTrigger = useForceUpdate();
-  builder.setRebuildTrigger(rebuildTrigger)
+  builder.setRebuildTrigger(rebuildTrigger);
 
   useEffect(() => {
     fetchQuery().catch(() => setError("An error has occurred"));
@@ -101,53 +76,47 @@ const ServiceStatusWidgetBlueprint: React.FC<ServiceStatusWidgetBlueprint> = ({ 
     setLoading(false);
   };
 
+  const removeWidget = () => removeWidgetBuilder(builder);
+
   const countOk = () => {
-    let Ok = 0;
-    serviceStatusData.forEach((data) => data.Status === "Ok" && Ok++);
-    return Ok;
+    return serviceStatusData.reduce((ok, data) => data.Status === "Ok" ? ok + 1 : ok, 0);
   };
+
+  const title = `Service Status (${countOk()}/${serviceStatusData.length} Ok)`;
 
   if (error) return <WidgetError message={error} border={kBorder.WIDGET_BORDER}/>;
 
   if (loading) return <WidgetLoading border={kBorder.WIDGET_BORDER}/>;
 
   return (
-    <Box className={classes.root} boxShadow={2}>
+    <WidgetContainer>
 
-      <Box className={classes.titleBar}>
-        <Typography className={"title"}>
-          Service Status ({countOk()}/{serviceStatusData.length} Ok)
-        </Typography>
-        <a href={builder.REFERENCE_URL.toString()} target={"_blank"}>
-          <IconButton
-            color={"inherit"}
-            aria-label={"Link to Service Status Page"}
-            component={"span"}
-            className={"externalLink"}
-          >
-            <ExitToAppIcon fontSize={"small"}/>
-          </IconButton>
-        </a>
-      </Box>
+      <WidgetTitleBar title={title} onClose={removeWidget}>
+        <IconButton href={builder.REFERENCE_URL.toString()} target={"_blank"} color={"inherit"} size={"small"}>
+          <ExitToAppIcon fontSize={"small"}/>
+        </IconButton>
+      </WidgetTitleBar>
 
-      <Grid container alignItems={"center"}>
-        {serviceStatusData.map(
-          (data) => {
-            return (
-              <Grid item xs={6} key={data.Title} className={classes.gridItem}>
-                <Box p={1} className={"container"}>
-                  <Typography variant={"body2"} className={"title"}>{data.Title}</Typography>
-                  <Box color={data.Status === "Ok" ? "success.main" : "error.main"}>
-                    <Typography variant={"body2"} className={"status"} color={"inherit"}>{data.Status}</Typography>
+      <WidgetBody>
+        <Grid container alignItems={"center"}>
+          {serviceStatusData.map(
+            (data) => {
+              return (
+                <Grid item xs={6} key={data.Title} className={classes.gridItem}>
+                  <Box p={1} className={"container"}>
+                    <Typography variant={"body2"} className={"title"}>{data.Title}</Typography>
+                    <Box color={data.Status === "Ok" ? "success.main" : "error.main"}>
+                      <Typography variant={"body2"} className={"status"} color={"inherit"}>{data.Status}</Typography>
+                    </Box>
                   </Box>
-                </Box>
-              </Grid>
-            );
-          }
-        )}
-      </Grid>
+                </Grid>
+              );
+            }
+          )}
+        </Grid>
+      </WidgetBody>
 
-    </Box>
+    </WidgetContainer>
   );
 
 };
