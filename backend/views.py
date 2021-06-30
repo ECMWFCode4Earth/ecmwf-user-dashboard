@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse, HttpResponseNotFound
 
+from backend.library.helpers.get_events import get_events
 from backend.library.helpers.get_service_status import get_service_status
 from backend.library.helpers.get_opencharts_products import get_opencharts_products
 
@@ -25,5 +26,14 @@ def opencharts_products(request):
     return JsonResponse(json)
 
 
+def events(request):
+    json, error = get_events()
+
+    if error is not None:
+        return HttpResponseNotFound()
+
+    return JsonResponse(json)
+
+
 def ping(request):
-    return HttpResponse("success")
+    return HttpResponse("Success")
