@@ -30,9 +30,6 @@ const theme = createMuiTheme({
     },
   },
   palette: {
-    common: {
-      black: kColor.BLACK,
-    },
     grey: kColor.GREY,
     text: {
       primary: kColor.BLACK,
