@@ -8,6 +8,7 @@ import { TextWidgetBuilder } from "../models/TextWidgetBuilder";
 import { EventsWidgetBuilder } from "../models/EventsWidgetBuilder";
 
 import { WidgetBuilderContext } from "../library/contexts/WidgetBuilderContext";
+import { APIKeyWidgetBuilder } from "../models/APIKeyWidgetBuilder";
 
 
 const useStyles = makeStyles(
@@ -34,6 +35,8 @@ const AppBar: React.FC<AppBarProps> = ({openChartBrowser}) => {
   const classes = useStyles();
   const {widgetBuilders, setWidgetBuilders} = useContext(WidgetBuilderContext);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+
+  const builders = [ServiceStatusWidgetBuilder, TextWidgetBuilder, EventsWidgetBuilder, APIKeyWidgetBuilder];
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -63,10 +66,7 @@ const AppBar: React.FC<AppBarProps> = ({openChartBrowser}) => {
             open={Boolean(anchorEl)}
             onClose={handleClose}
           >
-            <MenuItem onClick={() => addBuilder(new ServiceStatusWidgetBuilder())}>Service Status Widget</MenuItem>
-            <MenuItem onClick={handleClose}>Notification Widget</MenuItem>
-            <MenuItem onClick={() => addBuilder(new TextWidgetBuilder())}>Text Widget</MenuItem>
-            <MenuItem onClick={() => addBuilder(new EventsWidgetBuilder())}>Events Widget</MenuItem>
+            {builders.map(builder => <MenuItem onClick={() => addBuilder(new builder())}>{(builder as any).widgetName}</MenuItem>)}
           </Menu>
 
           <Button onClick={openChartBrowser}>Chart Browser</Button>

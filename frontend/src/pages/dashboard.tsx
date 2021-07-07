@@ -4,15 +4,15 @@
  * - User can customise dashboards
  * */
 
-import React, { useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import { makeStyles } from "@material-ui/core";
 
 import AppBar from "../components/AppBar";
 import WidgetCanvas from "../components/WidgetCanvas";
+import ChartBrowser from "../components/ChartBrowser";
 
-import { ServiceStatusWidgetBuilder } from "../models/ServiceStatusWidgetBuilder";
+import { useDrawer } from "../library/hooks/useDrawer";
 import { WidgetBuilderContext } from "../library/contexts/WidgetBuilderContext";
-import ChartsBrowser from "../components/ChartsBrowser";
 
 
 const useStyles = makeStyles(
@@ -22,20 +22,20 @@ const useStyles = makeStyles(
 );
 
 
-interface DashboardPage {
+interface DashboardPageProps {
 
 }
 
 
-const DashboardPage: React.FC<DashboardPage> = ({}) => {
+const DashboardPage: React.FC<DashboardPageProps> = ({}) => {
 
   const classes = useStyles();
   const {widgetBuilders, setWidgetBuilders} = useContext(WidgetBuilderContext);
+  const {open, onOpen, onClose} = useDrawer();
 
-  // TODO Remove this useEffect block
-  useEffect(() => {
-    setWidgetBuilders([...widgetBuilders, new ServiceStatusWidgetBuilder()])
-  }, [])
+  const openChartBrowser = () => {
+    onOpen();
+  };
 
   const buildAllWidgets = () => {
     return widgetBuilders.map((builder) => builder.build());
@@ -43,11 +43,11 @@ const DashboardPage: React.FC<DashboardPage> = ({}) => {
 
   return (
     <>
-      <AppBar/>
+      <AppBar openChartBrowser={openChartBrowser}/>
       <WidgetCanvas>
         {buildAllWidgets()}
       </WidgetCanvas>
-      <ChartsBrowser />
+      <ChartBrowser isOpen={open} onClose={onClose}/>
     </>
   );
 

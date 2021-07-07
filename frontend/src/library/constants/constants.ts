@@ -137,6 +137,14 @@ export const kColor = {
 };
 
 
+export const kSize = {
+
+  WIDGET_TITLE_BAR: "32px",
+  WIDGET_TITLE_BAR_HIDDEN: "8px",
+
+}
+
+
 export const kBorder = {
 
   WIDGET_BORDER: "2px solid black",

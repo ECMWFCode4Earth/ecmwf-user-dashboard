@@ -6,6 +6,7 @@ import ChartWidgetBlueprint from "../components/widgets/ChartWidgetBlueprint";
 
 export class ChartWidgetBuilder extends WidgetBuilder {
 
+  public static readonly widgetName = "Chart Widget"
   layout: ReactGridLayout.Layout;
   public readonly chartName: string;
   public readonly chartTitle: string;

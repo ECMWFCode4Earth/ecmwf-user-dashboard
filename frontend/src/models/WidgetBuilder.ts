@@ -9,6 +9,7 @@ export abstract class WidgetBuilder {
 
   public readonly key: string;
   public abstract layout: Layout;
+  public static readonly widgetName: string = "Widget";
 
   private rebuildTrigger: () => void;
 

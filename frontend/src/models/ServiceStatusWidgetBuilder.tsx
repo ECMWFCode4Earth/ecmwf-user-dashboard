@@ -15,6 +15,8 @@ import { kStore } from "../library/constants/constants";
 
 export class ServiceStatusWidgetBuilder extends WidgetBuilder {
 
+  public static readonly widgetName = "Service Status Widget"
+
   public readonly QUERY_URL: URL = new URL("/backend/service_status", kStore.BASE_URL);
   public readonly REFERENCE_URL: URL = new URL("https://www.ecmwf.int/en/service-status");
 
