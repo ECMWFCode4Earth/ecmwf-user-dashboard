@@ -1,8 +1,5 @@
-/**
- * Theme configuration used by Material UI.
- * */
-
 import { createMuiTheme } from "@material-ui/core/styles";
+
 import { kColor, kFont, kFontFamily } from "../library/constants/constants";
 
 
@@ -16,7 +13,7 @@ const theme = createMuiTheme({
       "@global": {
         "html, body": {
           backgroundColor: "white",
-          minHeight: "100vh",
+          minHeight: "100vh", // TODO Calculate using subtracting Navbar height
           overscrollBehavior: "none",
         },
         "a": {
@@ -43,8 +40,6 @@ const theme = createMuiTheme({
     h4: kFont.HEADING_MD,
     h5: kFont.HEADING_SM,
     h6: kFont.HEADING_XS,
-    subtitle1: kFont.HEADING_XXS,
-    subtitle2: kFont.BODY_LG,
     body1: kFont.BODY_MD,
     body2: kFont.BODY_SM,
     caption: kFont.BODY_XS,
