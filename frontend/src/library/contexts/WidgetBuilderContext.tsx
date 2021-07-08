@@ -1,7 +1,3 @@
-/**
- * React context to keep track of widget builders across the application.
- * */
-
 import React, { createContext, useState } from "react";
 
 import { WidgetBuilder } from "../../models/WidgetBuilder";
@@ -11,21 +7,19 @@ const useWidgetBuilder = () => {
   const [widgetBuilders, setWidgetBuilders] = useState<WidgetBuilder[]>([]);
 
   const removeWidgetBuilder = (builderToRemove: WidgetBuilder) => {
-    setWidgetBuilders(widgetBuilders.filter(widgetBuilder => widgetBuilder.key !== builderToRemove.key));
+    setWidgetBuilders((widgetBuilders) => widgetBuilders.filter(widgetBuilder => widgetBuilder.id !== builderToRemove.id));
   };
 
-  return {widgetBuilders, setWidgetBuilders, removeWidgetBuilder};
+  return { widgetBuilders, setWidgetBuilders, removeWidgetBuilder };
 };
 
 
 const WidgetBuilderContext = createContext<ReturnType<typeof useWidgetBuilder>>(
-  {
-    widgetBuilders: [], setWidgetBuilders: () => null, removeWidgetBuilder: () => null
-  }
+  { widgetBuilders: [], setWidgetBuilders: () => null, removeWidgetBuilder: () => null }
 );
 
 
-const WidgetBuilderProvider: React.FC = ({children}) => {
+const WidgetBuilderProvider: React.FC = ({ children }) => {
 
   const value = useWidgetBuilder();
 

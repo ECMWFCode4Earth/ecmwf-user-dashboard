@@ -10,6 +10,7 @@ import "react-resizable/css/styles.css";
 import App from "./App";
 import WidgetBuilderProvider from "./library/contexts/WidgetBuilderContext";
 import { theme } from "./styles/theme";
+import GlobalContextProvider from "./library/contexts/GlobalContext";
 
 
 ReactDOM.render(
@@ -17,9 +18,11 @@ ReactDOM.render(
     <ThemeProvider theme={theme}>
       <CssBaseline/>
       <NoSsr>
-        <WidgetBuilderProvider>
-          <App/>
-        </WidgetBuilderProvider>
+        <GlobalContextProvider>
+          <WidgetBuilderProvider>
+            <App/>
+          </WidgetBuilderProvider>
+        </GlobalContextProvider>
       </NoSsr>
     </ThemeProvider>
   </React.StrictMode>,

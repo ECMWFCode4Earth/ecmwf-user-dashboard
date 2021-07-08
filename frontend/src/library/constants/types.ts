@@ -1,5 +1,5 @@
-/**
- * Location for trivial types
- * */
 
-export {};
+
+export interface GlobalConfiguration {
+
+}
