@@ -1,13 +1,8 @@
-/**
- * Service Status Widget Builder Class
- * - Builds Service Status Widget
- * - Built widget displays information from https://www.ecmwf.int/en/service-status
- * */
-
 import React from "react";
 import { Layout } from "react-grid-layout";
 
 import { WidgetBuilder } from "./WidgetBuilder";
+
 import ServiceStatusWidgetBlueprint from "../components/widgets/ServiceStatusWidgetBlueprint";
 
 import { kStore } from "../library/constants/constants";
@@ -17,19 +12,19 @@ export class ServiceStatusWidgetBuilder extends WidgetBuilder {
 
   public static readonly widgetName = "Service Status Widget"
 
-  public readonly QUERY_URL: URL = new URL("/backend/service_status", kStore.BASE_URL);
-  public readonly REFERENCE_URL: URL = new URL("https://www.ecmwf.int/en/service-status");
+  public readonly queryUrl: URL = new URL("/backend/service_status", kStore.BASE_URL);
+  public readonly referenceUrl: URL = new URL("https://www.ecmwf.int/en/service-status");
 
-  public layout: Layout;
+  layout: Layout;
 
-  constructor(layout?: Layout, key?: string) {
-    super(key);
-    this.layout = layout || { i: this.key, x: 0, y: 0, w: 3, h: 2, minW: 3, maxW: 4, minH: 1, maxH: 3 };
+  constructor() {
+    super();
+    this.layout = { i: this.id, x: 0, y: 0, w: 3, h: 2, minW: 3, maxW: 4, minH: 1, maxH: 3 };
   }
 
   public build() {
     return (
-      <div key={this.key} data-grid={this.layout}>
+      <div key={this.id} data-grid={this.layout}>
         <ServiceStatusWidgetBlueprint builder={this}/>
       </div>
     );

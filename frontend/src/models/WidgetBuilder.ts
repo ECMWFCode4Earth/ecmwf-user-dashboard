@@ -1,35 +1,22 @@
-/**
- * Widget Builder Abstract Class
- * */
-
+import { v4 as uuidv4 } from "uuid";
 import { Layout } from "react-grid-layout";
 
 
 export abstract class WidgetBuilder {
 
-  public readonly key: string;
-  public abstract layout: Layout;
   public static readonly widgetName: string = "Widget";
 
-  private rebuildTrigger: () => void;
+  public readonly id: string;
+  public abstract layout: Layout;
 
-  protected constructor(key?: string) {
-    this.key = key || ("w" + Date.now()); // If key not provide, generate a random id using w appended with Date.now()
-    this.rebuildTrigger = () => undefined;
+  protected constructor() {
+    this.id = "Widget-" + uuidv4(); // If key not provide, generate a random id.
   }
 
   public setLayout(layout: Layout) {
     this.layout = layout;
   }
 
-  public setRebuildTrigger(rebuildTrigger: () => void) {
-    this.rebuildTrigger = rebuildTrigger;
-  }
-
   public abstract build(): JSX.Element;
-
-  public rebuild() {
-    this.rebuildTrigger();
-  }
 
 }

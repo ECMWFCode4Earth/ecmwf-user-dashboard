@@ -1,11 +1,4 @@
-/**
- * Dashboard
- * - User can add widgets
- * - User can customise dashboards
- * */
-
 import React, { useContext } from "react";
-import { makeStyles } from "@material-ui/core";
 
 import AppBar from "../components/AppBar";
 import WidgetCanvas from "../components/WidgetCanvas";
@@ -15,27 +8,12 @@ import { useDrawer } from "../library/hooks/useDrawer";
 import { WidgetBuilderContext } from "../library/contexts/WidgetBuilderContext";
 
 
-const useStyles = makeStyles(
-  (theme) => (
-    {}
-  )
-);
+const DashboardPage: React.FC = ({}) => {
 
-
-interface DashboardPageProps {
-
-}
-
-
-const DashboardPage: React.FC<DashboardPageProps> = ({}) => {
-
-  const classes = useStyles();
-  const {widgetBuilders, setWidgetBuilders} = useContext(WidgetBuilderContext);
+  const {widgetBuilders} = useContext(WidgetBuilderContext);
   const {open, onOpen, onClose} = useDrawer();
 
-  const openChartBrowser = () => {
-    onOpen();
-  };
+  const openChartBrowser = () => onOpen();
 
   const buildAllWidgets = () => {
     return widgetBuilders.map((builder) => builder.build());

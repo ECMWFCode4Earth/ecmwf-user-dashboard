@@ -44,7 +44,7 @@ const EventsWidgetBlueprint: React.FC<EventsWidgetBlueprintProps> = ({builder}) 
   }, []);
 
   const fetchQuery = async () => {
-    const res = await axios.get(builder.QUERY_URL.toString());
+    const res = await axios.get(builder.queryUrl.toString());
     const events = res.data.results;
     setEvents(events);
     setLoading(false);

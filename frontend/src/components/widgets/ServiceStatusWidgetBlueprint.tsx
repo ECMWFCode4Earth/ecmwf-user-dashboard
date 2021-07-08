@@ -68,7 +68,7 @@ const ServiceStatusWidgetBlueprint: React.FC<ServiceStatusWidgetBlueprintProps> 
   }, []);
 
   const fetchQuery = async () => {
-    const res = await axios.get(builder.QUERY_URL.toString());
+    const res = await axios.get(builder.queryUrl.toString());
     const nodes = res.data.nodes;
     const serviceStatusData: BackendDataType[] = [];
     nodes.forEach((edge: { node: BackendDataType }) => serviceStatusData.push(edge.node));
@@ -92,7 +92,7 @@ const ServiceStatusWidgetBlueprint: React.FC<ServiceStatusWidgetBlueprintProps> 
     <WidgetContainer>
 
       <WidgetTitleBar title={title} onClose={removeWidget}>
-        <IconButton href={builder.REFERENCE_URL.toString()} target={"_blank"} color={"inherit"} size={"small"}>
+        <IconButton href={builder.referenceUrl.toString()} target={"_blank"} color={"inherit"} size={"small"}>
           <ExitToAppIcon fontSize={"small"}/>
         </IconButton>
       </WidgetTitleBar>

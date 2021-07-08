@@ -1,27 +1,24 @@
-/**
- * Text Widget Builder
- * */
 import React from "react";
-import ReactGridLayout from "react-grid-layout";
-
-import TextWidgetBlueprint from "../components/widgets/TextWidgetBlueprint";
+import { Layout } from "react-grid-layout";
 
 import { WidgetBuilder } from "./WidgetBuilder";
+
+import TextWidgetBlueprint from "../components/widgets/TextWidgetBlueprint";
 
 
 export class TextWidgetBuilder extends WidgetBuilder {
 
-  public static readonly widgetName  = "Text Widget"
-  layout: ReactGridLayout.Layout;
+  public static readonly widgetName  = "Text Widget";
+  layout: Layout;
 
-  constructor(layout?: ReactGridLayout.Layout, key?: string) {
-    super(key);
-    this.layout = layout || {i: this.key, x: 2, y: 0, w: 4, h: 2, minW: 3, maxW: 6, minH: 2, maxH: 6};
+  constructor() {
+    super();
+    this.layout = {i: this.id, x: 2, y: 0, w: 4, h: 2, minW: 3, maxW: 6, minH: 2, maxH: 6};
   }
 
   build(): JSX.Element {
     return (
-      <div key={this.key} data-grid={this.layout}>
+      <div key={this.id} data-grid={this.layout}>
         <TextWidgetBlueprint builder={this}/>
       </div>
     );
