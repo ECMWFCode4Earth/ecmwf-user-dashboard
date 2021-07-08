@@ -8,8 +8,8 @@ import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 
 import App from "./App";
-import { theme } from "./styles/theme";
 import WidgetBuilderProvider from "./library/contexts/WidgetBuilderContext";
+import { theme } from "./styles/theme";
 
 
 ReactDOM.render(
@@ -23,5 +23,5 @@ ReactDOM.render(
       </NoSsr>
     </ThemeProvider>
   </React.StrictMode>,
-  document.getElementById("root")
+  document.getElementsByClassName("ecmwf-template__content-wrapper")[1]
 );
