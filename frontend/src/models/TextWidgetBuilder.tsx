@@ -13,7 +13,7 @@ export class TextWidgetBuilder extends WidgetBuilder {
 
   constructor() {
     super();
-    this.layout = {i: this.id, x: 2, y: 0, w: 4, h: 2, minW: 3, maxW: 6, minH: 2, maxH: 6};
+    this.layout = {i: this.id, x: 0, y: 0, w: 4, h: 2, minW: 3, maxW: 6, minH: 2, maxH: 6};
   }
 
   build(): JSX.Element {

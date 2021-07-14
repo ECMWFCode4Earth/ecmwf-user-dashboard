@@ -1,7 +1,3 @@
-/**
- *
- * */
-
 import React, { useContext, useEffect, useState } from "react";
 import { Box, Button, Dialog, DialogTitle, Grid, makeStyles, Slide, TextField, Typography } from "@material-ui/core";
 import { TransitionProps } from "@material-ui/core/transitions";
@@ -121,7 +117,7 @@ const ChartBrowser: React.FC<ChartBrowserProps> = ({isOpen, onClose}) => {
       aria-labelledby={"chart-browser"}
     >
       <DialogTitle id={"chart-browser"}>
-        <Typography variant={"h1"}>Charts Browser</Typography>
+        <Typography variant={"h1"}>Chart Browser</Typography>
       </DialogTitle>
       <Box mx={2} mb={1}>
         <TextField  onChange={handleSearchOnChange} fullWidth size={"small"} label="Search"

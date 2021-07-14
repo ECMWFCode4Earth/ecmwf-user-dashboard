@@ -1,29 +1,24 @@
 import React from "react";
 import { Box } from "@material-ui/core";
 import { Responsive, WidthProvider } from "react-grid-layout";
+import { kDefaults, kName } from "../library/constants/constants";
 
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
+
 const WidgetCanvas: React.FC = ({ children }) => {
-
-  // Sensible defaults
-  const breakpoints = { lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 };
-  const cols = { lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }
-
   return (
     <Box>
       <ResponsiveGridLayout
-        className={"layouts"}
-        breakpoints={breakpoints}
-        cols={cols}
-        draggableCancel={".noDrag"}
+        breakpoints={kDefaults.RGL_BREAKPOINTS}
+        cols={kDefaults.RGL_COLS}
+        draggableCancel={`.${kName.CLASS_NO_DRAG}`}
       >
         {children}
       </ResponsiveGridLayout>
     </Box>
   );
-
 };
 
 

@@ -1,12 +1,14 @@
 import React from "react";
-import { Box } from "@material-ui/core";
+
+import Layout from "../components/common/Layout";
+import ChartBrowser from "../components/ChartBrowser";
 
 
 const ChartBrowserPage: React.FC = () => {
   return (
-    <Box>
-
-    </Box>
+    <Layout>
+      <ChartBrowser isOpen={true} onClose={() => {}} />
+    </Layout>
   );
 
 };

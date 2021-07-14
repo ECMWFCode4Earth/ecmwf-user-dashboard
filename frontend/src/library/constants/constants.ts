@@ -161,6 +161,12 @@ export const kName = {
 };
 
 
+export const kDefaults = {
+  RGL_BREAKPOINTS: { lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 },
+  RGL_COLS: { lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 },
+}
+
+
 export const kStore = {
 
   BASE_URL: "http://127.0.0.1:8000", // TODO Refactor base to env variable

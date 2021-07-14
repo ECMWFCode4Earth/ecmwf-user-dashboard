@@ -10,6 +10,8 @@ import { APIKeyWidgetBuilder } from "../models/APIKeyWidgetBuilder";
 import { SatelliteAlertsWidgetBuilder } from "../models/SatelliteAlertsWidgetBuilder";
 
 import { WidgetBuilderContext } from "../library/contexts/WidgetBuilderContext";
+import ChartBrowser from "./ChartBrowser";
+import { useDrawer } from "../library/hooks/useDrawer";
 
 
 const useStyles = makeStyles(
@@ -32,6 +34,7 @@ const AppBar: React.FC = () => {
   const classes = useStyles();
   const { setWidgetBuilders } = useContext(WidgetBuilderContext);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const { open, onOpen, onClose } = useDrawer(); // TODO Remove
 
   const builders = [ServiceStatusWidgetBuilder, TextWidgetBuilder, EventsWidgetBuilder, APIKeyWidgetBuilder, SatelliteAlertsWidgetBuilder];
 
@@ -47,35 +50,41 @@ const AppBar: React.FC = () => {
 
 
   return (
-    <div className={classes.root}>
-      <MaterialAppBar elevation={0} className={classes.appBar}>
-        <Toolbar variant={"dense"}>
+    <>
+      <div className={classes.root}>
+        <MaterialAppBar elevation={0} className={classes.appBar}>
+          <Toolbar variant={"dense"}>
 
-          <Button onClick={openMenu}>
-            Add Widget
-          </Button>
-          <Menu
-            anchorEl={anchorEl}
-            keepMounted
-            open={Boolean(anchorEl)}
-            onClose={closeMenu}
-          >
-            {
-              builders.map((builder) => (
-                  <MenuItem onClick={() => addBuilder(new builder())}>
-                    {(builder as any).widgetName}
-                  </MenuItem>
+            <Button onClick={openMenu}>
+              Add Widget
+            </Button>
+            <Menu
+              anchorEl={anchorEl}
+              keepMounted
+              open={Boolean(anchorEl)}
+              onClose={closeMenu}
+            >
+              {
+                builders.map((builder) => (
+                    <MenuItem onClick={() => addBuilder(new builder())}>
+                      {(builder as any).widgetName}
+                    </MenuItem>
+                  )
                 )
-              )
-            }
-          </Menu>
+              }
+            </Menu>
 
-          {/* TODO Link to Chart Browser */}
-          <Button>Chart Browser</Button>
+            {/* TODO Link to Chart Browser */}
+            <Button onClick={onOpen}>Chart Browser</Button>
 
-        </Toolbar>
-      </MaterialAppBar>
-    </div>
+          </Toolbar>
+        </MaterialAppBar>
+      </div>
+
+      {/* TODO Remove */}
+      <ChartBrowser isOpen={open} onClose={onClose}/>
+    </>
+
   );
 
 };
