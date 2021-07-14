@@ -7,7 +7,7 @@ import { kName } from "../../library/constants/constants";
 const useStyles = makeStyles(
   (theme) => (
     {
-      root: {
+      body: {
         flexGrow: 1,
         overflow: "scroll"
       }
@@ -27,7 +27,7 @@ const WidgetBody: React.FC<WidgetBodyProps> = ({ children, px, py }) => {
   const classes = useStyles();
 
   return (
-    <Box px={px} py={py} className={[classes.root, kName.CLASS_NO_DRAG].join(" ")}>
+    <Box px={px} py={py} className={[classes.body, kName.CLASS_NO_DRAG].join(" ")}>
       {children}
     </Box>
   );

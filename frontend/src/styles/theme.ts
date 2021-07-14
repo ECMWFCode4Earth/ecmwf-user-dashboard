@@ -45,7 +45,7 @@ const theme = createMuiTheme({
     caption: kFont.BODY_XS,
   },
   shape: {
-    borderRadius: 0
+    borderRadius: 3
   }
 });
 

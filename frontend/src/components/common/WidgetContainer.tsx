@@ -1,12 +1,13 @@
 import React from "react";
 import { Box, makeStyles } from "@material-ui/core";
+
 import { kBorder } from "../../library/constants/constants";
 
 
 const useStyles = makeStyles(
   (theme) => (
     {
-      root: {
+      container: {
         height: "100%",
         display: "flex",
         flexDirection: "column",
@@ -21,17 +22,12 @@ const useStyles = makeStyles(
 );
 
 
-interface WidgetContainerProps {
-
-}
-
-
-const WidgetContainer: React.FC<WidgetContainerProps> = ({children}) => {
+const WidgetContainer: React.FC = ({ children }) => {
 
   const classes = useStyles();
 
   return (
-    <Box className={classes.root} boxShadow={2}>
+    <Box boxShadow={2} className={classes.container}>
       {children}
     </Box>
   );
