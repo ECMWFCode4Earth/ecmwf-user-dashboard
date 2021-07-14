@@ -1,6 +1,7 @@
 import React from "react";
 import { Box, makeStyles } from "@material-ui/core";
-import { kSize } from "../../library/constants/constants";
+
+import { kName } from "../../library/constants/constants";
 
 
 const useStyles = makeStyles(
@@ -21,13 +22,12 @@ interface WidgetBodyProps {
 }
 
 
-const WidgetBody: React.FC<WidgetBodyProps> = ({children, px, py}) => {
+const WidgetBody: React.FC<WidgetBodyProps> = ({ children, px, py }) => {
 
   const classes = useStyles();
 
   return (
-    // noDrag is special className - can't click and drag element across grid.
-    <Box className={`${classes.root} noDrag`} px={px} py={py}>
+    <Box px={px} py={py} className={[classes.root, kName.CLASS_NO_DRAG].join(" ")}>
       {children}
     </Box>
   );
@@ -38,7 +38,7 @@ const WidgetBody: React.FC<WidgetBodyProps> = ({children, px, py}) => {
 WidgetBody.defaultProps = {
   px: 0,
   py: 0,
-}
+};
 
 
 export default WidgetBody;

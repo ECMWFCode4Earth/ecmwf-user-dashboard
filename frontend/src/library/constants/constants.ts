@@ -154,6 +154,13 @@ export const kBorder = {
 };
 
 
+export const kName = {
+
+  CLASS_NO_DRAG: "noDrag", // noDrag is special className - can't click and drag element across grid.
+
+};
+
+
 export const kStore = {
 
   BASE_URL: "http://127.0.0.1:8000", // TODO Refactor base to env variable
