@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { Box, IconButton, makeStyles, Typography } from "@material-ui/core";
-import { kSize } from "../../library/constants/constants";
 import CancelPresentationIcon from "@material-ui/icons/CancelPresentation";
 import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
 import ExpandLessIcon from "@material-ui/icons/ExpandLess";
+
+import { kName, kSize } from "../../library/constants/constants";
 
 
 const useStyles = makeStyles(
@@ -48,7 +49,7 @@ const WidgetTitleBar: React.FC<WidgetTitleBarProps> = ({children, title, onClose
   if (hidden) {
     return (
       <Box className={[classes.root, classes.hidden].join(" ")}>
-        <IconButton onClick={toggleHidden} disableRipple color={"inherit"} size={"small"} className={"noDrag"}>
+        <IconButton onClick={toggleHidden} disableRipple color={"inherit"} size={"small"} className={kName.CLASS_NO_DRAG}>
           <MoreHorizIcon fontSize={"small"}/>
         </IconButton>
       </Box>
@@ -57,7 +58,7 @@ const WidgetTitleBar: React.FC<WidgetTitleBarProps> = ({children, title, onClose
 
   return (
     <Box className={classes.root}>
-      <Box p={1} className={"noDrag"}>
+      <Box p={1} className={kName.CLASS_NO_DRAG}>
         {children}
       </Box>
       <Box>
@@ -65,7 +66,7 @@ const WidgetTitleBar: React.FC<WidgetTitleBarProps> = ({children, title, onClose
           {title}
         </Typography>
       </Box>
-      <Box px={1} className={"noDrag"}>
+      <Box px={1} className={kName.CLASS_NO_DRAG}>
         <IconButton onClick={toggleHidden} color={"inherit"} size={"small"}>
           <ExpandLessIcon fontSize={"small"}/>
         </IconButton>
