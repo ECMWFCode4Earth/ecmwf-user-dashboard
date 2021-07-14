@@ -79,7 +79,7 @@ const ServiceStatusWidgetBlueprint: React.FC<ServiceStatusWidgetBlueprintProps> 
   const title = `Service Status (${countOk()}/${serviceStatusDetails.length} Ok)`;
 
 
-  if (error) return <WidgetError message={error}/>;
+  if (error) return <WidgetError message={error} onClose={removeWidget}/>;
 
   if (loading) return <WidgetLoading/>;
 

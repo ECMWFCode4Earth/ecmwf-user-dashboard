@@ -1,34 +1,51 @@
 import React from "react";
-import { Box } from "@material-ui/core";
-import { kBorder } from "../../library/constants/constants";
+import { Box, makeStyles, Typography } from "@material-ui/core";
+import WidgetContainer from "./WidgetContainer";
+import WidgetTitleBar from "./WidgetTitleBar";
+import WidgetBody from "./WidgetBody";
+
+
+const useStyles = makeStyles(
+  (theme) => (
+    {
+      container: {
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        flexDirection: "column",
+      }
+    }
+  )
+);
 
 
 interface WidgetErrorProps {
   message: string;
-  border?: boolean;
+  onClose: (e: React.MouseEvent) => void;
 }
 
 
-const WidgetError: React.FC<WidgetErrorProps> = ({message, border}) => {
+const WidgetError: React.FC<WidgetErrorProps> = ({ message, onClose }) => {
+
+  const classes = useStyles();
+
   return (
-    <Box
-      width={"100%"}
-      height={"100%"}
-      border={border && kBorder.WIDGET_BORDER}
-      borderRadius={border && "borderRadius"}
-      display={"flex"}
-      alignItems={"center"}
-      justifyContent={"center"}
-    >
-      {message}
-    </Box>
+    <WidgetContainer>
+
+      <WidgetTitleBar title={"Error"} onClose={onClose}/>
+
+      <WidgetBody>
+        <Box className={classes.container}>
+          <Typography variant={"body2"}>{message}</Typography>
+        </Box>
+      </WidgetBody>
+
+    </WidgetContainer>
   );
+
 };
-
-
-WidgetError.defaultProps = {
-  border: true,
-}
 
 
 export default WidgetError;
