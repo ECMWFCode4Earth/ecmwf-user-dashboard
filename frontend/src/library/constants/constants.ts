@@ -5,9 +5,9 @@
 
 
 export const kFontFamily = {
-  HEADING: '"Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif',
-  BODY: '"Open Sans","Helvetica Neue",Helvetica,Arial,sans-serif'
-}
+  HEADING: "\"Open Sans\",\"Helvetica Neue\",Helvetica,Arial,sans-serif",
+  BODY: "\"Open Sans\",\"Helvetica Neue\",Helvetica,Arial,sans-serif"
+};
 
 
 export const kFont = {
@@ -141,19 +141,21 @@ export const kSize = {
 
   WIDGET_TITLE_BAR: "32px",
   WIDGET_TITLE_BAR_HIDDEN: "8px",
+  TEMPLATE_HEADER_HEIGHT: "48px",
+  TEMPLATE_FOOTER_HEIGHT: "50px",
 
-}
+};
 
 
 export const kBorder = {
 
   WIDGET_BORDER: "2px solid black",
 
-}
+};
 
 
 export const kStore = {
 
   BASE_URL: "http://127.0.0.1:8000", // TODO Refactor base to env variable
 
-}
+};

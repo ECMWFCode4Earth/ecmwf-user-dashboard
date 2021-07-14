@@ -1,9 +1,10 @@
 import React from "react";
 import { Box, CircularProgress } from "@material-ui/core";
+import { kBorder } from "../../library/constants/constants";
 
 
 interface WidgetLoadingProps {
-  border?: string;
+  border?: boolean;
 }
 
 
@@ -12,7 +13,7 @@ const WidgetLoading: React.FC<WidgetLoadingProps> = ({ border }) => {
     <Box
       width={"100%"}
       height={"100%"}
-      border={border}
+      border={border && kBorder.WIDGET_BORDER}
       borderRadius={border && "borderRadius"}
       display={"flex"}
       alignItems={"center"}
@@ -23,6 +24,11 @@ const WidgetLoading: React.FC<WidgetLoadingProps> = ({ border }) => {
   );
 
 };
+
+
+WidgetLoading.defaultProps = {
+  border: true,
+}
 
 
 export default WidgetLoading;

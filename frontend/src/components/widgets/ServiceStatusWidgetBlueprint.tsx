@@ -10,9 +10,6 @@ import WidgetLoading from "../common/WidgetLoading";
 import WidgetError from "../common/WidgetError";
 
 import { ServiceStatusWidgetBuilder } from "../../models/ServiceStatusWidgetBuilder";
-
-import { kBorder } from "../../library/constants/constants";
-import { useForceUpdate } from "../../library/hooks/useForceUpdate";
 import { WidgetBuilderContext } from "../../library/contexts/WidgetBuilderContext";
 
 
@@ -38,9 +35,9 @@ const useStyles = makeStyles(
 
 
 /**
- * Structure of incoming data from the backend. TODO
+ * Structure of incoming data from the backend.
  * */
-interface BackendDataType {
+interface ServiceStatusDetails {
   Title: string,
   Status: string,
   "Last notification": string
@@ -52,41 +49,39 @@ interface ServiceStatusWidgetBlueprintProps {
 }
 
 
-const ServiceStatusWidgetBlueprint: React.FC<ServiceStatusWidgetBlueprintProps> = ({builder}) => {
+const ServiceStatusWidgetBlueprint: React.FC<ServiceStatusWidgetBlueprintProps> = ({ builder }) => {
 
   const classes = useStyles();
+  const { removeWidgetBuilder } = useContext(WidgetBuilderContext);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [serviceStatusData, setServiceStatusData] = useState<BackendDataType[]>([]);
-  const {removeWidgetBuilder} = useContext(WidgetBuilderContext);
+  const [serviceStatusDetails, setServiceStatusDetails] = useState<ServiceStatusDetails[]>([]);
 
-  const rebuildTrigger = useForceUpdate();
-  builder.setRebuildTrigger(rebuildTrigger);
 
   useEffect(() => {
-    fetchQuery().catch(() => setError("An error has occurred"));
+    fetchQuery().catch(() => setError("An error occurred. Failed to fetch data from backend server."));
   }, []);
+
 
   const fetchQuery = async () => {
     const res = await axios.get(builder.queryUrl.toString());
     const nodes = res.data.nodes;
-    const serviceStatusData: BackendDataType[] = [];
-    nodes.forEach((edge: { node: BackendDataType }) => serviceStatusData.push(edge.node));
-    setServiceStatusData(serviceStatusData);
+    const serviceStatusData: ServiceStatusDetails[] = [];
+    nodes.forEach((edge: { node: ServiceStatusDetails }) => serviceStatusData.push(edge.node));
+    setServiceStatusDetails(serviceStatusData);
     setLoading(false);
   };
 
   const removeWidget = () => removeWidgetBuilder(builder);
 
-  const countOk = () => {
-    return serviceStatusData.reduce((ok, data) => data.Status === "Ok" ? ok + 1 : ok, 0);
-  };
+  const countOk = () => serviceStatusDetails.reduce((ok, data) => data.Status === "Ok" ? ok + 1 : ok, 0);
 
-  const title = `Service Status (${countOk()}/${serviceStatusData.length} Ok)`;
+  const title = `Service Status (${countOk()}/${serviceStatusDetails.length} Ok)`;
 
-  if (error) return <WidgetError message={error} border={kBorder.WIDGET_BORDER}/>;
 
-  if (loading) return <WidgetLoading border={kBorder.WIDGET_BORDER}/>;
+  if (error) return <WidgetError message={error}/>;
+
+  if (loading) return <WidgetLoading/>;
 
   return (
     <WidgetContainer>
@@ -99,7 +94,7 @@ const ServiceStatusWidgetBlueprint: React.FC<ServiceStatusWidgetBlueprintProps> 
 
       <WidgetBody>
         <Grid container alignItems={"center"}>
-          {serviceStatusData.map(
+          {serviceStatusDetails.map(
             (data) => {
               return (
                 <Grid item xs={6} key={data.Title} className={classes.gridItem}>

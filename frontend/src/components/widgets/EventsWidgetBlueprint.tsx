@@ -36,8 +36,6 @@ const EventsWidgetBlueprint: React.FC<EventsWidgetBlueprintProps> = ({builder}) 
   const [events, setEvents] = useState<any>([]); // TODO
   const {removeWidgetBuilder} = useContext(WidgetBuilderContext);
 
-  const triggerRebuild = useForceUpdate();
-  builder.setRebuildTrigger(triggerRebuild);
 
   useEffect(() => {
     fetchQuery().catch(() => setError("An error has occurred"));
@@ -52,9 +50,9 @@ const EventsWidgetBlueprint: React.FC<EventsWidgetBlueprintProps> = ({builder}) 
 
   const removeWidget = () => removeWidgetBuilder(builder);
 
-  if (error) return <WidgetError message={error} border={kBorder.WIDGET_BORDER}/>;
+  if (error) return <WidgetError message={error} />;
 
-  if (loading) return <WidgetLoading border={kBorder.WIDGET_BORDER}/>;
+  if (loading) return <WidgetLoading />;
 
   return (
     <WidgetContainer>

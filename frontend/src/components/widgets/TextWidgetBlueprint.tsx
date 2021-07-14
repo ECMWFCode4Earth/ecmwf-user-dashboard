@@ -10,7 +10,6 @@ import WidgetBody from "../common/WidgetBody";
 import { TextWidgetBuilder } from "../../models/TextWidgetBuilder";
 
 import { WidgetBuilderContext } from "../../library/contexts/WidgetBuilderContext";
-import { useForceUpdate } from "../../library/hooks/useForceUpdate";
 
 
 const useStyles = makeStyles(
@@ -31,8 +30,6 @@ const TextWidgetBlueprint: React.FC<TextWidgetBlueprintProps> = ({builder}) => {
   const [editorState, setEditorState] = React.useState(() => EditorState.createEmpty());
   const {removeWidgetBuilder} = useContext(WidgetBuilderContext);
 
-  const rebuildTrigger = useForceUpdate();
-  builder.setRebuildTrigger(rebuildTrigger);
 
   const removeWidget = () => removeWidgetBuilder(builder);
 

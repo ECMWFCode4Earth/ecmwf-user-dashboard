@@ -1,10 +1,11 @@
 import React from "react";
 import { Box } from "@material-ui/core";
+import { kBorder } from "../../library/constants/constants";
 
 
 interface WidgetErrorProps {
   message: string;
-  border?: string;
+  border?: boolean;
 }
 
 
@@ -13,7 +14,7 @@ const WidgetError: React.FC<WidgetErrorProps> = ({message, border}) => {
     <Box
       width={"100%"}
       height={"100%"}
-      border={border}
+      border={border && kBorder.WIDGET_BORDER}
       borderRadius={border && "borderRadius"}
       display={"flex"}
       alignItems={"center"}
@@ -23,6 +24,11 @@ const WidgetError: React.FC<WidgetErrorProps> = ({message, border}) => {
     </Box>
   );
 };
+
+
+WidgetError.defaultProps = {
+  border: true,
+}
 
 
 export default WidgetError;

@@ -6,9 +6,10 @@ import { WidgetBuilder } from "../models/WidgetBuilder";
 import { ServiceStatusWidgetBuilder } from "../models/ServiceStatusWidgetBuilder";
 import { TextWidgetBuilder } from "../models/TextWidgetBuilder";
 import { EventsWidgetBuilder } from "../models/EventsWidgetBuilder";
+import { APIKeyWidgetBuilder } from "../models/APIKeyWidgetBuilder";
+import { SatelliteAlertsWidgetBuilder } from "../models/SatelliteAlertsWidgetBuilder";
 
 import { WidgetBuilderContext } from "../library/contexts/WidgetBuilderContext";
-import { APIKeyWidgetBuilder } from "../models/APIKeyWidgetBuilder";
 
 
 const useStyles = makeStyles(
@@ -18,6 +19,7 @@ const useStyles = makeStyles(
         flexGrow: 1,
       },
       appBar: {
+        position: "static",
         backgroundColor: theme.palette.grey[300],
       }
     }
@@ -25,51 +27,51 @@ const useStyles = makeStyles(
 );
 
 
-interface AppBarProps {
-  openChartBrowser: () => void;
-}
-
-
-const AppBar: React.FC<AppBarProps> = ({openChartBrowser}) => {
+const AppBar: React.FC = () => {
 
   const classes = useStyles();
-  const {widgetBuilders, setWidgetBuilders} = useContext(WidgetBuilderContext);
+  const { setWidgetBuilders } = useContext(WidgetBuilderContext);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
-  const builders = [ServiceStatusWidgetBuilder, TextWidgetBuilder, EventsWidgetBuilder, APIKeyWidgetBuilder];
+  const builders = [ServiceStatusWidgetBuilder, TextWidgetBuilder, EventsWidgetBuilder, APIKeyWidgetBuilder, SatelliteAlertsWidgetBuilder];
 
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
 
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+  const openMenu = (event: React.MouseEvent<HTMLButtonElement>) => setAnchorEl(event.currentTarget);
+
+  const closeMenu = () => setAnchorEl(null);
 
   const addBuilder = (builder: WidgetBuilder) => {
-    setWidgetBuilders([...widgetBuilders, builder]);
-    handleClose();
+    setWidgetBuilders(widgetBuilders => [...widgetBuilders, builder]);
+    closeMenu();
   };
+
 
   return (
     <div className={classes.root}>
-      <MaterialAppBar position="static" elevation={0} className={classes.appBar}>
-        <Toolbar variant="dense">
+      <MaterialAppBar elevation={0} className={classes.appBar}>
+        <Toolbar variant={"dense"}>
 
-          <Button aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick}>
+          <Button onClick={openMenu}>
             Add Widget
           </Button>
           <Menu
-            id="simple-menu"
             anchorEl={anchorEl}
             keepMounted
             open={Boolean(anchorEl)}
-            onClose={handleClose}
+            onClose={closeMenu}
           >
-            {builders.map(builder => <MenuItem onClick={() => addBuilder(new builder())}>{(builder as any).widgetName}</MenuItem>)}
+            {
+              builders.map((builder) => (
+                  <MenuItem onClick={() => addBuilder(new builder())}>
+                    {(builder as any).widgetName}
+                  </MenuItem>
+                )
+              )
+            }
           </Menu>
 
-          <Button onClick={openChartBrowser}>Chart Browser</Button>
+          {/* TODO Link to Chart Browser */}
+          <Button>Chart Browser</Button>
 
         </Toolbar>
       </MaterialAppBar>

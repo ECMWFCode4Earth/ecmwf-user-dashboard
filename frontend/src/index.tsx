@@ -11,6 +11,7 @@ import App from "./App";
 import WidgetBuilderProvider from "./library/contexts/WidgetBuilderContext";
 import { theme } from "./styles/theme";
 import GlobalContextProvider from "./library/contexts/GlobalContext";
+import AuthContextProvider from "./library/contexts/AuthContext";
 
 
 ReactDOM.render(
@@ -19,9 +20,11 @@ ReactDOM.render(
       <CssBaseline/>
       <NoSsr>
         <GlobalContextProvider>
-          <WidgetBuilderProvider>
-            <App/>
-          </WidgetBuilderProvider>
+          <AuthContextProvider>
+            <WidgetBuilderProvider>
+              <App/>
+            </WidgetBuilderProvider>
+          </AuthContextProvider>
         </GlobalContextProvider>
       </NoSsr>
     </ThemeProvider>
