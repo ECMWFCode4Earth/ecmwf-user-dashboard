@@ -1,34 +1,37 @@
 import React from "react";
-import { Box, CircularProgress } from "@material-ui/core";
-import { kBorder } from "../../library/constants/constants";
+import { Box, CircularProgress, makeStyles } from "@material-ui/core";
+
+import WidgetContainer from "./WidgetContainer";
 
 
-interface WidgetLoadingProps {
-  border?: boolean;
-}
+const useStyles = makeStyles(
+  (theme) => (
+    {
+      loading: {
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }
+    }
+  )
+);
 
 
-const WidgetLoading: React.FC<WidgetLoadingProps> = ({ border }) => {
+const WidgetLoading: React.FC = () => {
+
+  const classes = useStyles();
+
   return (
-    <Box
-      width={"100%"}
-      height={"100%"}
-      border={border && kBorder.WIDGET_BORDER}
-      borderRadius={border && "borderRadius"}
-      display={"flex"}
-      alignItems={"center"}
-      justifyContent={"center"}
-    >
-      <CircularProgress />
-    </Box>
+    <WidgetContainer>
+      <Box className={classes.loading}>
+        <CircularProgress/>
+      </Box>
+    </WidgetContainer>
   );
 
 };
-
-
-WidgetLoading.defaultProps = {
-  border: true,
-}
 
 
 export default WidgetLoading;

@@ -22,19 +22,20 @@ const useStyles = makeStyles(
 
 
 interface WidgetErrorProps {
+  title?: string;
   message: string;
   onClose: (e: React.MouseEvent) => void;
 }
 
 
-const WidgetError: React.FC<WidgetErrorProps> = ({ message, onClose }) => {
+const WidgetError: React.FC<WidgetErrorProps> = ({ title, message, onClose }) => {
 
   const classes = useStyles();
 
   return (
     <WidgetContainer>
 
-      <WidgetTitleBar title={"Error"} onClose={onClose}/>
+      <WidgetTitleBar title={title || ""} onClose={onClose}/>
 
       <WidgetBody>
         <Box className={classes.container}>
@@ -45,6 +46,11 @@ const WidgetError: React.FC<WidgetErrorProps> = ({ message, onClose }) => {
     </WidgetContainer>
   );
 
+};
+
+
+WidgetError.defaultProps = {
+  title: "",
 };
 
 
