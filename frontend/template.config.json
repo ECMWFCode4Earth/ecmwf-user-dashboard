@@ -1,7 +1,0 @@
-{
-  "title": "ECMWF | User Dashboard",
-  "appName": "User Dashboard",
-  "output": "./public",
-  "layout": "fluid",
-  "authHost": "https://accounts.ecmwf.com"
-}
