@@ -9,12 +9,23 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@material-ui/core": "^4.12.1",
+    "@material-ui/icons": "^4.11.2",
+    "axios": "^0.21.1",
+    "draft-js": "^0.11.7",
+    "lodash": "^4.17.21",
     "next": "11.0.1",
     "react": "17.0.2",
-    "react-dom": "17.0.2"
+    "react-dom": "17.0.2",
+    "react-grid-layout": "^1.2.5",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
+    "@types/draft-js": "^0.11.4",
+    "@types/lodash": "^4.14.171",
     "@types/react": "17.0.14",
+    "@types/react-grid-layout": "^1.1.2",
+    "@types/uuid": "^8.3.1",
     "eslint": "7.31.0",
     "eslint-config-next": "11.0.1",
     "typescript": "4.3.5"
