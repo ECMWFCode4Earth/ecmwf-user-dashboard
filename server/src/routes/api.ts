@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import { openchartProducts, ping, serviceStatus } from "../controllers/widgets";
+import { openChartsProducts, ping, serviceStatus } from "../controllers/widgets";
 
 
 const router = Router();
@@ -14,7 +14,7 @@ router.get("/ping", ping);
 router.get("/service-status", serviceStatus);
 
 // * Open Charts products - Proxy
-router.get("/opencharts-products", openchartProducts);
+router.get("/open-charts-products", openChartsProducts);
 
 
 export default router;

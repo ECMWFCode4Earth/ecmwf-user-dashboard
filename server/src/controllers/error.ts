@@ -1,8 +1,8 @@
 import { RequestHandler } from "express";
-import { Payload } from "../utils/json";
+import { CustomResponse } from "../utils/json";
 
 
 export const notFound: RequestHandler = (req, res, _) => {
-  const payload = new Payload();
-  res.status(payload.status).json(payload.json);
+  const response = new CustomResponse();
+  res.status(response.status).json(response.json);
 };
