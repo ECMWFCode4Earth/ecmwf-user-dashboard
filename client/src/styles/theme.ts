@@ -13,15 +13,15 @@ const theme = createTheme({
       "@global": {
         "html, body": {
           backgroundColor: "white",
-          minHeight: "100vh", // TODO Calculate using subtracting Navbar height
+          minHeight: "100vh",
           overscrollBehavior: "none",
         },
         "a": {
           textDecoration: "none",
           color: "inherit",
         },
-        ".react-grid-item.react-grid-placeholder": { // This CSS selector is React-Grid-Layout specific.
-          background: "lightBlue"
+        ".react-grid-item.react-grid-placeholder": { // This CSS selector is React-Grid-Layout specific. Consult documentation.
+          background: "lightBlue",
         }
       },
     },

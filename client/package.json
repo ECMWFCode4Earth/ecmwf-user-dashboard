@@ -14,7 +14,9 @@
     "axios": "^0.21.1",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
+    "date-fns": "^2.23.0",
     "draft-js": "^0.11.7",
+    "localforage": "^1.10.0",
     "lodash": "^4.17.21",
     "next": "11.0.1",
     "react": "17.0.2",
@@ -23,6 +25,7 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
+    "@types/date-fns": "^2.6.0",
     "@types/draft-js": "^0.11.4",
     "@types/lodash": "^4.14.171",
     "@types/react": "17.0.14",

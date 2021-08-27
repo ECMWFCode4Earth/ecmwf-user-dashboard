@@ -1,12 +1,9 @@
-/**
- * All constants start with letter k.
- * E.g. kSize, kColor, etc.
- * */
+// All constants starts with letter: k
 
 
 export const kFontFamily = {
-  HEADING: "\"Open Sans\",\"Helvetica Neue\",Helvetica,Arial,sans-serif",
-  BODY: "\"Open Sans\",\"Helvetica Neue\",Helvetica,Arial,sans-serif"
+  HEADING: "Open Sans, Helvetica Neue, Helvetica,Arial, sans-serif",
+  BODY: "Open Sans, Helvetica Neue, Helvetica,Arial, sans-serif",
 };
 
 
@@ -138,37 +135,23 @@ export const kColor = {
 
 
 export const kSize = {
-
   WIDGET_TITLE_BAR: "32px",
   WIDGET_TITLE_BAR_HIDDEN: "8px",
   TEMPLATE_HEADER_HEIGHT: "48px",
   TEMPLATE_FOOTER_HEIGHT: "50px",
-
 };
 
 
 export const kBorder = {
-
   WIDGET_BORDER: "2px solid black",
-
 };
 
 
 export const kName = {
-
   CLASS_NO_DRAG: "noDrag", // noDrag is special className - can't click and drag element across grid.
-
 };
 
 
-export const kDefaults = {
-  RGL_BREAKPOINTS: { lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 },
-  RGL_COLS: { lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 },
-}
-
-
 export const kStore = {
-
   BASE_URL: "http://127.0.0.1:8000", // TODO Refactor base to env variable
-
 };
