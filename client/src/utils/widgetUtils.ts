@@ -7,33 +7,41 @@ import { ServiceStatusWidgetBuilder } from "../models/widgetBuilders/ServiceStat
 import { WebAPIActivityWidgetBuilder } from "../models/widgetBuilders/WebAPIActivityWidgetBuilder";
 
 
+/**
+ * Describe your widget here.
+ *
+ * format: {
+ *   name: string,
+ *   BuilderClass: Class
+ * }
+ * */
 export const builderClassIdToBuilderClassMap = {
   "text-widget": {
     name: "Text Widget",
-    builderClass: TextWidgetBuilder
+    BuilderClass: TextWidgetBuilder
   },
   "chart-widget": {
     name: "Chart Widget",
-    builderClass: ChartWidgetBuilder
+    BuilderClass: ChartWidgetBuilder
   },
   "events-widget": {
     name: "Events Widget",
-    builderClass: EventsWidgetBuilder
+    BuilderClass: EventsWidgetBuilder
   },
   "mars-activity-widget": {
     name: "MARS Activity Widget",
-    builderClass: MARSActivityWidgetBuilder
+    BuilderClass: MARSActivityWidgetBuilder
   },
   "satellite-alerts-widget": {
     name: "Satellite Alerts Widget",
-    builderClass: SatelliteAlertsWidgetBuilder
+    BuilderClass: SatelliteAlertsWidgetBuilder
   },
   "service-status-widget": {
     name: "Service Status Widget",
-    builderClass: ServiceStatusWidgetBuilder
+    BuilderClass: ServiceStatusWidgetBuilder
   },
   "web-api-activity-widget": {
     name: "Web API Widget",
-    builderClass: WebAPIActivityWidgetBuilder
+    BuilderClass: WebAPIActivityWidgetBuilder
   },
 };

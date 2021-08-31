@@ -1,17 +1,16 @@
 import React, { useContext } from "react";
 import MaterialAppBar from "@material-ui/core/AppBar";
 import {
-  Button,
-  Box,
   makeStyles,
+  Box,
+  Button,
   Menu,
   MenuItem,
   Toolbar,
 } from "@material-ui/core";
 
-import { WidgetBuilderContext } from "../utils/contexts/WidgetBuilderContext";
-import { GlobalContext } from "../utils/contexts/GlobalContext";
-import { builderClassIdToBuilderClassMap } from "../utils/widget";
+import { TabManagerContext } from "../utils/contexts/TabManagerContext";
+import { builderClassIdToBuilderClassMap } from "../utils/widgetUtils";
 
 
 const useStyles = makeStyles(
@@ -37,64 +36,65 @@ const useStyles = makeStyles(
 const AppBar: React.FC = () => {
 
   const classes = useStyles();
-  const { setWidgetBuilders } = useContext(WidgetBuilderContext);
-  const { globalConfiguration } = useContext(GlobalContext);
+  const { addNewWidgetToCurrentTab } = useContext(TabManagerContext);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+
 
   const openMenu = (event: React.MouseEvent<HTMLButtonElement>) => setAnchorEl(event.currentTarget);
 
   const closeMenu = () => setAnchorEl(null);
 
-  const addBuilder = (builderClass: any) => {
-    setWidgetBuilders(widgetBuilders => [...widgetBuilders, new builderClass(globalConfiguration.tabDetails.activeTab)]);
+  const addNewWidget = (builderClassId: string) => {
+    addNewWidgetToCurrentTab(builderClassId);
     closeMenu();
   };
 
+
   return (
-      <div className={classes.root}>
-        <MaterialAppBar elevation={0} className={classes.appBar}>
-          <Toolbar variant={"dense"}>
-            <Box className={classes.buttonsContainer}>
+    <div className={classes.root}>
+      <MaterialAppBar elevation={0} className={classes.appBar}>
+        <Toolbar variant={"dense"}>
+          <Box className={classes.buttonsContainer}>
 
-              <Box>
+            <Box>
 
-                <Button onClick={openMenu}>
-                  Add Widget
-                </Button>
-                <Menu
-                  keepMounted
-                  anchorEl={anchorEl}
-                  open={Boolean(anchorEl)}
-                  onClose={closeMenu}
-                >
-                  {
-                    Object.keys(builderClassIdToBuilderClassMap).map((builderClassId, idx) => (
-                        <MenuItem
-                          key={`MenuItem-${idx}`}
-                          onClick={() => addBuilder((builderClassIdToBuilderClassMap as any)[builderClassId].builderClass)}>
-                          {(builderClassIdToBuilderClassMap as any)[builderClassId].name}
-                        </MenuItem>
-                      )
+              <Button onClick={openMenu}>
+                Add Widget
+              </Button>
+              <Menu
+                keepMounted
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={closeMenu}
+              >
+                {
+                  Object.keys(builderClassIdToBuilderClassMap).map((builderClassId, idx) => (
+                      <MenuItem
+                        key={`MenuItem-${idx}`}
+                        onClick={() => addNewWidget(builderClassId)}>
+                        {(builderClassIdToBuilderClassMap as any)[builderClassId].name}
+                      </MenuItem>
                     )
-                  }
-                </Menu>
+                  )
+                }
+              </Menu>
 
-                <Button onClick={() => alert("Under migration")}>
-                  Chart Browser
-                </Button>
-
-              </Box>
-
-              <Box>
-                <Button>
-                  Share Tab
-                </Button>
-              </Box>
+              <Button onClick={() => alert("Under migration")}>
+                Chart Browser
+              </Button>
 
             </Box>
-          </Toolbar>
-        </MaterialAppBar>
-      </div>
+
+            <Box>
+              <Button>
+                Share Tab
+              </Button>
+            </Box>
+
+          </Box>
+        </Toolbar>
+      </MaterialAppBar>
+    </div>
   );
 
 };

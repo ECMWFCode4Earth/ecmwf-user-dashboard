@@ -17,7 +17,6 @@ import WidgetTitleBar from "../common/WidgetTitleBar";
 import WidgetBody from "../common/WidgetBody";
 import WidgetLoading from "../common/WidgetLoading";
 
-import { WidgetBuilderContext } from "../../utils/contexts/WidgetBuilderContext";
 import { WebAPIActivityWidgetBuilder } from "../../models/widgetBuilders/WebAPIActivityWidgetBuilder";
 
 
@@ -45,7 +44,6 @@ const WebAPIActivityWidgetBlueprint: React.FC<WebAPIActivityWidgetBlueprintProps
   const classes = useStyles();
   const [loading, setLoading] = useState(true);
 
-  const { removeWidgetBuilder } = useContext(WidgetBuilderContext);
 
   // const [activity, setActivity] = useState<Record<string, number>[]>([])
   const [activity, setActivity] = useState<any[]>([])
@@ -66,7 +64,7 @@ const WebAPIActivityWidgetBlueprint: React.FC<WebAPIActivityWidgetBlueprintProps
     setLoading(false);
   };
 
-  const removeWidget = () => removeWidgetBuilder(builder);
+  const removeWidget = () => {};
 
   if (loading) return <WidgetLoading/>;
 

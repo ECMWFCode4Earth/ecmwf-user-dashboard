@@ -10,8 +10,7 @@ import WidgetLoading from "../common/WidgetLoading";
 import WidgetError from "../common/WidgetError";
 
 import { ServiceStatusWidgetBuilder } from "../../models/widgetBuilders/ServiceStatusWidgetBuilder";
-import { WidgetBuilderContext } from "../../utils/contexts/WidgetBuilderContext";
-import { kStore } from "../../utils/constants/store";
+import { kStore } from "../../utils/constants";
 
 
 const useStyles = makeStyles(
@@ -53,7 +52,6 @@ interface ServiceStatusWidgetBlueprintProps {
 const ServiceStatusWidgetBlueprint: React.FC<ServiceStatusWidgetBlueprintProps> = ({ builder }) => {
 
   const classes = useStyles();
-  const { removeWidgetBuilder } = useContext(WidgetBuilderContext);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [serviceStatusDetails, setServiceStatusDetails] = useState<ServiceStatusDetails[]>([]);
@@ -74,7 +72,7 @@ const ServiceStatusWidgetBlueprint: React.FC<ServiceStatusWidgetBlueprintProps> 
     setLoading(false);
   };
 
-  const removeWidget = () => removeWidgetBuilder(builder);
+  const removeWidget = () => {};
 
   const countOk = () => serviceStatusDetails.reduce((ok, data) => data.Status === "Ok" ? ok + 1 : ok, 0);
 

@@ -17,7 +17,6 @@ import WidgetTitleBar from "../common/WidgetTitleBar";
 import WidgetBody from "../common/WidgetBody";
 import WidgetLoading from "../common/WidgetLoading";
 
-import { WidgetBuilderContext } from "../../utils/contexts/WidgetBuilderContext";
 import { useDrawer } from "../../utils/hooks/useDrawer";
 import { MARSActivityWidgetBuilder } from "../../models/widgetBuilders/MARSActivityWidgetBuilder";
 
@@ -46,7 +45,6 @@ const MARSActivityWidgetBlueprint: React.FC<MARSActivityWidgetBlueprintProps> = 
   const classes = useStyles();
   const [loading, setLoading] = useState(true);
 
-  const { removeWidgetBuilder } = useContext(WidgetBuilderContext);
 
   // const [activity, setActivity] = useState<Record<string, number>[]>([])
   const [activity, setActivity] = useState<any[]>([])
@@ -67,7 +65,7 @@ const MARSActivityWidgetBlueprint: React.FC<MARSActivityWidgetBlueprintProps> = 
     setLoading(false);
   };
 
-  const removeWidget = () => removeWidgetBuilder(builder);
+  const removeWidget = () => {};
 
   if (loading) return <WidgetLoading/>;
 

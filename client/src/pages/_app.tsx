@@ -7,26 +7,26 @@ import "react-resizable/css/styles.css";
 
 import { theme } from "../styles/theme";
 
-import GlobalContextProvider from "../utils/contexts/GlobalContext";
 import AuthContextProvider from "../utils/contexts/AuthContext";
-import WidgetBuilderProvider from "../utils/contexts/WidgetBuilderContext";
+import TabManagerProvider from "../utils/contexts/TabManagerContext";
 
+
+/**
+ * Wrap app around contexts.
+ * */
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline/>
       <NoSsr>
-        <GlobalContextProvider>
-          <AuthContextProvider>
-            <WidgetBuilderProvider>
-              <Component {...pageProps} />
-            </WidgetBuilderProvider>
-          </AuthContextProvider>
-        </GlobalContextProvider>
+        <AuthContextProvider>
+          <TabManagerProvider>
+            <Component {...pageProps} />
+          </TabManagerProvider>
+        </AuthContextProvider>
       </NoSsr>
     </ThemeProvider>
-
   );
 }
 

@@ -4,7 +4,7 @@ import CancelPresentationIcon from "@material-ui/icons/CancelPresentation";
 import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
 import ExpandLessIcon from "@material-ui/icons/ExpandLess";
 
-import { kName, kSize } from "../../utils/constants/store";
+import { kName, kSize } from "../../utils/constants";
 
 
 const useStyles = makeStyles(

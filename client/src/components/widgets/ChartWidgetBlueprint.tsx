@@ -7,7 +7,6 @@ import WidgetBody from "../common/WidgetBody";
 
 import { ChartWidgetBuilder } from "../../models/widgetBuilders/ChartWidgetBuilder";
 
-import { WidgetBuilderContext } from "../../utils/contexts/WidgetBuilderContext";
 
 
 const useStyles = makeStyles(
@@ -25,16 +24,15 @@ interface ChartWidgetBlueprintProps {
 const ChartWidgetBlueprint: React.FC<ChartWidgetBlueprintProps> = ({builder}) => {
 
   const classes = useStyles();
-  const [chartName, setChartName] = useState(builder.chartName);
+  const [chartName, setChartName] = useState("");
 
-  const {removeWidgetBuilder} = useContext(WidgetBuilderContext);
 
-  const removeWidget = () => removeWidgetBuilder(builder);
+  const removeWidget = () => {};
 
   return (
     <WidgetContainer>
 
-      <WidgetTitleBar title={builder.chartTitle} onClose={removeWidget}/>
+      <WidgetTitleBar title={""} onClose={removeWidget}/>
 
       <WidgetBody>
         <iframe

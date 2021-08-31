@@ -1,12 +1,12 @@
 import React, { useContext, useState } from "react";
-import { makeStyles, AppBar, Tabs, Tab, Typography, Box, IconButton } from "@material-ui/core";
+import { makeStyles, AppBar, Tabs, Tab, IconButton } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
 
 import Layout from "../components/common/Layout";
 import WidgetCanvas from "../components/WidgetCanvas";
 
-import { WidgetBuilderContext } from "../utils/contexts/WidgetBuilderContext";
-import { GlobalContext } from "../utils/contexts/GlobalContext";
+import { TabManagerContext } from "../utils/contexts/TabManagerContext";
+import TabPanel from "../components/TabPanel";
 
 
 const useStyles = makeStyles(
@@ -24,94 +24,67 @@ const useStyles = makeStyles(
 
 export default function Dashboard() {
 
-
-
-  const { widgetBuilders } = useContext(WidgetBuilderContext);
-  const { globalConfiguration, setGlobalConfiguration } = useContext(GlobalContext);
-
-  const { tabDetails } = globalConfiguration;
-
   const classes = useStyles();
-  const [value, setValue] = useState(tabDetails.activeTab);
+  const { tabManager, addNewTab, changeActiveTab, buildAllWidgetsOfCurrentTab } = useContext(TabManagerContext);
+  const [activeTab, setActiveTab] = useState(tabManager.activeTab);
 
-  const buildAllWidgets = (value: number) => {
-    console.log(widgetBuilders)
-    console.log(value)
-    console.log(widgetBuilders.filter((builder) => builder.tabNo === value))
-    return widgetBuilders.filter((builder) => builder.tabNo === value).map((builder) => builder.build());
-  };
-  // const buildAllWidgets = (value: number) => widgetBuilders.map((builder) => builder.build());
 
-  const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
-    setGlobalConfiguration(globalConfiguration => ({
-      ...globalConfiguration,
-      tabDetails: { count: tabDetails.count, activeTab: newValue }
-    }));
-    setValue(newValue);
+  const handleTabChange = (event: React.ChangeEvent<{}>, newActiveTab: number) => {
+    changeActiveTab(newActiveTab);
+    setActiveTab(newActiveTab);
   };
 
-  const addTab = () => {
-    setGlobalConfiguration(globalConfiguration => ({
-      ...globalConfiguration,
-      tabDetails: { count: tabDetails.count + 1, activeTab: tabDetails.count }
-    }));
-    setValue(tabDetails.count);
+  const handleAddNewTab = () => {
+    setActiveTab(addNewTab());
   };
+
 
   return (
     <Layout>
       <div className={classes.root}>
-        <AppBar position={"static"} className={classes.appBar} elevation={0}>
-          <Tabs value={value} onChange={handleChange}>
+
+        <AppBar position={"static"} elevation={0} className={classes.appBar}>
+          <Tabs value={activeTab} onChange={handleTabChange}>
+
             {
-              Array(tabDetails.count)
-                .fill(0)
-                .map((_, idx) => <Tab key={`Tab-${idx}`} label={`Tab ${idx + 1}`}/>)
+              Array(tabManager.tabCount).fill(0).map((_, index) => {
+                return (
+                  <Tab
+                    key={tabManager.tabs[index].uuid}
+                    label={tabManager.tabs[index].name}
+                  />
+                );
+              })
             }
-            <IconButton onClick={addTab} color={"inherit"}>
+
+            <IconButton color={"inherit"} onClick={handleAddNewTab}>
               <AddIcon/>
             </IconButton>
+
           </Tabs>
         </AppBar>
+
         {
-          Array(tabDetails.count)
-            .fill(0)
-            .map((_, idx) => (
-              <TabPanel key={`TabPanel-${idx}`} value={value} index={idx}>
-                <WidgetCanvas>
-                  {buildAllWidgets(value)}
-                </WidgetCanvas>
-              </TabPanel>
-            ))
+          Array(tabManager.tabCount).fill(0).map((_, index) => (
+            <TabPanel
+              key={tabManager.tabs[index].uuid}
+              value={activeTab}
+              index={index}
+            >
+              <WidgetCanvas>
+                {buildAllWidgetsOfCurrentTab()}
+              </WidgetCanvas>
+            </TabPanel>
+          ))
         }
+
       </div>
     </Layout>
   );
 
 }
 
-interface TabPanelProps {
-  children?: React.ReactNode;
-  index: any;
-  value: any;
-}
 
-function TabPanel(props: TabPanelProps) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-    >
-      {value === index && (
-        <Box p={1}>
-          {children}
-        </Box>
-      )}
-    </div>
-  );
-}
 
 
 

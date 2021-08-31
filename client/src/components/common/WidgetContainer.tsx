@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, makeStyles } from "@material-ui/core";
 
-import { kBorder } from "../../utils/constants/store";
+import { kBorder } from "../../utils/constants";
 
 
 const useStyles = makeStyles(

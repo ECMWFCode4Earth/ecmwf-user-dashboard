@@ -1,9 +1,8 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { Layout, Layouts, Responsive, WidthProvider } from "react-grid-layout";
 
-import { kName } from "../utils/constants/store";
-import localStore from "../utils/localStore";
-import { GlobalContext } from "../utils/contexts/GlobalContext";
+import { kName } from "../utils/constants";
+import { TabManagerContext } from "../utils/contexts/TabManagerContext";
 
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
@@ -23,28 +22,15 @@ const RGL_DEFAULT_SETTINGS = {
 
 const WidgetCanvas: React.FC = ({ children }) => {
 
-  const { globalConfiguration } = useContext(GlobalContext);
-  const { tabDetails } = globalConfiguration;
-  const [layouts, setLayouts] = useState({});
+  const { loadLayoutsForCurrentTab, saveLayoutsOfCurrentTab } = useContext(TabManagerContext);
+  const [layouts, setLayouts] = useState(loadLayoutsForCurrentTab());
 
-  useEffect(() => {
-    fetchLayouts().catch((err) => console.log(err));
-  }, []);
-
-  const fetchLayouts = async () => {
-    const layouts = await localStore.getItem(`layouts-tab-${tabDetails.activeTab}`);
-    if (layouts === null) {
-      await localStore.setItem(`layouts-tab-${tabDetails.activeTab}`, {});
-      return;
-    }
-    console.log(layouts);
-    setLayouts(layouts as Layouts);
-  };
 
   const handleOnLayoutChange = async (layout: Layout[], layouts: Layouts) => {
     setLayouts(layouts);
-    await localStore.setItem(`layouts-tab-${tabDetails.activeTab}`, layouts);
+    saveLayoutsOfCurrentTab(layouts);
   };
+
 
   return (
     <ResponsiveGridLayout
@@ -60,6 +46,7 @@ const WidgetCanvas: React.FC = ({ children }) => {
       {children}
     </ResponsiveGridLayout>
   );
+
 };
 
 

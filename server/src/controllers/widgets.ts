@@ -3,8 +3,36 @@ import axios from "axios";
 
 
 export const pingController: RequestHandler = (req, res, _) => {
-  console.log("ping")
   res.status(200).json({ success: true, message: "Success" });
+};
+
+
+export const saveTabManagerController: RequestHandler = (req, res, _) => {
+  try {
+    const user: any = req.user;
+    const tabManager = req.body.tabManager;
+    if (!user || !tabManager) {
+      return res.status(500).json({ success: false, message: "Internal error" });
+    }
+    user.saveTabManager(tabManager);
+    res.status(200).json({ success: true, message: "Success" });
+  } catch (err) {
+    res.status(500).json({ success: false, message: "Internal error" });
+  }
+};
+
+
+export const loadTabManagerController: RequestHandler = (req, res, _) => {
+  try {
+    const user: any = req.user;
+    if (!user) {
+      return res.status(500).json({ success: false, message: "Internal error" });
+    }
+    const tabManager = user.loadTabManager();
+    res.status(200).json({ success: true, message: "Success", data: { tabManager } });
+  } catch (err) {
+    res.status(500).json({ success: false, message: "Internal error" });
+  }
 };
 
 

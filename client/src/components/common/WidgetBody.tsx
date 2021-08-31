@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, makeStyles } from "@material-ui/core";
 
-import { kName } from "../../utils/constants/store";
+import { kName } from "../../utils/constants";
 
 
 const useStyles = makeStyles(

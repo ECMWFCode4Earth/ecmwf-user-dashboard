@@ -1,6 +1,6 @@
 import { createTheme } from "@material-ui/core/styles";
 
-import { kColor, kFont, kFontFamily } from "../utils/constants/store";
+import { kColor, kFont, kFontFamily } from "../utils/constants";
 
 
 /**

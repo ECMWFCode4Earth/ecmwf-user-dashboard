@@ -3,7 +3,7 @@ import { Box, makeStyles } from "@material-ui/core";
 
 import AppBar from "../AppBar";
 
-import { kSize } from "../../utils/constants/store";
+import { kSize } from "../../utils/constants";
 
 
 const useStyles = makeStyles(

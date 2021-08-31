@@ -19,7 +19,6 @@ import WidgetContainer from "../common/WidgetContainer";
 import WidgetTitleBar from "../common/WidgetTitleBar";
 import WidgetBody from "../common/WidgetBody";
 import axios from "axios";
-import { WidgetBuilderContext } from "../../utils/contexts/WidgetBuilderContext";
 import WidgetLoading from "../common/WidgetLoading";
 import { TransitionProps } from "@material-ui/core/transitions";
 import { useDrawer } from "../../utils/hooks/useDrawer";
@@ -66,7 +65,6 @@ const SatelliteAlertsWidgetBlueprint: React.FC<SatelliteAlertsWidgetBlueprintPro
 
   const { open, onOpen, onClose } = useDrawer();
 
-  const { removeWidgetBuilder } = useContext(WidgetBuilderContext);
 
 
   useEffect(() => {
@@ -82,7 +80,7 @@ const SatelliteAlertsWidgetBlueprint: React.FC<SatelliteAlertsWidgetBlueprintPro
     setLoading(false);
   };
 
-  const removeWidget = () => removeWidgetBuilder(builder);
+  const removeWidget = () => {};
 
   if (loading) return <WidgetLoading/>;
 

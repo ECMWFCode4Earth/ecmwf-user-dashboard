@@ -11,7 +11,6 @@ import WidgetLoading from "../common/WidgetLoading";
 import WidgetError from "../common/WidgetError";
 import EventContainer from "./events/EventContainer";
 
-import { WidgetBuilderContext } from "../../utils/contexts/WidgetBuilderContext";
 
 
 const useStyles = makeStyles(
@@ -32,21 +31,20 @@ const EventsWidgetBlueprint: React.FC<EventsWidgetBlueprintProps> = ({builder}) 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [events, setEvents] = useState<any>([]); // TODO
-  const {removeWidgetBuilder} = useContext(WidgetBuilderContext);
 
 
-  useEffect(() => {
-    fetchQuery().catch(() => setError("An error has occurred"));
-  }, []);
+  // useEffect(() => {
+  //   fetchQuery().catch(() => setError("An error has occurred"));
+  // }, []);
+  //
+  // const fetchQuery = async () => {
+  //   const res = await axios.get(builder.queryUrl.toString());
+  //   const events = res.data.results;
+  //   setEvents(events);
+  //   setLoading(false);
+  // };
 
-  const fetchQuery = async () => {
-    const res = await axios.get(builder.queryUrl.toString());
-    const events = res.data.results;
-    setEvents(events);
-    setLoading(false);
-  };
-
-  const removeWidget = () => removeWidgetBuilder(builder);
+  const removeWidget = () => {};
 
   if (error) return <WidgetError message={error} onClose={removeWidget} />;
 

@@ -1,6 +1,34 @@
 // All constants starts with letter: k
 
 
+export const kSize = {
+  WIDGET_TITLE_BAR: "32px",
+  WIDGET_TITLE_BAR_HIDDEN: "8px",
+  TEMPLATE_HEADER_HEIGHT: "48px",
+  TEMPLATE_FOOTER_HEIGHT: "50px",
+};
+
+
+export const kBorder = {
+  WIDGET_BORDER: "2px solid black",
+};
+
+
+export const kName = {
+  CLASS_NO_DRAG: "noDrag", // noDrag is special className - can't click and drag element across grid.
+};
+
+
+export const kStore = {
+  BASE_URL: "http://127.0.0.1:8000", // TODO Refactor base to env variable
+};
+
+
+export const kLocalStoreKey = {
+  TAB_MANAGER: "tabManager",
+}
+
+
 export const kFontFamily = {
   HEADING: "Open Sans, Helvetica Neue, Helvetica,Arial, sans-serif",
   BODY: "Open Sans, Helvetica Neue, Helvetica,Arial, sans-serif",
@@ -131,27 +159,4 @@ export const kColor = {
 
   WHITE: "#FFFFFF"
 
-};
-
-
-export const kSize = {
-  WIDGET_TITLE_BAR: "32px",
-  WIDGET_TITLE_BAR_HIDDEN: "8px",
-  TEMPLATE_HEADER_HEIGHT: "48px",
-  TEMPLATE_FOOTER_HEIGHT: "50px",
-};
-
-
-export const kBorder = {
-  WIDGET_BORDER: "2px solid black",
-};
-
-
-export const kName = {
-  CLASS_NO_DRAG: "noDrag", // noDrag is special className - can't click and drag element across grid.
-};
-
-
-export const kStore = {
-  BASE_URL: "http://127.0.0.1:8000", // TODO Refactor base to env variable
 };

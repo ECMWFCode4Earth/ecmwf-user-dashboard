@@ -9,7 +9,6 @@ import WidgetBody from "../common/WidgetBody";
 
 import { TextWidgetBuilder } from "../../models/widgetBuilders/TextWidgetBuilder";
 
-import { WidgetBuilderContext } from "../../utils/contexts/WidgetBuilderContext";
 
 
 const useStyles = makeStyles(
@@ -28,10 +27,9 @@ const TextWidgetBlueprint: React.FC<TextWidgetBlueprintProps> = ({builder}) => {
 
   const classes = useStyles();
   const [editorState, setEditorState] = React.useState(() => EditorState.createEmpty());
-  const {removeWidgetBuilder} = useContext(WidgetBuilderContext);
 
 
-  const removeWidget = () => removeWidgetBuilder(builder);
+  const removeWidget = () => {};
 
   const handleKeyCommand = (command: DraftEditorCommand, editorState: EditorState) => {
     const newState = RichUtils.handleKeyCommand(editorState, command);
