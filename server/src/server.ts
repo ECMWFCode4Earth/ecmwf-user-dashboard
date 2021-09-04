@@ -7,10 +7,10 @@ require("dotenv").config();
 import "./utils/db";
 import "./utils/auth";
 
-import authRoutes from "./routes/auth";
-import apiRoutes from "./routes/api";
+import authRoutes from "./routes/authRoutes"; // Routes like login, signup, etc.
+import apiRoutes from "./routes/apiRoutes";
 
-import { notFoundController, defaultErrorController } from "./controllers/errors";
+import { notFoundController, defaultErrorController } from "./controllers/errorControllers";
 
 
 // Express app
@@ -19,12 +19,12 @@ const app = express();
 
 // Configurations
 const corsOptions = {
-  origin: "*", // TODO Dev
+  origin: "*", // TODO Modify this?
 };
 
 
 // Middlewares
-app.use(express.json()); 
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors(corsOptions));
 app.use(passport.initialize());

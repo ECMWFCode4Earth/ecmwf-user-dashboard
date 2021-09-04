@@ -4,7 +4,6 @@ import { Layout } from "react-grid-layout";
 
 export abstract class WidgetBuilder {
 
-  public tabNumber: number;
   public readonly uuid: string;
 
   // Make sure to define this when creating sub class.
@@ -16,8 +15,7 @@ export abstract class WidgetBuilder {
    * Do not define constructor in sub class.
    * */
 
-  public constructor(tabNumber: number, uuid: string | undefined = undefined) {
-    this.tabNumber = tabNumber || 0;
+  public constructor(uuid: string | undefined = undefined) {
     this.uuid = uuid || uuidv4(); // Generate a random uuid.
   }
 
@@ -26,13 +24,13 @@ export abstract class WidgetBuilder {
    * Static methods
    * */
 
-  public static generateWidgetId(tabNumber: number, builderClassId: string) {
-    return [tabNumber, builderClassId, uuidv4()].join("/");
+  public static generateWidgetId(builderClassId: string) {
+    return [builderClassId, uuidv4()].join("/");
   }
 
   public static splitWidgetId(widgetId: string) {
-    const [tabNumber, builderClassId, uuid] = widgetId.split("/"); // Extract widget information for widget id.
-    return { tabNumber: Number(tabNumber), builderClassId, uuid };
+    const [builderClassId, uuid] = widgetId.split("/"); // Extract widget information for widget id.
+    return { builderClassId, uuid };
   }
 
 
@@ -41,7 +39,7 @@ export abstract class WidgetBuilder {
    * */
 
   get widgetId() {
-    return `${this.tabNumber}/${this.builderClassId}/${this.uuid}`;
+    return `${this.builderClassId}/${this.uuid}`;
   }
 
   public abstract build(): JSX.Element;

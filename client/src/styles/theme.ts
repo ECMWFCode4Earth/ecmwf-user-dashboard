@@ -1,6 +1,6 @@
 import { createTheme } from "@material-ui/core/styles";
 
-import { kColor, kFont, kFontFamily } from "../utils/constants";
+import { kColor } from "../utils/constants";
 
 
 /**
@@ -27,22 +27,15 @@ const theme = createTheme({
     },
   },
   palette: {
-    grey: kColor.GREY,
+    primary: {
+      main: kColor.PRIMARY.MAIN,
+    },
+    secondary: {
+      main: kColor.SECONDARY.MAIN,
+    },
     text: {
-      primary: kColor.BLACK,
+      primary: kColor.TEXT_BLACK,
     }
-  },
-  typography: {
-    fontFamily: kFontFamily.BODY,
-    h1: kFont.HEADING_2XL,
-    h2: kFont.HEADING_XL,
-    h3: kFont.HEADING_LG,
-    h4: kFont.HEADING_MD,
-    h5: kFont.HEADING_SM,
-    h6: kFont.HEADING_XS,
-    body1: kFont.BODY_MD,
-    body2: kFont.BODY_SM,
-    caption: kFont.BODY_XS,
   },
   shape: {
     borderRadius: 3

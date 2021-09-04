@@ -1,44 +1,54 @@
 import React from "react";
-import { Box, makeStyles } from "@material-ui/core";
+import { makeStyles, Box } from "@material-ui/core";
 
-import AppBar from "../AppBar";
+import AppBar from "./AppBar";
 
 import { kSize } from "../../utils/constants";
-
-
-const useStyles = makeStyles(
-  (theme) => (
-    {
-      container: {
-        display: "static",
-        width: "100vw",
-        minHeight: `calc(100vh-(${kSize.TEMPLATE_HEADER_HEIGHT}+${kSize.TEMPLATE_FOOTER_HEIGHT}))`,
-        overflowX: "scroll"
-      }
-    }
-  )
-);
+import WidgetToolbar from "../WidgetToolbar";
 
 
 interface LayoutProps {
-
+  showWidgetToolbar?: boolean
 }
 
 
-const Layout: React.FC<LayoutProps> = ({ children }) => {
+const Layout: React.FC<LayoutProps> = ({ children, showWidgetToolbar }) => {
 
-  const classes = useStyles();
+  const classes = useStyles({ showWidgetToolbar });
 
   return (
-    <Box className={classes.container}>
+    <Box>
       <AppBar/>
       <main>
-        {children}
+        {
+          showWidgetToolbar && (<WidgetToolbar/>)
+        }
+        <Box className={classes.mainContainer}>
+          {children}
+        </Box>
       </main>
     </Box>
   );
 
 };
+
+
+Layout.defaultProps = {
+  showWidgetToolbar: false
+};
+
+
+const useStyles = makeStyles(
+  (theme) => (
+    {
+      mainContainer: {
+        width: "100vw",
+        minHeight: (props: any) => `calc(100vh - (${kSize.APP_BAR_HEIGHT} + ${props.showWidgetToolbar ? kSize.WIDGET_TOOLBAR_HEIGHT : "0px"}))`,
+        overflowX: "scroll"
+      },
+    }
+  )
+);
 
 
 export default Layout;

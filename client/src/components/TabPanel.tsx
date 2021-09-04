@@ -3,22 +3,18 @@ import { Box } from "@material-ui/core";
 
 
 interface TabPanelProps {
-  index: any;
-  value: any;
+  index: number;
+  value: number;
 }
 
 
 const TabPanel: React.FC<TabPanelProps> = ({ children, index, value }) => {
   return (
-    <div hidden={value !== index}>
+    <Box p={1} hidden={value !== index}>
       {
-        value === index && (
-          <Box p={1}>
-            {children}
-          </Box>
-        )
+        value === index && (<>{children}</>)
       }
-    </div>
+    </Box>
   );
 };
 

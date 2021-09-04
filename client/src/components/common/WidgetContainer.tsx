@@ -4,6 +4,19 @@ import { Box, makeStyles } from "@material-ui/core";
 import { kBorder } from "../../utils/constants";
 
 
+const WidgetContainer: React.FC = ({ children }) => {
+
+  const classes = useStyles();
+
+  return (
+    <Box boxShadow={2} className={classes.container}>
+      {children}
+    </Box>
+  );
+
+};
+
+
 const useStyles = makeStyles(
   (theme) => (
     {
@@ -20,19 +33,6 @@ const useStyles = makeStyles(
     }
   )
 );
-
-
-const WidgetContainer: React.FC = ({ children }) => {
-
-  const classes = useStyles();
-
-  return (
-    <Box boxShadow={2} className={classes.container}>
-      {children}
-    </Box>
-  );
-
-};
 
 
 export default WidgetContainer;

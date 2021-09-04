@@ -4,18 +4,6 @@ import { Box, makeStyles } from "@material-ui/core";
 import { kName } from "../../utils/constants";
 
 
-const useStyles = makeStyles(
-  (theme) => (
-    {
-      body: {
-        flexGrow: 1,
-        overflow: "scroll"
-      }
-    }
-  )
-);
-
-
 interface WidgetBodyProps {
   px?: number;
   py?: number;
@@ -39,6 +27,18 @@ WidgetBody.defaultProps = {
   px: 0,
   py: 0,
 };
+
+
+const useStyles = makeStyles(
+  (theme) => (
+    {
+      body: {
+        flexGrow: 1,
+        overflow: "scroll"
+      }
+    }
+  )
+);
 
 
 export default WidgetBody;

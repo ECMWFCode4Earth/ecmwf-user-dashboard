@@ -6,22 +6,6 @@ import WidgetTitleBar from "./WidgetTitleBar";
 import WidgetBody from "./WidgetBody";
 
 
-const useStyles = makeStyles(
-  (theme) => (
-    {
-      container: {
-        width: "100%",
-        height: "100%",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        flexDirection: "column",
-      }
-    }
-  )
-);
-
-
 interface WidgetErrorProps {
   title?: string;
   message: string;
@@ -53,6 +37,22 @@ const WidgetError: React.FC<WidgetErrorProps> = ({ title, message, onClose }) =>
 WidgetError.defaultProps = {
   title: "",
 };
+
+
+const useStyles = makeStyles(
+  (theme) => (
+    {
+      container: {
+        width: "75%",
+        height: "100%",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        flexDirection: "column",
+      }
+    }
+  )
+);
 
 
 export default WidgetError;

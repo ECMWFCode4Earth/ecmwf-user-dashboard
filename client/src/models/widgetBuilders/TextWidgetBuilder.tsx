@@ -8,7 +8,7 @@ import TextWidgetBlueprint from "../../components/widgets/TextWidgetBlueprint";
 export class TextWidgetBuilder extends WidgetBuilder {
 
   builderClassId = "text-widget";
-  layout: Layout = { i: this.widgetId, x: 0, y: Infinity, w: 4, h: 2, minW: 3, maxW: 8, minH: 1, maxH: 6 };
+  layout: Layout = { i: this.widgetId, x: 0, y: Infinity, w: 3, h: 10, minW: 2, maxW: 6, minH: 3, maxH: 15 };
 
   build(): JSX.Element {
     return (

@@ -9,7 +9,7 @@ import ChartWidgetBlueprint from "../../components/widgets/ChartWidgetBlueprint"
 export class ChartWidgetBuilder extends WidgetBuilder {
 
   builderClassId = "chart-widget"
-  layout: Layout = {i: this.widgetId, x: 0, y: Infinity, w: 4, h: 2, minW: 3, maxW: 6, minH: 2, maxH: 6};
+  layout: Layout = {i: this.widgetId, x: 0, y: Infinity, w: 3, h: 6, minW: 2, maxW: 4, minH: 5, maxH: 10};
 
   build(): JSX.Element {
     return (

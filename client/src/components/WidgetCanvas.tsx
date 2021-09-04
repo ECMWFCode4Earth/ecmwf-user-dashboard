@@ -8,11 +8,6 @@ import { TabManagerContext } from "../utils/contexts/TabManagerContext";
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
 
-const style = {
-  height: `calc( 100vh )` // TODO Change later
-};
-
-
 const RGL_DEFAULT_SETTINGS = {
   breakpoints: { lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 },
   cols: { lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 },
@@ -47,6 +42,11 @@ const WidgetCanvas: React.FC = ({ children }) => {
     </ResponsiveGridLayout>
   );
 
+};
+
+
+const style = {
+  height: `100%`
 };
 
 

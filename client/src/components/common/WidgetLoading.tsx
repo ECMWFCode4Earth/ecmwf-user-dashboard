@@ -2,6 +2,35 @@ import React from "react";
 import { Box, CircularProgress, makeStyles } from "@material-ui/core";
 
 import WidgetContainer from "./WidgetContainer";
+import WidgetTitleBar from "./WidgetTitleBar";
+import WidgetBody from "./WidgetBody";
+
+
+interface WidgetLoadingProps {
+  title?: string;
+  onClose: (e: React.MouseEvent) => void;
+}
+
+
+const WidgetLoading: React.FC<WidgetLoadingProps> = ({ title, onClose }) => {
+
+  const classes = useStyles();
+
+  return (
+    <WidgetContainer>
+
+      <WidgetTitleBar title={title || ""} onClose={onClose}/>
+
+      <WidgetBody>
+        <Box className={classes.loading}>
+          <CircularProgress/>
+        </Box>
+      </WidgetBody>
+
+    </WidgetContainer>
+  );
+
+};
 
 
 const useStyles = makeStyles(
@@ -17,21 +46,6 @@ const useStyles = makeStyles(
     }
   )
 );
-
-
-const WidgetLoading: React.FC = () => {
-
-  const classes = useStyles();
-
-  return (
-    <WidgetContainer>
-      <Box className={classes.loading}>
-        <CircularProgress/>
-      </Box>
-    </WidgetContainer>
-  );
-
-};
 
 
 export default WidgetLoading;

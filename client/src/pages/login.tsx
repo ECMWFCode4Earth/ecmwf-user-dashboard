@@ -1,38 +1,55 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
+import { Box, Container } from "@material-ui/core";
+import Alert from "@material-ui/lab/Alert";
+import { useRouter } from "next/router";
+
+import Layout from "../components/common/Layout";
+import SignUpForm from "../components/SignUpForm";
+import LoginForm from "../components/LoginForm";
 
 import { AuthContext } from "../utils/contexts/AuthContext";
 
 
 const Login: React.FC = () => {
 
+  const router = useRouter();
   const { signup, login } = useContext(AuthContext);
+
   const [loading, setLoading] = useState(false);
   const [showSignupForm, setShowSignUpForm] = useState(false);
   const [message, setMessage] = useState({ type: "", message: "" });
-  const [formDetails, setFormDetails] = useState({ username: "", password: "" });
+  const [formDetails, setFormDetails] = useState({ name: "", username: "", password: "" });
 
 
-  const loginUser: React.FormEventHandler<HTMLFormElement> = async (e) => {
-    e.preventDefault();
+  const loginUser: React.MouseEventHandler<HTMLButtonElement> = async (e) => {
+    setLoading(true);
     try {
       await login(formDetails.username, formDetails.password);
       setMessage(message => ({ type: "success", message: "Logged In" }));
+      await router.push("/dashboard");
     } catch (err) {
-      setMessage(message => ({ type: "error", message: err.message, }));
+      console.error(err);
+      setMessage(message => ({ type: "error", message: "Unexpected error occurred." }));
     }
+    setLoading(false);
   };
 
-  const signupUser: React.FormEventHandler<HTMLFormElement> = async (e) => {
-    e.preventDefault();
+  const signupUser: React.MouseEventHandler<HTMLButtonElement> = async (e) => {
+    setLoading(true);
     try {
-      await signup(formDetails.username, formDetails.password);
-      setMessage(message => ({ message: "Sign in", type: "success" }));
+      await signup(formDetails.name, formDetails.username, formDetails.password);
+      setMessage(message => ({ type: "success", message: "User registered successfully. Please log in." }));
     } catch (err) {
       setMessage(message => ({ type: "error", message: err.message, }));
     }
+    setLoading(false);
   };
 
-  const toggleSignUpForm = () => setShowSignUpForm(showSignupForm => !showSignupForm);
+  const toggleForm = () => {
+    setMessage({ type: "", message: "" });
+    setFormDetails({ name: "", username: "", password: "" });
+    setShowSignUpForm(showSignupForm => !showSignupForm);
+  };
 
   const handleFormOnChange: React.FormEventHandler<HTMLFormElement> = (e) => {
     const target = e.target as HTMLInputElement;
@@ -41,34 +58,32 @@ const Login: React.FC = () => {
 
 
   return (
-    <div>
+    <Layout>
+      <Box mt={4}>
+        <Container maxWidth={"sm"}>
 
-      {
-        showSignupForm ? (
-          <div>
-            <h1>Sign Up</h1>
-            <form onChange={handleFormOnChange} onSubmit={signupUser}>
-              <input type={"text"} title={"Username"} placeholder={"Username"} name={"username"}/>
-              <input type={"password"} title={"Password"} placeholder={"Password"} name={"password"}/>
-              <input type={"submit"} value={"Sign Up"}/>
-            </form>
-            <p>Already have an account? <span onClick={toggleSignUpForm}>Log In</span></p>
-            <p>{message.message}</p>
-          </div>
-        ) : (
-          <div>
-            <h1>Log In</h1>
-            <form onChange={handleFormOnChange} onSubmit={loginUser}>
-              <input type={"text"} title={"Username"} placeholder={"Username"} name={"username"}/>
-              <input type={"password"} title={"Password"} placeholder={"Password"} name={"password"}/>
-              <input type={"submit"} value={"Login"}/>
-            </form>
-            <p>Dont have an account? <span onClick={toggleSignUpForm}>Sign Up</span></p>
-            <p>{message.message}</p>
-          </div>
-        )
-      }
-    </div>
+          {
+            showSignupForm ? (
+              <SignUpForm
+                onChange={handleFormOnChange}
+                onSubmit={signupUser}
+                toggleForm={toggleForm}
+                loading={loading}
+              />
+            ) : (
+              <LoginForm onChange={handleFormOnChange} onSubmit={loginUser} toggleForm={toggleForm} loading={loading}/>
+            )
+          }
+
+          <Box mt={2}>
+            {message.message && (
+              <Alert severity={message.type as any}>{message.message}</Alert>
+            )}
+          </Box>
+
+        </Container>
+      </Box>
+    </Layout>
   );
 };
 

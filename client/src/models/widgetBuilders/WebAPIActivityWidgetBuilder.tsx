@@ -8,7 +8,7 @@ import WebAPIActivityWidgetBlueprint from "../../components/widgets/WebAPIActivi
 export class WebAPIActivityWidgetBuilder extends WidgetBuilder {
 
   builderClassId = "web-api-activity-widget"
-  layout: Layout = { i: this.widgetId, x: 0, y: Infinity, w: 3, h: 2, minW: 3, maxW: 4, minH: 1, maxH: 3 };
+  layout: Layout = { i: this.widgetId, x: 0, y: Infinity, w: 3, h: 6, minW: 2, maxW: 4, minH: 5, maxH: 10 };
 
   public build() {
     return (

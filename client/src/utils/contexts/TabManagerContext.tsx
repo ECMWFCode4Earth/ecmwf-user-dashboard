@@ -1,15 +1,17 @@
-import React, { createContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { Layouts } from "react-grid-layout";
 import { v4 as uuidv4 } from "uuid";
 import _ from "lodash";
 
 import { WidgetBuilder } from "../../models/widgetBuilders/WidgetBuilder";
 
-import { Tab, TabManager } from "../types";
+import { Tab, TabManager, UserDetails } from "../types";
 import { kLocalStoreKey, kStore } from "../constants";
 import localStore from "../localStore";
 import { builderClassIdToBuilderClassMap } from "../widgetUtils";
 import axios from "axios";
+import { AuthContext } from "./AuthContext";
+
 
 /**
  * Tab Manager Context
@@ -22,21 +24,25 @@ import axios from "axios";
 const initialTabManagerState: TabManager = {
   tabCount: 1,
   activeTab: 0, // uses zero indexing
+  lastSavedTimestamp: new Date(),
   tabs: [
     {
       uuid: uuidv4(),
       name: "Tab 1",
       shared: false,
+      sharedWithUsers: [],
       widgetIds: [],
       layouts: {}
     }
-  ]
+  ],
+  widgetConfigurations: {}
 };
 
 
 // Tab Manager Hook - almost all the important utility functions related to tab mangers are described here.
 const useTabManager = (initialState: TabManager) => {
 
+  const { user } = useContext(AuthContext);
   const [ready, setReady] = useState(false); // Determines if tab manager is ready to use.
   const [tabManager, setTabManager] = useState<TabManager>(initialState); // Hold the main JS Object which defines Tab Manger.
 
@@ -50,59 +56,89 @@ const useTabManager = (initialState: TabManager) => {
     loadTabManager().catch((err) => console.error(err));
   }, []);
 
+  // Load tab manager state when auth changes.
+  useEffect(() => {
+    loadTabManager().catch((err) => console.error(err));
+  }, [user]);
+
   // Save tab manager state on every change to tabManager object.
   useEffect(() => {
-    saveTabManager().then(() => console.log(tabManager)).catch((err) => console.error(err));
+    if (ready) {
+      saveTabManager()
+        .then(() => console.log("Debug", tabManager))
+        .catch((err) => console.error(err));
+    }
   }, [tabManager]);
+
 
   /*
   * Utility functions
-  * - loadTabManager
-  * - saveTabManager
-  * - addNewTab
-  * - changeActiveTab
-  * - loadLayoutsForCurrentTab
-  * - saveLayoutsOfCurrentTab
-  * - addNewWidgetToCurrentTab
-  * - buildAllWidgetsOfCurrentTab
   * */
-
 
   // Load tab manager state from server side / local storage
   const loadTabManager = async () => {
 
-    // TODO Server side state
+    let tabManager: TabManager = initialTabManagerState;
 
-    const res = await axios.get(`${kStore.BASE_URL}/api/load-tab-manager`, {
-      headers: {
-        Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MTJlMTI1N2NiNzEzYzQzY2YzMTE0MDIiLCJpYXQiOjE2MzA0MDkzMTg2NjQsImV4cCI6MTYzMDQxMDUyODI2NH0._ZEhfHsGJOTwf9SlQYWJ0t1Qv8fI6JqmOntw6coPopo"
-      } // TODO Change authorisation
-    });
+    const userDetails: UserDetails | null = await localStore.getItem(kLocalStoreKey.USER_DETAILS);
+    const storedTabManger = await localStore.getItem(kLocalStoreKey.TAB_MANAGER);
 
-    const tabManager = res.data.data.tabManager;
-
-    console.log(tabManager)
-    // const tabManager = await localStore.getItem(kLocalStoreKey.TAB_MANAGER);
-    if (tabManager === null) {
-      await localStore.setItem(kLocalStoreKey.TAB_MANAGER, initialTabManagerState);
-      return;
-    } else {
-      await localStore.setItem(kLocalStoreKey.TAB_MANAGER, tabManager);
+    if (storedTabManger) {
+      tabManager = storedTabManger as TabManager;
     }
-    setTabManager(tabManager as TabManager);
+
+    if (userDetails) {
+      const res = await axios.get(`${kStore.BASE_URL}/api/load-tab-manager`, {
+        headers: {
+          Authorization: userDetails?.token
+        }
+      });
+      if (res.status === 200) {
+        tabManager = res.data.data.tabManager;
+      }
+    }
+
+    await localStore.setItem(kLocalStoreKey.TAB_MANAGER, tabManager);
+    setTabManager(tabManager);
     setReady(true);
+
   };
 
 
   // Save tab manager state to local storage and server side
   const saveTabManager = async () => {
+
+    tabManager.lastSavedTimestamp = new Date();
+
     await localStore.setItem(kLocalStoreKey.TAB_MANAGER, tabManager);
-    const res = await axios.post(`${kStore.BASE_URL}/api/save-tab-manager`, { tabManager }, {
-      headers: {
-        Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MTJlMTI1N2NiNzEzYzQzY2YzMTE0MDIiLCJpYXQiOjE2MzA0MDkzMTg2NjQsImV4cCI6MTYzMDQxMDUyODI2NH0._ZEhfHsGJOTwf9SlQYWJ0t1Qv8fI6JqmOntw6coPopo"
-      } // TODO Change authorisation
-    });
-    console.log(res.data);
+
+    const userDetails: UserDetails | null = await localStore.getItem(kLocalStoreKey.USER_DETAILS);
+    if (userDetails) {
+      const res = await axios.post(`${kStore.BASE_URL}/api/save-tab-manager`, { tabManager }, {
+        headers: {
+          Authorization: userDetails?.token
+        }
+      });
+    }
+
+  };
+
+
+  // Clear tab manager from client side as well server side
+  const clearTabManager = async () => {
+    await localStore.removeItem(kLocalStoreKey.TAB_MANAGER);
+
+    const userDetails: UserDetails | null = await localStore.getItem(kLocalStoreKey.USER_DETAILS);
+    if (userDetails) {
+      const res = await axios.post(`${kStore.BASE_URL}/api/clear-tab-manager`, {}, {
+        headers: {
+          Authorization: userDetails?.token
+        }
+      });
+      if (res.status !== 200) {
+        throw new Error(res.data.message);
+      }
+    }
   };
 
 
@@ -114,6 +150,7 @@ const useTabManager = (initialState: TabManager) => {
       uuid: uuidv4(),
       name: `Tab ${tabManager.tabCount + 1}`,
       shared: false,
+      sharedWithUsers: [],
       widgetIds: [],
       layouts: {}
     };
@@ -130,10 +167,65 @@ const useTabManager = (initialState: TabManager) => {
   };
 
 
+  // Remove current tab
+  const removeCurrentTab = () => {
+
+    const newTabManagerState = _.cloneDeep(tabManager);
+
+    newTabManagerState.tabs = newTabManagerState.tabs.filter((tab, index) => index !== newTabManagerState.activeTab);
+    newTabManagerState.tabCount--;
+    if (newTabManagerState.activeTab !== 0) {
+      newTabManagerState.activeTab--;
+    }
+
+    // Boundary condition
+    if (newTabManagerState.tabCount < 1) return null;
+
+    setTabManager(newTabManagerState);
+
+    return newTabManagerState.activeTab;
+  };
+
+
   // Change active tab.
   const changeActiveTab = (newActiveTab: number) => {
     const newTabManagerState = _.cloneDeep(tabManager);
     newTabManagerState.activeTab = newActiveTab;
+    setTabManager(newTabManagerState);
+  };
+
+
+  // Rename active tab.
+  const renameCurrentTab = (newName: string) => {
+    const newTabManagerState = _.cloneDeep(tabManager);
+    newTabManagerState.tabs[newTabManagerState.activeTab].name = newName;
+    setTabManager(newTabManagerState);
+  };
+
+
+  // Share active tab.
+  const shareCurrentTab = (username: string) => {
+    const newTabManagerState = _.cloneDeep(tabManager);
+    const sharedWithUsers = newTabManagerState.tabs[newTabManagerState.activeTab].sharedWithUsers;
+    if (!sharedWithUsers.includes(username)) {
+      sharedWithUsers.push(username);
+    }
+    newTabManagerState.tabs[newTabManagerState.activeTab].sharedWithUsers = sharedWithUsers;
+    if (sharedWithUsers.length > 0) {
+      newTabManagerState.tabs[newTabManagerState.activeTab].shared = true;
+    }
+    setTabManager(newTabManagerState);
+  };
+
+
+  // Stop sharing current tab with user.
+  const stopSharingCurrentTab = (username: string) => {
+    const newTabManagerState = _.cloneDeep(tabManager);
+    const sharedWithUsers = newTabManagerState.tabs[newTabManagerState.activeTab].sharedWithUsers;
+    newTabManagerState.tabs[newTabManagerState.activeTab].sharedWithUsers = sharedWithUsers.filter((sharedWithUsername) => sharedWithUsername !== username);
+    if (newTabManagerState.tabs[newTabManagerState.activeTab].sharedWithUsers.length === 0) {
+      newTabManagerState.tabs[newTabManagerState.activeTab].shared = false;
+    }
     setTabManager(newTabManagerState);
   };
 
@@ -158,7 +250,7 @@ const useTabManager = (initialState: TabManager) => {
     const currentTab = tabManager.activeTab;
 
     // Generate new widget id
-    const newWidgetId = WidgetBuilder.generateWidgetId(currentTab, builderClassId);
+    const newWidgetId = WidgetBuilder.generateWidgetId(builderClassId);
 
     const newTabManagerState = _.cloneDeep(tabManager);
     newTabManagerState.tabs[currentTab].widgetIds.push(newWidgetId);
@@ -166,6 +258,22 @@ const useTabManager = (initialState: TabManager) => {
     // Set state
     setTabManager(newTabManagerState);
 
+  };
+
+
+  // Remove widget from current tab.
+  const removeWidgetFromCurrentTab = (widgetIdToRemove: string) => {
+    const newTabManagerState = _.cloneDeep(tabManager);
+
+    // Current info
+    const activeTab = newTabManagerState.activeTab;
+    const widgetIdsOfCurrentTab = newTabManagerState.tabs[newTabManagerState.activeTab].widgetIds;
+
+    // Remove widget id
+    newTabManagerState.tabs[activeTab].widgetIds = widgetIdsOfCurrentTab.filter((widgetId) => widgetId !== widgetIdToRemove);
+
+    // Set state
+    setTabManager(newTabManagerState);
   };
 
 
@@ -177,8 +285,8 @@ const useTabManager = (initialState: TabManager) => {
     return widgetIdsOfCurrentTab
       .map((widgetId) => WidgetBuilder.splitWidgetId(widgetId))
       .filter(({ builderClassId }) => builderClassId in builderClassIdToBuilderClassMap)
-      .map(({ tabNumber, builderClassId, uuid }) => {
-        return (new builderClassIdToBuilderClassMap[builderClassId as keyof typeof builderClassIdToBuilderClassMap].BuilderClass(tabNumber, uuid));
+      .map(({ builderClassId, uuid }) => {
+        return (new builderClassIdToBuilderClassMap[builderClassId as keyof typeof builderClassIdToBuilderClassMap].BuilderClass(uuid));
       })
       .map((widgetBuilder) => widgetBuilder.build());
   };
@@ -191,11 +299,17 @@ const useTabManager = (initialState: TabManager) => {
   return {
     ready,
     tabManager,
+    clearTabManager,
     addNewTab,
+    removeCurrentTab,
     changeActiveTab,
+    renameCurrentTab,
+    shareCurrentTab,
+    stopSharingCurrentTab,
     loadLayoutsForCurrentTab,
     saveLayoutsOfCurrentTab,
     addNewWidgetToCurrentTab,
+    removeWidgetFromCurrentTab,
     buildAllWidgetsOfCurrentTab,
   };
 
@@ -206,11 +320,17 @@ const TabManagerContext = createContext<ReturnType<typeof useTabManager>>(
   {
     ready: false,
     tabManager: initialTabManagerState,
+    clearTabManager: async () => {},
     addNewTab: () => 0,
+    removeCurrentTab: () => null,
     changeActiveTab: () => {},
+    renameCurrentTab: () => {},
+    shareCurrentTab: () => {},
+    stopSharingCurrentTab: () => {},
     loadLayoutsForCurrentTab: () => ({}),
     saveLayoutsOfCurrentTab: () => {},
     addNewWidgetToCurrentTab: () => {},
+    removeWidgetFromCurrentTab: () => {},
     buildAllWidgetsOfCurrentTab: () => [],
   }
 );

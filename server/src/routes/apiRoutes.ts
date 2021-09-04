@@ -1,15 +1,20 @@
 import { Router } from "express";
 
+import { changePasswordController } from "../controllers/authControllers";
 import {
   openChartsProductsController,
   pingController,
   serviceStatusController,
   eventsController,
   satelliteAlertsController,
-  webAPIActivityController,
+  webApiActivityController,
   marsActivityController,
-  saveTabManagerController, loadTabManagerController
-} from "../controllers/widgets";
+  saveTabManagerController,
+  loadTabManagerController,
+  clearTabManagerController,
+  apiTokensController,
+  updateApiTokensController
+} from "../controllers/apiControllers";
 
 
 const router = Router();
@@ -23,8 +28,24 @@ router.get("/ping", pingController);
 router.post("/save-tab-manager", saveTabManagerController);
 
 
-// * Load Tab Manager in string format
+// * Load Tab Manager
 router.get("/load-tab-manager", loadTabManagerController);
+
+
+// * Clear Tab Manager
+router.post("/clear-tab-manager", clearTabManagerController);
+
+
+// * Change password
+router.post("/change-password", changePasswordController);
+
+
+// * Update ECMWF API Tokens
+router.post("/update-api-tokens", updateApiTokensController);
+
+
+// * Get ECMWF API Tokens
+router.get("/api-tokens", apiTokensController);
 
 
 // * Service status - Proxy
@@ -32,7 +53,7 @@ router.get("/service-status", serviceStatusController);
 
 
 // * Open Charts products - Proxy
-router.get("/open-charts-products", openChartsProductsController);
+router.get("/open-charts/products", openChartsProductsController);
 
 
 // * Events - Proxy (Uses API token)
@@ -44,7 +65,7 @@ router.get("/satellite-alerts", satelliteAlertsController);
 
 
 // * Web API Activity
-router.get("/webapi-activity", webAPIActivityController);
+router.get("/web-api-activity", webApiActivityController);
 
 
 // * MARS Activity

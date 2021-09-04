@@ -1,74 +1,46 @@
-import React, { useContext, useState } from "react";
-import { makeStyles, AppBar, Tabs, Tab, IconButton } from "@material-ui/core";
-import AddIcon from "@material-ui/icons/Add";
+import React, { useContext } from "react";
+import { Box } from "@material-ui/core";
 
 import Layout from "../components/common/Layout";
+import TabBar from "../components/TabBar";
+import CustomTab from "../components/CustomTab";
+import TabPanel from "../components/TabPanel";
 import WidgetCanvas from "../components/WidgetCanvas";
 
 import { TabManagerContext } from "../utils/contexts/TabManagerContext";
-import TabPanel from "../components/TabPanel";
-
-
-const useStyles = makeStyles(
-  (theme) => ({
-    root: {
-      flexGrow: 1,
-      backgroundColor: theme.palette.background.paper,
-    },
-    appBar: {
-      backgroundColor: theme.palette.grey[800]
-    }
-  })
-);
 
 
 export default function Dashboard() {
 
-  const classes = useStyles();
   const { tabManager, addNewTab, changeActiveTab, buildAllWidgetsOfCurrentTab } = useContext(TabManagerContext);
-  const [activeTab, setActiveTab] = useState(tabManager.activeTab);
 
 
   const handleTabChange = (event: React.ChangeEvent<{}>, newActiveTab: number) => {
     changeActiveTab(newActiveTab);
-    setActiveTab(newActiveTab);
   };
 
   const handleAddNewTab = () => {
-    setActiveTab(addNewTab());
+    addNewTab();
   };
 
 
   return (
-    <Layout>
-      <div className={classes.root}>
+    <Layout showWidgetToolbar={true}>
 
-        <AppBar position={"static"} elevation={0} className={classes.appBar}>
-          <Tabs value={activeTab} onChange={handleTabChange}>
-
-            {
-              Array(tabManager.tabCount).fill(0).map((_, index) => {
-                return (
-                  <Tab
-                    key={tabManager.tabs[index].uuid}
-                    label={tabManager.tabs[index].name}
-                  />
-                );
-              })
-            }
-
-            <IconButton color={"inherit"} onClick={handleAddNewTab}>
-              <AddIcon/>
-            </IconButton>
-
-          </Tabs>
-        </AppBar>
-
+      <TabBar activeTab={tabManager.activeTab} onChange={handleTabChange} onAddNewTab={handleAddNewTab}>
         {
-          Array(tabManager.tabCount).fill(0).map((_, index) => (
+          tabManager.tabs.map((tab, index) => (
+            <CustomTab key={tab.uuid} label={tab.name}/>
+          ))
+        }
+      </TabBar>
+
+      <Box>
+        {
+          tabManager.tabs.map((tab, index) => (
             <TabPanel
-              key={tabManager.tabs[index].uuid}
-              value={activeTab}
+              key={tab.uuid}
+              value={tabManager.activeTab}
               index={index}
             >
               <WidgetCanvas>
@@ -77,15 +49,9 @@ export default function Dashboard() {
             </TabPanel>
           ))
         }
+      </Box>
 
-      </div>
     </Layout>
   );
 
 }
-
-
-
-
-
-
