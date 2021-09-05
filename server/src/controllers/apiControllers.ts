@@ -83,7 +83,7 @@ export const serviceStatusController: RequestHandler = async (req, res, next) =>
   try {
     const data = (await axios.get("https://www.ecmwf.int/ecmwf_status/status")).data;
     const nodes = data["nodes"];
-    res.status(200).json({ success: false, message: "Success", data: nodes.map((node: any) => node.node) });
+    res.status(200).json({ success: true, message: "Success", data: nodes.map((node: any) => node.node) });
   } catch (err) {
     next(err);
   }
@@ -123,7 +123,7 @@ export const satelliteAlertsController: RequestHandler = async (req, res, next) 
 export const webApiActivityController: RequestHandler = async (req, res, next) => {
   try {
     const user: any = req.user;
-    const axiosRes = await axios.get("https://apps-test.ecmwf.int/webapi-activity/api/v1/stats/?token=be7276d3c5050bca87c1b45256829c6e"); // TODO Replace this with token2
+    const axiosRes = await axios.get(`https://apps-test.ecmwf.int/webapi-activity/api/v1/stats/?token=${user.apiTokens.token2}`);
     if (axiosRes.status == 403) {
       return res.status(403).json({ success: false, message: "ECMWF API token invalid" });
     }
@@ -138,7 +138,7 @@ export const webApiActivityController: RequestHandler = async (req, res, next) =
 export const marsActivityController: RequestHandler = async (req, res, next) => {
   try {
     const user: any = req.user;
-    const axiosRes = await axios.get("https://apps-test.ecmwf.int/mars-activity/api/v1/stats/?token=be7276d3c5050bca87c1b45256829c6e"); // TODO Replace this with token2
+    const axiosRes = await axios.get(`https://apps-test.ecmwf.int/mars-activity/api/v1/stats/?token=${user.apiTokens.token2}`);
     if (axiosRes.status == 403) {
       return res.status(403).json({ success: false, message: "ECMWF API token invalid" });
     }

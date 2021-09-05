@@ -2,13 +2,14 @@ import express from "express";
 import cors from "cors";
 import passport from "passport";
 
+
 require("dotenv").config();
 
 import "./utils/db";
 import "./utils/auth";
 
 import authRoutes from "./routes/authRoutes"; // Routes like login, signup, etc.
-import apiRoutes from "./routes/apiRoutes";
+import { authRouter, noAuthRouter } from "./routes/apiRoutes";
 
 import { notFoundController, defaultErrorController } from "./controllers/errorControllers";
 
@@ -34,8 +35,12 @@ app.use(passport.initialize());
 app.use("/", authRoutes);
 
 
-// API Endpoints
-app.use("/api", passport.authenticate("jwt", { session: false }), apiRoutes);
+// API Endpoints - Requires no authentication
+app.use("/api", noAuthRouter);
+
+
+// API Endpoints - Requires authentication
+app.use("/api", passport.authenticate("jwt", { session: false }), authRouter);
 
 
 // Errors

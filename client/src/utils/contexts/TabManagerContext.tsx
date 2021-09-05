@@ -11,6 +11,7 @@ import localStore from "../localStore";
 import { builderClassIdToBuilderClassMap } from "../widgetUtils";
 import axios from "axios";
 import { AuthContext } from "./AuthContext";
+import { ChartWidgetConfiguration } from "../../components/widgets/ChartWidgetBlueprint";
 
 
 /**
@@ -258,6 +259,27 @@ const useTabManager = (initialState: TabManager) => {
     // Set state
     setTabManager(newTabManagerState);
 
+    return newWidgetId;
+  };
+
+
+  // Special case -  add chart widget to current tab.
+  const addNewChartWidgetToCurrentTab = (chartName: string) => {
+
+    const newTabManagerState = _.cloneDeep(tabManager);
+
+    const chartWidgetConfiguration: ChartWidgetConfiguration = {
+      chartName: chartName,
+    };
+
+    const currentTab = newTabManagerState.activeTab;
+    const newChartWidgetId = WidgetBuilder.generateWidgetId("chart-widget");
+    newTabManagerState.tabs[currentTab].widgetIds.push(newChartWidgetId);
+    newTabManagerState.widgetConfigurations[newChartWidgetId] = chartWidgetConfiguration;
+
+    // Set state
+    setTabManager(newTabManagerState);
+
   };
 
 
@@ -272,8 +294,27 @@ const useTabManager = (initialState: TabManager) => {
     // Remove widget id
     newTabManagerState.tabs[activeTab].widgetIds = widgetIdsOfCurrentTab.filter((widgetId) => widgetId !== widgetIdToRemove);
 
+    // Remove widget configuration if any
+    if (widgetIdToRemove in newTabManagerState.widgetConfigurations) {
+      delete newTabManagerState.widgetConfigurations[widgetIdToRemove];
+    }
+
     // Set state
     setTabManager(newTabManagerState);
+  };
+
+
+  // Save widget configuration.
+  const saveWidgetConfiguration = (widgetId: string, widgetConfiguration: Record<string, any>) => {
+    const newTabManagerState = _.cloneDeep(tabManager);
+    newTabManagerState.widgetConfigurations[widgetId] = widgetConfiguration;
+    setTabManager(newTabManagerState);
+  };
+
+
+  // Load widget configuration.
+  const loadWidgetConfiguration = (widgetId: string) => {
+    return tabManager.widgetConfigurations[widgetId];
   };
 
 
@@ -309,7 +350,10 @@ const useTabManager = (initialState: TabManager) => {
     loadLayoutsForCurrentTab,
     saveLayoutsOfCurrentTab,
     addNewWidgetToCurrentTab,
+    addNewChartWidgetToCurrentTab,
     removeWidgetFromCurrentTab,
+    saveWidgetConfiguration,
+    loadWidgetConfiguration,
     buildAllWidgetsOfCurrentTab,
   };
 
@@ -329,8 +373,11 @@ const TabManagerContext = createContext<ReturnType<typeof useTabManager>>(
     stopSharingCurrentTab: () => {},
     loadLayoutsForCurrentTab: () => ({}),
     saveLayoutsOfCurrentTab: () => {},
-    addNewWidgetToCurrentTab: () => {},
+    addNewWidgetToCurrentTab: () => "",
+    addNewChartWidgetToCurrentTab: () => {},
     removeWidgetFromCurrentTab: () => {},
+    saveWidgetConfiguration: () => {},
+    loadWidgetConfiguration: () => ({}),
     buildAllWidgetsOfCurrentTab: () => [],
   }
 );

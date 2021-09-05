@@ -28,7 +28,8 @@ export const kStore = {
 
 export const kLocalStoreKey = {
   TAB_MANAGER: "tabManager",
-  USER_DETAILS: "userDetails"
+  USER_DETAILS: "userDetails",
+  CHART_DETAILS: "chartDetails"
 };
 
 

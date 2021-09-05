@@ -11,13 +11,7 @@ import WidgetLoading from "../common/WidgetLoading";
 import WidgetError from "../common/WidgetError";
 import EventContainer from "./events/EventContainer";
 
-
-
-const useStyles = makeStyles(
-  (theme) => (
-    {}
-  )
-);
+import { TabManagerContext } from "../../utils/contexts/TabManagerContext";
 
 
 interface EventsWidgetBlueprintProps {
@@ -28,6 +22,7 @@ interface EventsWidgetBlueprintProps {
 const EventsWidgetBlueprint: React.FC<EventsWidgetBlueprintProps> = ({builder}) => {
 
   const classes = useStyles();
+  const {removeWidgetFromCurrentTab} = useContext(TabManagerContext)
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [events, setEvents] = useState<any>([]); // TODO
@@ -44,11 +39,12 @@ const EventsWidgetBlueprint: React.FC<EventsWidgetBlueprintProps> = ({builder}) 
   //   setLoading(false);
   // };
 
-  const removeWidget = () => {};
+  const removeWidget = () => removeWidgetFromCurrentTab(builder.widgetId);
+
 
   if (error) return <WidgetError message={error} onClose={removeWidget} />;
 
-  if (loading) return <WidgetLoading />;
+  if (loading) return <WidgetLoading onClose={removeWidget} />;
 
   return (
     <WidgetContainer>
@@ -79,6 +75,13 @@ const EventsWidgetBlueprint: React.FC<EventsWidgetBlueprintProps> = ({builder}) 
   );
 
 };
+
+
+const useStyles = makeStyles(
+  (theme) => (
+    {}
+  )
+);
 
 
 export default EventsWidgetBlueprint;

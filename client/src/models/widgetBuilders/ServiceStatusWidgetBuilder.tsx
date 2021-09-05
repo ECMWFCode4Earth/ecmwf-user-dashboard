@@ -8,7 +8,7 @@ import ServiceStatusWidgetBlueprint from "../../components/widgets/ServiceStatus
 export class ServiceStatusWidgetBuilder extends WidgetBuilder {
 
   builderClassId = "service-status-widget"
-  layout: Layout = { i: this.widgetId, x: 0, y: Infinity, w: 3, h: 6, minW: 2, maxW: 4, minH: 5, maxH: 10 };
+  layout: Layout = { i: this.widgetId, x: 0, y: Infinity, w: 3, h: 12, minW: 3, maxW: 4, minH: 7, maxH: 15 };
 
   public build() {
     return (

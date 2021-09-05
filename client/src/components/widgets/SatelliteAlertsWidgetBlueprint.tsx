@@ -1,41 +1,19 @@
 import React, { useContext, useEffect, useState } from "react";
-import {
-  Box,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  makeStyles,
-  Paper,
-  Slide,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow
-} from "@material-ui/core";
-import { SatelliteAlertsWidgetBuilder } from "../../models/widgetBuilders/SatelliteAlertsWidgetBuilder";
+import { makeStyles, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@material-ui/core";
+import axios from "axios";
+
 import WidgetContainer from "../common/WidgetContainer";
 import WidgetTitleBar from "../common/WidgetTitleBar";
 import WidgetBody from "../common/WidgetBody";
-import axios from "axios";
 import WidgetLoading from "../common/WidgetLoading";
-import { TransitionProps } from "@material-ui/core/transitions";
+import WidgetError from "../common/WidgetError";
+import WidgetDialog from "../common/WidgetDialog";
+
+import { SatelliteAlertsWidgetBuilder } from "../../models/widgetBuilders/SatelliteAlertsWidgetBuilder";
+
+import { kStore } from "../../utils/constants";
+import { TabManagerContext } from "../../utils/contexts/TabManagerContext";
 import { useDrawer } from "../../utils/hooks/useDrawer";
-
-
-const useStyles = makeStyles(
-  (theme) => (
-    {
-      root: {
-        display: "static",
-      },
-      table: {
-        // minWidth: 650,
-      },
-    }
-  )
-);
 
 
 interface SatelliteAlertsWidgetBlueprintProps {
@@ -43,46 +21,44 @@ interface SatelliteAlertsWidgetBlueprintProps {
 }
 
 
-function createData(name: string, status: number) {
-  return { name, status };
-}
-
-
-const Transition = React.forwardRef(function Transition(
-  props: TransitionProps & { children?: React.ReactElement<any, any> },
-  ref: React.Ref<unknown>,
-) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
-
-
 const SatelliteAlertsWidgetBlueprint: React.FC<SatelliteAlertsWidgetBlueprintProps> = ({ builder }) => {
 
   const classes = useStyles();
-  const [reports, setReports] = useState<any>({});
-  const [instruments, setInstruments] = useState<any>({});
+  const { removeWidgetFromCurrentTab } = useContext(TabManagerContext);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  const [reports, setReports] = useState<Record<string, Record<string, any>>>({});
+  const [instruments, setInstruments] = useState<Record<string, number>>({});
 
   const { open, onOpen, onClose } = useDrawer();
 
 
-
   useEffect(() => {
-    fetchSatelliteAlerts();
+    fetchSatelliteAlerts().catch((err) => setError(err.message));
   }, []);
 
 
   const fetchSatelliteAlerts = async () => {
-    const res = await axios.get("http://localhost:8000/api/satellite-alerts");
-    const reports = res.data.report;
+    const res = await axios.get(`${kStore.BASE_URL}/api/satellite-alerts`);
+    const reports = res.data.data.report;
     console.log(reports);
     setReports(reports);
     setLoading(false);
   };
 
-  const removeWidget = () => {};
 
-  if (loading) return <WidgetLoading/>;
+  const openInstruments = (instruments: Record<string, number>) => {
+    setInstruments(instruments);
+    onOpen();
+  };
+
+  const removeWidget = () => removeWidgetFromCurrentTab(builder.widgetId);
+
+
+  if (error) return <WidgetError message={error} onClose={removeWidget}/>;
+
+  if (loading) return <WidgetLoading onClose={removeWidget}/>;
 
   return (
     <>
@@ -91,78 +67,88 @@ const SatelliteAlertsWidgetBlueprint: React.FC<SatelliteAlertsWidgetBlueprintPro
         <WidgetTitleBar title={"Satellite Alerts"} onClose={removeWidget}/>
 
         <WidgetBody>
-          <TableContainer component={Paper}>
-            <Table className={classes.table}>
+
+          <TableContainer>
+            <Table>
+
               <TableHead>
                 <TableRow>
-                  <TableCell>Name</TableCell>
-                  <TableCell align="right">Status</TableCell>
+                  <TableCell size={"small"}>Name</TableCell>
+                  <TableCell size={"small"} align={"right"}>Status</TableCell>
                 </TableRow>
               </TableHead>
+
               <TableBody>
+
                 {Object.keys(reports).map((key) => (
-                  <TableRow onClick={() => {
-                    setInstruments(reports[key].instruments);
-                    onOpen();
-                  }} key={key} style={{ cursor: "pointer" }}>
-                    <TableCell component="th" scope="row">
-                      <Box color={reports[key].status !== 0 && "error.light"}>
-                        {key}
-                      </Box>
+                  <TableRow hover onClick={() => openInstruments(reports[key].instruments)} key={key}
+                            className={classes.row}>
+                    <TableCell scope={"row"} className={reports[key].status !== 0 ? classes.cellError : ""}>
+                      {key}
                     </TableCell>
-                    <TableCell align="right">
-                      <Box color={reports[key].status !== 0 && "error.light"}>
-                        {reports[key].status}
-                      </Box>
+                    <TableCell align={"right"} className={reports[key].status !== 0 ? classes.cellError : ""}>
+                      {reports[key].status}
                     </TableCell>
                   </TableRow>
                 ))}
+
               </TableBody>
+
             </Table>
           </TableContainer>
+
+
         </WidgetBody>
 
       </WidgetContainer>
 
-      <Dialog
-        open={open}
-        TransitionComponent={Transition}
-        keepMounted
-        maxWidth={"md"}
-        fullWidth
-        onClose={onClose}
-        aria-labelledby="alert-dialog-slide-title"
-        aria-describedby="alert-dialog-slide-description"
-      >
-        <DialogTitle id="alert-dialog-slide-title">Instruments</DialogTitle>
-        <DialogContent style={{ padding: "32px" }}>
-          <TableContainer component={Paper}>
-            <Table className={classes.table}>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Instrument</TableCell>
-                  <TableCell align="right">Status</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {Object.keys(instruments).map((key) => (
-                  <TableRow key={key}>
-                    <TableCell component="th" scope="row">
-                      {key}
-                    </TableCell>
-                    <TableCell align="right">{instruments[key]}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </DialogContent>
-      </Dialog>
-    </>
+      <WidgetDialog title={"Instruments"} open={open} onClose={onClose}>
+        <TableContainer variant={"outlined"} component={Paper}>
+          <Table>
 
+            <TableHead>
+              <TableRow>
+                <TableCell size={"small"}>Instrument</TableCell>
+                <TableCell align={"right"} size={"small"}>Status</TableCell>
+              </TableRow>
+            </TableHead>
+
+            <TableBody>
+              {Object.keys(instruments).map((key) => (
+                <TableRow hover key={key}>
+                  <TableCell scope={"row"} className={instruments[key] !== 0 ? classes.cellError : ""}>
+                    {key}
+                  </TableCell>
+                  <TableCell align={"right"} className={instruments[key] !== 0 ? classes.cellError : ""}>
+                    {instruments[key]}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+
+          </Table>
+        </TableContainer>
+      </WidgetDialog>
+
+    </>
   );
 
 };
+
+
+const useStyles = makeStyles(
+  (theme) => (
+    {
+      cellError: {
+        color: theme.palette.error.dark,
+        fontWeight: "bold"
+      },
+      row: {
+        cursor: "pointer"
+      }
+    }
+  )
+);
 
 
 export default SatelliteAlertsWidgetBlueprint;

@@ -44,7 +44,6 @@ const useStyles = makeStyles(
       mainContainer: {
         width: "100vw",
         minHeight: (props: any) => `calc(100vh - (${kSize.APP_BAR_HEIGHT} + ${props.showWidgetToolbar ? kSize.WIDGET_TOOLBAR_HEIGHT : "0px"}))`,
-        overflowX: "scroll"
       },
     }
   )

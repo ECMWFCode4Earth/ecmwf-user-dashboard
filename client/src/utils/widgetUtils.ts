@@ -20,28 +20,28 @@ export const builderClassIdToBuilderClassMap = {
     name: "Text Widget",
     BuilderClass: TextWidgetBuilder
   },
-  // "chart-widget": {
-  //   name: "Chart Widget",
-  //   BuilderClass: ChartWidgetBuilder
-  // },
+  "chart-widget": {
+    name: "Chart Widget",
+    BuilderClass: ChartWidgetBuilder
+  },
   // "events-widget": {
   //   name: "Events Widget",
   //   BuilderClass: EventsWidgetBuilder
   // },
-  // "mars-activity-widget": {
-  //   name: "MARS Activity Widget",
-  //   BuilderClass: MARSActivityWidgetBuilder
-  // },
-  // "satellite-alerts-widget": {
-  //   name: "Satellite Alerts Widget",
-  //   BuilderClass: SatelliteAlertsWidgetBuilder
-  // },
-  // "service-status-widget": {
-  //   name: "Service Status Widget",
-  //   BuilderClass: ServiceStatusWidgetBuilder
-  // },
-  // "web-api-activity-widget": {
-  //   name: "Web API Widget",
-  //   BuilderClass: WebAPIActivityWidgetBuilder
-  // },
+  "mars-activity-widget": {
+    name: "MARS Activity Widget",
+    BuilderClass: MARSActivityWidgetBuilder
+  },
+  "satellite-alerts-widget": {
+    name: "Satellite Alerts Widget",
+    BuilderClass: SatelliteAlertsWidgetBuilder
+  },
+  "service-status-widget": {
+    name: "Service Status Widget",
+    BuilderClass: ServiceStatusWidgetBuilder
+  },
+  "web-api-activity-widget": {
+    name: "Web API Widget",
+    BuilderClass: WebAPIActivityWidgetBuilder
+  },
 };

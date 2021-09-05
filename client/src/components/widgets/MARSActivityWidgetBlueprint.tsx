@@ -1,15 +1,5 @@
-import { useContext, useEffect, useState } from "react";
-import {
-  Box,
-  makeStyles,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow
-} from "@material-ui/core";
+import React, { useContext, useEffect, useState } from "react";
+import { makeStyles, Paper, Table, TableBody, TableCell, TableRow, TableContainer, TableHead } from "@material-ui/core";
 import axios from "axios";
 
 import WidgetContainer from "../common/WidgetContainer";
@@ -17,22 +7,12 @@ import WidgetTitleBar from "../common/WidgetTitleBar";
 import WidgetBody from "../common/WidgetBody";
 import WidgetLoading from "../common/WidgetLoading";
 
-import { useDrawer } from "../../utils/hooks/useDrawer";
 import { MARSActivityWidgetBuilder } from "../../models/widgetBuilders/MARSActivityWidgetBuilder";
 
-
-const useStyles = makeStyles(
-  (theme) => (
-    {
-      root: {
-        display: "static",
-      },
-      table: {
-        // minWidth: 650,
-      },
-    }
-  )
-);
+import { AuthContext } from "../../utils/contexts/AuthContext";
+import { TabManagerContext } from "../../utils/contexts/TabManagerContext";
+import { kStore } from "../../utils/constants";
+import WidgetError from "../common/WidgetError";
 
 
 interface MARSActivityWidgetBlueprintProps {
@@ -43,31 +23,32 @@ interface MARSActivityWidgetBlueprintProps {
 const MARSActivityWidgetBlueprint: React.FC<MARSActivityWidgetBlueprintProps> = ({ builder }) => {
 
   const classes = useStyles();
+  const { user } = useContext(AuthContext);
+  const { removeWidgetFromCurrentTab } = useContext(TabManagerContext);
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
 
-
-  // const [activity, setActivity] = useState<Record<string, number>[]>([])
-  const [activity, setActivity] = useState<any[]>([])
+  const [activity, setActivity] = useState<[string, number][]>([]);
 
 
   useEffect(() => {
-    fetchMARSActivity().catch((e) => console.error(e));
+    fetchMARSActivity().catch((e) => setError(e.message));
   }, []);
 
-  useEffect(() => {
-    console.log(activity)
-  })
 
   const fetchMARSActivity = async () => {
-    const res = await axios.get("http://localhost:8000/api/mars-activity");
+    const res = await axios.get(`${kStore.BASE_URL}/api/mars-activity`, { headers: { Authorization: user?.token } });
     console.log(res.data.data);
-    setActivity(Object.keys(res.data.data).filter((key) => key !== "uid" && key !== "tracker").map((key) => [key, res.data.data[key]]))
+    setActivity(Object.keys(res.data.data).filter((key) => key !== "uid" && key !== "tracker").map((key) => [key, res.data.data[key]]));
     setLoading(false);
   };
 
-  const removeWidget = () => {};
+  const removeWidget = () => removeWidgetFromCurrentTab(builder.widgetId);
 
-  if (loading) return <WidgetLoading/>;
+
+  if (error) return <WidgetError message={error} onClose={removeWidget}/>;
+
+  if (loading) return <WidgetLoading onClose={removeWidget}/>;
 
   return (
     <WidgetContainer>
@@ -75,30 +56,29 @@ const MARSActivityWidgetBlueprint: React.FC<MARSActivityWidgetBlueprintProps> = 
       <WidgetTitleBar title={"MARS Activity"} onClose={removeWidget}/>
 
       <WidgetBody>
-        <TableContainer component={Paper}>
-          <Table className={classes.table}>
+        <TableContainer>
+          <Table>
+
             <TableHead>
               <TableRow>
-                <TableCell>Name</TableCell>
-                <TableCell align="right">Stat</TableCell>
+                <TableCell size={"small"}>Name</TableCell>
+                <TableCell align={"right"} size={"small"}>Statistic</TableCell>
               </TableRow>
             </TableHead>
+
             <TableBody>
-              {activity.map((ac) => (
-                <TableRow key={ac[0]} style={{ cursor: "pointer" }}>
+              {activity.map(([name, statistic]) => (
+                <TableRow hover key={name}>
                   <TableCell component="th" scope="row">
-                    <Box>
-                      {ac[0]}
-                    </Box>
+                    {name}
                   </TableCell>
                   <TableCell align="right">
-                    <Box>
-                      {ac[1]}
-                    </Box>
+                    {statistic}
                   </TableCell>
                 </TableRow>
               ))}
             </TableBody>
+
           </Table>
         </TableContainer>
       </WidgetBody>
@@ -107,6 +87,15 @@ const MARSActivityWidgetBlueprint: React.FC<MARSActivityWidgetBlueprintProps> = 
   );
 
 };
+
+
+const useStyles = makeStyles(
+  (theme) => (
+    {
+
+    }
+  )
+);
 
 
 export default MARSActivityWidgetBlueprint;

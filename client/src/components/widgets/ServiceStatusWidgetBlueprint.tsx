@@ -1,5 +1,12 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Box, Grid, IconButton, makeStyles, Typography } from "@material-ui/core";
+import {
+  IconButton,
+  makeStyles,
+  Table, TableBody,
+  TableCell, TableContainer,
+  TableHead,
+  TableRow,
+} from "@material-ui/core";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import axios from "axios";
 
@@ -11,27 +18,7 @@ import WidgetError from "../common/WidgetError";
 
 import { ServiceStatusWidgetBuilder } from "../../models/widgetBuilders/ServiceStatusWidgetBuilder";
 import { kStore } from "../../utils/constants";
-
-
-const useStyles = makeStyles(
-  (theme) => (
-    {
-      gridItem: {
-        "& .container": {
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        },
-        "& .title": {
-          fontWeight: 600
-        },
-        "& .status": {
-          fontWeight: 600
-        }
-      }
-    }
-  )
-);
+import { TabManagerContext } from "../../utils/contexts/TabManagerContext";
 
 
 /**
@@ -52,13 +39,15 @@ interface ServiceStatusWidgetBlueprintProps {
 const ServiceStatusWidgetBlueprint: React.FC<ServiceStatusWidgetBlueprintProps> = ({ builder }) => {
 
   const classes = useStyles();
+  const { removeWidgetFromCurrentTab } = useContext(TabManagerContext);
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [serviceStatusDetails, setServiceStatusDetails] = useState<ServiceStatusDetails[]>([]);
 
 
   useEffect(() => {
-    fetchQuery().catch(() => setError("An error occurred. Failed to fetch data from backend server."));
+    fetchQuery().catch((err) => setError("An error occurred. Failed to fetch data from backend server."));
   }, []);
 
 
@@ -72,7 +61,7 @@ const ServiceStatusWidgetBlueprint: React.FC<ServiceStatusWidgetBlueprintProps> 
     setLoading(false);
   };
 
-  const removeWidget = () => {};
+  const removeWidget = () => removeWidgetFromCurrentTab(builder.widgetId);
 
   const countOk = () => serviceStatusDetails.reduce((ok, data) => data.Status === "Ok" ? ok + 1 : ok, 0);
 
@@ -81,7 +70,7 @@ const ServiceStatusWidgetBlueprint: React.FC<ServiceStatusWidgetBlueprintProps> 
 
   if (error) return <WidgetError message={error} onClose={removeWidget}/>;
 
-  if (loading) return <WidgetLoading/>;
+  if (loading) return <WidgetLoading onClose={removeWidget}/>;
 
   return (
     <WidgetContainer>
@@ -93,28 +82,71 @@ const ServiceStatusWidgetBlueprint: React.FC<ServiceStatusWidgetBlueprintProps> 
       </WidgetTitleBar>
 
       <WidgetBody>
-        <Grid container alignItems={"center"}>
-          {serviceStatusDetails.map(
-            (data) => {
-              return (
-                <Grid item xs={6} key={data.Title} className={classes.gridItem}>
-                  <Box p={1} className={"container"}>
-                    <Typography variant={"body2"} className={"title"}>{data.Title}</Typography>
-                    <Box color={data.Status === "Ok" ? "success.main" : "error.main"}>
-                      <Typography variant={"body2"} className={"status"} color={"inherit"}>{data.Status}</Typography>
-                    </Box>
-                  </Box>
-                </Grid>
-              );
-            }
-          )}
-        </Grid>
+
+        <TableContainer>
+          <Table>
+
+            <TableHead>
+              <TableRow>
+                <TableCell size={"small"}>Service</TableCell>
+                <TableCell size={"small"} align={"right"}>Status</TableCell>
+              </TableRow>
+            </TableHead>
+
+            <TableBody>
+
+              {serviceStatusDetails.map(
+                (data) => {
+                  return (
+                    <TableRow hover={data.Status === "Ok"} key={data.Title}
+                              className={data.Status === "Ok" ? classes.rowOk : classes.rowNotOk}>
+                      <TableCell scope={"row"}>
+                        {data.Title}
+                      </TableCell>
+                      <TableCell align={"right"} className={data.Status === "Ok" ? classes.cellOk : classes.cellNotOk}>
+                        {data.Status}
+                      </TableCell>
+                    </TableRow>
+                  );
+                }
+              )}
+
+            </TableBody>
+
+          </Table>
+        </TableContainer>
+
       </WidgetBody>
 
     </WidgetContainer>
   );
 
 };
+
+
+const useStyles = makeStyles(
+  (theme) => (
+    {
+      cellOk: {
+        color: theme.palette.success.dark,
+        fontWeight: "bold"
+      },
+      cellNotOk: {
+        color: theme.palette.error.main,
+      },
+      rowOk: {
+        cursor: "pointer",
+      },
+      rowNotOk: {
+        // backgroundColor: theme.palette.error.light,
+        cursor: "pointer",
+        "&:hover": {
+          // backgroundColor: theme.palette.error.main,
+        }
+      }
+    }
+  )
+);
 
 
 export default ServiceStatusWidgetBlueprint;

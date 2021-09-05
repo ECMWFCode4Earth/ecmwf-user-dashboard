@@ -1,37 +1,18 @@
 import { useContext, useEffect, useState } from "react";
-import {
-  Box,
-  makeStyles,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow
-} from "@material-ui/core";
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@material-ui/core";
 import axios from "axios";
 
 import WidgetContainer from "../common/WidgetContainer";
 import WidgetTitleBar from "../common/WidgetTitleBar";
 import WidgetBody from "../common/WidgetBody";
 import WidgetLoading from "../common/WidgetLoading";
+import WidgetError from "../common/WidgetError";
 
 import { WebAPIActivityWidgetBuilder } from "../../models/widgetBuilders/WebAPIActivityWidgetBuilder";
 
-
-const useStyles = makeStyles(
-  (theme) => (
-    {
-      root: {
-        display: "static",
-      },
-      table: {
-        // minWidth: 650,
-      },
-    }
-  )
-);
+import { TabManagerContext } from "../../utils/contexts/TabManagerContext";
+import { kStore } from "../../utils/constants";
+import { AuthContext } from "../../utils/contexts/AuthContext";
 
 
 interface WebAPIActivityWidgetBlueprintProps {
@@ -41,32 +22,38 @@ interface WebAPIActivityWidgetBlueprintProps {
 
 const WebAPIActivityWidgetBlueprint: React.FC<WebAPIActivityWidgetBlueprintProps> = ({ builder }) => {
 
-  const classes = useStyles();
+  const { user } = useContext(AuthContext);
+  const { removeWidgetFromCurrentTab } = useContext(TabManagerContext);
+
   const [loading, setLoading] = useState(true);
-
-
-  // const [activity, setActivity] = useState<Record<string, number>[]>([])
-  const [activity, setActivity] = useState<any[]>([])
+  const [error, setError] = useState("");
+  const [activity, setActivity] = useState<[string, number][]>([]);
 
 
   useEffect(() => {
     fetchMARSActivity().catch((e) => console.error(e));
   }, []);
 
-  useEffect(() => {
-    console.log(activity)
-  })
 
   const fetchMARSActivity = async () => {
-    const res = await axios.get("http://localhost:8000/api/webapi-activity");
-    console.log(res.data.data);
-    setActivity(Object.keys(res.data.data).filter((key) => key !== "uid" && key !== "tracker").map((key) => [key, res.data.data[key]]))
-    setLoading(false);
+    try {
+      const res = await axios.get(`${kStore.BASE_URL}/api/web-api-activity`, {
+        headers: { Authorization: user?.token }
+      });
+      setActivity(Object.keys(res.data.data).filter((key) => key !== "uid" && key !== "tracker").map((key) => [key, res.data.data[key]]));
+      setLoading(false);
+    } catch (err) {
+      setError(err.message);
+      setLoading(false);
+    }
   };
 
-  const removeWidget = () => {};
+  const removeWidget = () => removeWidgetFromCurrentTab(builder.widgetId);
 
-  if (loading) return <WidgetLoading/>;
+
+  if (error) return <WidgetError message={error} onClose={removeWidget}/>;
+
+  if (loading) return <WidgetLoading onClose={removeWidget}/>;
 
   return (
     <WidgetContainer>
@@ -74,32 +61,33 @@ const WebAPIActivityWidgetBlueprint: React.FC<WebAPIActivityWidgetBlueprintProps
       <WidgetTitleBar title={"Web API Activity"} onClose={removeWidget}/>
 
       <WidgetBody>
-        <TableContainer component={Paper}>
-          <Table className={classes.table}>
+
+        <TableContainer>
+          <Table>
+
             <TableHead>
               <TableRow>
-                <TableCell>Name</TableCell>
-                <TableCell align="right">Stat</TableCell>
+                <TableCell size={"small"}>Name</TableCell>
+                <TableCell size={"small"} align={"right"}>Statistic</TableCell>
               </TableRow>
             </TableHead>
+
             <TableBody>
-              {activity.map((ac) => (
-                <TableRow key={ac[0]} style={{ cursor: "pointer" }}>
-                  <TableCell component="th" scope="row">
-                    <Box>
-                      {ac[0]}
-                    </Box>
+              {activity.map(([name, statistic]) => (
+                <TableRow hover key={name}>
+                  <TableCell scope={"row"}>
+                    {name}
                   </TableCell>
-                  <TableCell align="right">
-                    <Box>
-                      {ac[1]}
-                    </Box>
+                  <TableCell align={"right"}>
+                    {statistic}
                   </TableCell>
                 </TableRow>
               ))}
             </TableBody>
+
           </Table>
         </TableContainer>
+
       </WidgetBody>
 
     </WidgetContainer>
