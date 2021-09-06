@@ -23,7 +23,7 @@ const Layout: React.FC<LayoutProps> = ({ children, showWidgetToolbar }) => {
         {
           showWidgetToolbar && (<WidgetToolbar/>)
         }
-        <Box className={classes.mainContainer}>
+        <Box  className={classes.mainContainer}>
           {children}
         </Box>
       </main>

@@ -24,10 +24,10 @@ export const builderClassIdToBuilderClassMap = {
     name: "Chart Widget",
     BuilderClass: ChartWidgetBuilder
   },
-  // "events-widget": {
-  //   name: "Events Widget",
-  //   BuilderClass: EventsWidgetBuilder
-  // },
+  "events-widget": {
+    name: "Events Widget",
+    BuilderClass: EventsWidgetBuilder
+  },
   "mars-activity-widget": {
     name: "MARS Activity Widget",
     BuilderClass: MARSActivityWidgetBuilder

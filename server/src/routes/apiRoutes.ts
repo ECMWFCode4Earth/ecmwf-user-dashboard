@@ -13,7 +13,7 @@ import {
   loadTabManagerController,
   clearTabManagerController,
   apiTokensController,
-  updateApiTokensController
+  updateApiTokensController, sharedTabController
 } from "../controllers/apiControllers";
 
 
@@ -22,7 +22,7 @@ const noAuthRouter = Router(); // Required user to be authenticated.
 
 
 // * Ping service
-noAuthRouter.get("/ping", pingController);
+authRouter.get("/ping", pingController);
 
 
 // * Save Tab Manager
@@ -71,6 +71,10 @@ authRouter.get("/web-api-activity", webApiActivityController);
 
 // * MARS Activity
 authRouter.get("/mars-activity", marsActivityController);
+
+
+// * Shared Tab Details from Tab manager
+authRouter.get("/shared-tab", sharedTabController);
 
 
 export { authRouter, noAuthRouter };

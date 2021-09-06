@@ -34,11 +34,11 @@ const EventContainer: React.FC<EventContainerProps> = ({ title, organisedBy, cat
 
   return (
     <Box px={1} py={1}>
-      <Card className={classes.root} variant="outlined">
+      <Card className={classes.root} variant={"outlined"}>
         <CardContent >
           <Grid container spacing={1}>
             <Grid item xs={12}>
-              <Typography variant={"h4"}>{title}</Typography>
+              <Typography variant={"h6"}>{title}</Typography>
             </Grid>
             <Grid item xs={12}>
               <Box display={"flex"} >

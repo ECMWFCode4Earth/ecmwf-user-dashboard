@@ -1,7 +1,13 @@
 import { RequestHandler } from "express";
+
+
+import { compareDesc, compareAsc, isAfter } from "date-fns";
+import { zonedTimeToUtc } from "date-fns-tz";
 import axios from "axios";
 
 import { initialTabManagerState } from "../utils/defaults";
+import User from "../models/User";
+import { TabManager } from "../utils/types";
 
 
 export const pingController: RequestHandler = (req, res, _) => {
@@ -102,8 +108,37 @@ export const openChartsProductsController: RequestHandler = async (req, res, nex
 
 export const eventsController: RequestHandler = async (req, res, next) => {
   try {
-    const data = (await axios.get("https://events.ecmwf.int/export/categ/2.json?_=1623050927029&ak=c430e6b8-16d4-41f3-9c57-908a0f60bd0b")).data; // TODO Extract token to env variable
-    res.status(200).json({ success: false, message: "Success", data: data });
+    const data = (await axios.get(`https://events.ecmwf.int/export/categ/2.json?_=${process.env.EVENTS_}&ak=${process.env.EVENTS_AK}`)).data;
+
+    const events = data.results.map((result: any) => ({
+      title: result.title,
+      startDate: result.startDate,
+      endDate: result.endDate,
+      startDateUTC: zonedTimeToUtc(`${result.startDate.date} ${result.startDate.time}`, result.startDate.tz),
+      endDateUTC: zonedTimeToUtc(`${result.endDate.date} ${result.endDate.time}`, result.endDate.tz),
+      category: result.category,
+      organiser: result.creator.fullName,
+      url: result.url
+    }));
+
+    events.sort((firstEl: any, secondEl: any) => compareDesc(firstEl.startDateUTC, secondEl.startDateUTC));
+
+    const dateNowUTC = new Date();
+
+    const completedEvents: any[] = [];
+    const upcomingEvents: any[] = [];
+
+    events.forEach((event: any) => {
+      if (isAfter(event.startDateUTC, dateNowUTC)) {
+        upcomingEvents.push(event)
+      } else {
+        completedEvents.push(event)
+      }
+    })
+
+    upcomingEvents.sort((firstEl: any, secondEl: any) => compareAsc(firstEl.startDateUTC, secondEl.startDateUTC));
+
+    res.status(200).json({ success: false, message: "Success", data: { completedEvents, upcomingEvents } });
   } catch (err) {
     next(err);
   }
@@ -145,6 +180,65 @@ export const marsActivityController: RequestHandler = async (req, res, next) => 
     const data = axiosRes.data;
     res.status(200).json({ success: false, message: "Success", data: data });
   } catch (err) {
+    next(err);
+  }
+};
+
+
+export const sharedTabController: RequestHandler = async (req, res, next) => {
+  try {
+
+    const sharingUsername = req.query.u;
+    const tabUuid = req.query.uuid;
+
+    const viewingUser: any = req.user;
+
+    if (!sharingUsername || !tabUuid) {
+      return res.status(400).json({ success: false, message: "Incomplete parameters" });
+    }
+
+    const sharingUser = await User.findOne({ username: sharingUsername });
+
+    if (!sharingUser) {
+      return res.status(400).json({ success: false, message: "Sharing user does not exist" });
+    }
+
+
+    const tabManager = sharingUser.loadTabManager() as TabManager;
+
+    const tab = tabManager.tabs.find(tab => tab.uuid = tabUuid as string);
+
+    if (!tab) {
+      return res.status(400).json({ success: false, message: "Tab does not exist" });
+    }
+
+    let viewingUserHasViewingRight = false;
+    tab.sharedWithUsers.forEach(username => {
+      if (username === viewingUser.username) {
+        viewingUserHasViewingRight = true;
+      }
+    });
+
+    if (!viewingUserHasViewingRight) {
+      return res.status(403).json({ success: false, message: "User not authorised to view this tab." });
+    }
+
+    const widgetConfigurations = {};
+
+    tab.widgetIds.forEach((widgetId) => {
+      if (widgetId in tabManager.widgetConfigurations) {
+        (widgetConfigurations as any)[widgetId] = tabManager.widgetConfigurations[widgetId];
+      }
+    });
+
+    const data = {
+      tab,
+      widgetConfigurations
+    };
+
+    res.status(200).json({ success: false, message: "Success", data: data });
+  } catch (err) {
+    console.log(err);
     next(err);
   }
 };

@@ -9,7 +9,7 @@ import EventsWidgetBlueprint from "../../components/widgets/EventsWidgetBlueprin
 export class EventsWidgetBuilder extends WidgetBuilder {
 
   builderClassId = "events-widget"
-  layout: Layout = {i: this.widgetId, x: 0, y: Infinity, w: 3, h: 6, minW: 2, maxW: 4, minH: 5, maxH: 10};
+  layout: Layout = {i: this.widgetId, x: 0, y: Infinity, w: 4, h: 10, minW: 4, maxW: 6, minH: 8, maxH: 20};
 
   build(): JSX.Element {
     return (

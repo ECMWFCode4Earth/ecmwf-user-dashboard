@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import { Layout, Layouts, Responsive, WidthProvider } from "react-grid-layout";
 
-import { kName } from "../utils/constants";
+import { kName, kSize } from "../utils/constants";
 import { TabManagerContext } from "../utils/contexts/TabManagerContext";
 
 
@@ -46,7 +46,7 @@ const WidgetCanvas: React.FC = ({ children }) => {
 
 
 const style = {
-  height: `100%`
+  height: `calc(100vh - (${kSize.APP_BAR_HEIGHT} + ${kSize.WIDGET_TOOLBAR_HEIGHT} + ${kSize.TAB_BAR_HEIGHT}))`,
 };
 
 

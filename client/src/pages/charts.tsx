@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { Box, Button, CircularProgress, Container, Grid, Snackbar, TextField, Typography } from "@material-ui/core";
 import axios from "axios";
 import _ from "lodash";
+import Image from "next/image";
 
 import Layout from "../components/common/Layout";
 
@@ -156,7 +157,7 @@ export default function Charts() {
             horizontal: 'left',
           }}
           open={open}
-          autoHideDuration={5000}
+          autoHideDuration={1000}
           onClose={onClose}
           message={`Added chart to dashboard.`}
         />
@@ -181,7 +182,12 @@ const ChartBrowserItem: React.FC<ChartBrowserItemProps> = ({ showImages, thumbna
       <Box>
         {
           showImages && (
-            <img width={"100%"} src={thumbnail} alt={"chart thumbnail"}/>
+            <Image
+              src={thumbnail}
+              alt={"chart thumbnail"}
+              width={512}
+              height={256}
+            />
           )
         }
       </Box>

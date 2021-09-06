@@ -318,12 +318,45 @@ const useTabManager = (initialState: TabManager) => {
   };
 
 
+  // Clean up configuration.
+  const cleanUpWidgetConfiguration = () => {
+    const newTabManagerState = _.cloneDeep(tabManager);
+    const widgetConfigurations = newTabManagerState.widgetConfigurations;
+    const allWidgetIds = newTabManagerState.tabs.map(tab => tab.widgetIds).reduce(((previousValue, currentValue) => previousValue.concat(currentValue)), []);
+    const newWidgetConfigurations: Record<string, Record<string, any>> = {};
+    allWidgetIds.forEach((widgetId) => {
+      if (widgetId in widgetConfigurations) {
+        newWidgetConfigurations[widgetId] = widgetConfigurations[widgetId];
+      }
+    });
+    newTabManagerState.widgetConfigurations = newWidgetConfigurations;
+    setTabManager(newTabManagerState);
+  };
+
+
   // Build widgets from widgets ids.
   const buildAllWidgetsOfCurrentTab = () => {
     const currentTab = tabManager.activeTab;
     const widgetIdsOfCurrentTab = tabManager.tabs[currentTab].widgetIds;
 
     return widgetIdsOfCurrentTab
+      .map((widgetId) => WidgetBuilder.splitWidgetId(widgetId))
+      .filter(({ builderClassId }) => builderClassId in builderClassIdToBuilderClassMap)
+      .map(({ builderClassId, uuid }) => {
+        return (new builderClassIdToBuilderClassMap[builderClassId as keyof typeof builderClassIdToBuilderClassMap].BuilderClass(uuid));
+      })
+      .map((widgetBuilder) => widgetBuilder.build());
+  };
+
+
+  // Build widgets for shared tab.
+  const buildAllWidgetsOfSharedTab = (tab: Tab, widgetConfigurations: Record<string, Record<string, any>>) => {
+    const newTabManagerState = _.cloneDeep(tabManager);
+    newTabManagerState.widgetConfigurations = { ...widgetConfigurations, ...newTabManagerState.widgetConfigurations };
+
+    setTabManager(newTabManagerState); // Set state
+
+    return tab.widgetIds
       .map((widgetId) => WidgetBuilder.splitWidgetId(widgetId))
       .filter(({ builderClassId }) => builderClassId in builderClassIdToBuilderClassMap)
       .map(({ builderClassId, uuid }) => {
@@ -355,6 +388,7 @@ const useTabManager = (initialState: TabManager) => {
     saveWidgetConfiguration,
     loadWidgetConfiguration,
     buildAllWidgetsOfCurrentTab,
+    buildAllWidgetsOfSharedTab,
   };
 
 };
@@ -379,6 +413,7 @@ const TabManagerContext = createContext<ReturnType<typeof useTabManager>>(
     saveWidgetConfiguration: () => {},
     loadWidgetConfiguration: () => ({}),
     buildAllWidgetsOfCurrentTab: () => [],
+    buildAllWidgetsOfSharedTab: () => []
   }
 );
 
