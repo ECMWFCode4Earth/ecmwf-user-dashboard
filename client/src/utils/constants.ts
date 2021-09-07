@@ -22,7 +22,7 @@ export const kName = {
 
 
 export const kStore = {
-  BASE_URL: "http://127.0.0.1:8000", // TODO Refactor base to env variable
+  BASE_URL: process.env.NEXT_PUBLIC_SERVER_URL,
 };
 
 
