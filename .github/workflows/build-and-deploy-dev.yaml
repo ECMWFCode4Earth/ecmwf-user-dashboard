@@ -1,0 +1,62 @@
+name: Build and Deploy (DEV)
+
+on:
+  push:
+    branches:
+    - 'develop'
+
+  workflow_dispatch:
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build and push web app (frontend)
+        uses: docker/build-push-action@v2
+        with:
+          context: ./client/
+          push: true
+          tags: eduardrosert/user-dashboard:frontend-dev-latest
+      - name: Build and push api (backend)
+        uses: docker/build-push-action@v2
+        with:
+          context: ./server/
+          push: true
+          tags: eduardrosert/user-dashboard:api-dev-latest
+
+  kubernetes:
+    needs: docker
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Kubernetes build and deploy
+        uses: stefanprodan/kube-tools@v1
+        env:
+          KUBECONFIG_FILE: ${{secrets.KUBECONFIG}}
+          ENV_DEV_SECRETS: ${{secrets.ENV_DEV_SECRETS}}
+          DEV_DNS_SUFFIX: ${{secrets.DEV_DNS_SUFFIX}}
+        with:
+          command: |
+            echo "Save kubernetes configuration file"
+            mkdir -p ~/.kube/ && echo "$KUBECONFIG_FILE" > ~/.kube/config
+            echo "Overwrite secrets file for deployment"
+            echo "$ENV_DEV_SECRETS" > ecmwf-user-dashboard/base/.env.secrets
+            echo "Run kustomize build and deploy"
+            kustomize build ecmwf-user-dashboard/overlays/development | sed "s/example.com/$DEV_DNS_SUFFIX/g" | kubectl apply -f -
+            echo "Kill running pods for api and frontend to force image pull"
+            kubectl delete pods -lservice=user-dashboard-dev,app=api
+            kubectl delete pods -lservice=user-dashboard-dev,app=frontend
+            echo "Run kubectl"
+            kubectl get pods
