@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: api
+  name: api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      containers:
+      - name: api
+        image: ecmwf/esowc-user-dashboard-api
+        env:
+        - name: SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: user-dashboard-secrets
+              key: SECRET_KEY
+        - name: DB_URI
+          valueFrom:
+            secretKeyRef:
+              name: user-dashboard-secrets
+              key: DB_URI
+        - name: EVENTS_AK
+          valueFrom:
+            secretKeyRef:
+              name: user-dashboard-secrets
+              key: EVENTS_AK
+        - name: EVENTS_
+          valueFrom:
+            secretKeyRef:
+              name: user-dashboard-secrets
+              key: EVENTS_
+        imagePullPolicy: Always

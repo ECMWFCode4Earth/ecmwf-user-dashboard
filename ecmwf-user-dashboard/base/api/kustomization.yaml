@@ -1,0 +1,3 @@
+bases:
+- deployment.yaml
+- service.yaml
