@@ -1,0 +1,16 @@
+bases:
+  - ../../base
+
+namePrefix: prod-
+
+commonLabels:
+  service: user-dashboard-prod
+
+images:
+- name: ecmwf/esowc-user-dashboard-api
+  newName: eduardrosert/user-dashboard
+  newTag: api-latest
+
+- name: ecmwf/esowc-user-dashboard-frontend
+  newName: eduardrosert/user-dashboard
+  newTag: frontend-latest

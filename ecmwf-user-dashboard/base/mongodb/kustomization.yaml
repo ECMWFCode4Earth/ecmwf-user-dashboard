@@ -1,0 +1,4 @@
+bases:
+  # - statefulset.yaml
+  - deployment.yaml
+  - service.yaml

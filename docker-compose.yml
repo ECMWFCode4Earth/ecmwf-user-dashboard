@@ -1,0 +1,41 @@
+version: '3.7'
+
+services:
+  frontend:
+    build:
+      context: client
+      dockerfile: Dockerfile
+      args:
+        - NODE_ENV=production
+        - NEXT_PUBLIC_SERVER_URL=http://localhost:8000 # Server URL, this has to be publicly accessible
+    environment: 
+      - NEXT_PUBLIC_SERVER_URL=http://localhost:8000 # override the env at runtime
+    command: sh -c 'npm run build && npm run start'  # and rebuild with the new server url before starting the server
+    ports:
+      - '3000:3000'
+    depends_on: 
+      - api # requires express server api
+  
+  api:
+    build:
+      context: server
+      dockerfile: Dockerfile
+    environment: 
+      - SECRET_KEY=mysecretkey
+      - DB_URI=mongodb://<choose a secret db username>:<your secret db password goes here>@mongodb:27017 # change for production
+      - EVENTS_AK=<random UUID> # change for production
+      - EVENTS_=<random number> # change for production
+    ports:
+      - '8000:8000'
+    restart: always
+    depends_on: 
+      - mongodb # requires mongo db
+  
+  mongodb:
+    image: mongo:latest
+    restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=<choose a secret db username> # change for production
+      - MONGO_INITDB_ROOT_PASSWORD=<your secret db password goes here> # change for production
+    ports:
+      - '127.0.0.1:27017:27017' # this service should not be reachable from outside

@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: frontend
+    # url_suffix: example.com
+  name: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - name: frontend
+        image: ecmwf/esowc-user-dashboard-frontend
+        env:
+        - name: NEXT_PUBLIC_SERVER_URL
+          value: 'http://dashboard-api.example.com:80'
+        command:
+        - "bash"
+        - "-c"
+        - "cd /usr/src/client && /usr/local/bin/npm run build && /usr/local/bin/npm run start"
+        imagePullPolicy: Always

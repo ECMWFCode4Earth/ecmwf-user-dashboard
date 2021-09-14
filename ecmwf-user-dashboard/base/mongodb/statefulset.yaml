@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: mongodb
+  name: mongodb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongodb
+  serviceName: mongodb
+  template:
+    metadata:
+      labels:
+        app: mongodb
+    spec:
+      containers:
+      - name: mongodb
+        image: mongo:latest
+        env:
+        - name: MONGO_INITDB_ROOT_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: user-dashboard-secrets
+              key: MONGODB_USER
+        - name: MONGO_INITDB_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: user-dashboard-secrets
+              key: MONGODB_PASS
+        imagePullPolicy: Always
+        volumeMounts:
+        - mountPath: /data/db
+          name: ephemeral-data-volume
+      volumes:
+      - name: ephemeral-data-volume
+        emptyDir: {}
+        # emptyDir:
+        #   medium: Memory

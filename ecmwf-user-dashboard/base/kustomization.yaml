@@ -1,0 +1,13 @@
+bases:
+  - api
+  - frontend
+  - mongodb
+  - ingress
+
+commonLabels:
+  service: user-dashboard
+
+secretGenerator:
+  - name: user-dashboard-secrets
+    envs:
+    - .env.secrets
