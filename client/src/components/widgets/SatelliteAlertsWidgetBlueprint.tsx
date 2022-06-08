@@ -80,7 +80,7 @@ const SatelliteAlertsWidgetBlueprint: React.FC<SatelliteAlertsWidgetBlueprintPro
 
               <TableBody>
 
-                {Object.keys(reports).map((key) => (
+                {Object.keys(reports || {}).map((key) => (
                   <TableRow hover onClick={() => openInstruments(reports[key].instruments)} key={key}
                             className={classes.row}>
                     <TableCell scope={"row"} className={reports[key].status !== 0 ? classes.cellError : ""}>
