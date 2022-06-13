@@ -78,12 +78,12 @@ export default function Charts() {
   };
 
   const filterCharts = (partialName: string) => {
-    const trimmedPartialName = partialName.trim();
+    const trimmedPartialName = partialName.trim().toLowerCase();
     if (trimmedPartialName.length === 0) {
       setFilteredChartDetails(allChartDetails);
       return;
     }
-    setFilteredChartDetails(allChartDetails.filter(chartDetail => chartDetail.title.includes(trimmedPartialName)));
+    setFilteredChartDetails(allChartDetails.filter(chartDetail => chartDetail.title.toLowerCase().includes(trimmedPartialName)));
   };
 
   const debouncedFilterCharts = _.debounce((partialName) => filterCharts(partialName), 1000);
