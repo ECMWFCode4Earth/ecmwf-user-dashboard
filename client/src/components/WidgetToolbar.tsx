@@ -38,6 +38,10 @@ const WidgetToolbar: React.FC = () => {
     router.push("/charts");
   };
 
+  const navigateToWidgetBrowser = () => {
+    router.push("/widgets");
+  };
+
   const navigateToDashboard = () => {
     router.push("/dashboard");
   };
@@ -70,32 +74,15 @@ const WidgetToolbar: React.FC = () => {
 
           <Box flexGrow={1}>
 
-            <Button onClick={openAddWidgetMenu}>
-              Add Widget
-            </Button>
-            <Menu
-              keepMounted
-              anchorEl={anchorElAddWidgetMenu}
-              open={Boolean(anchorElAddWidgetMenu)}
-              onClose={closeAddWidgetMenu}
-            >
-              {
-                Object.keys(builderClassIdToBuilderClassMap).map((builderClassId, index) => (
-                    <MenuItem
-                      key={`MenuItem-${index}`}
-                      onClick={() => addNewWidget(builderClassId)}
-                    >
-                      {builderClassIdToBuilderClassMap[builderClassId as keyof typeof builderClassIdToBuilderClassMap].name}
-                    </MenuItem>
-                  )
-                )
-              }
-            </Menu>
-
             {
               router.pathname !== "/charts" && (
                 <Button onClick={navigateToChartBrowser}>Chart Browser</Button>
               )
+            }
+            {
+                router.pathname !== "/widgets" && (
+                    <Button onClick={navigateToWidgetBrowser}>Widget Browser</Button>
+                )
             }
 
             {

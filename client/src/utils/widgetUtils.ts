@@ -5,6 +5,7 @@ import { MARSActivityWidgetBuilder } from "../models/widgetBuilders/MARSActivity
 import { SatelliteAlertsWidgetBuilder } from "../models/widgetBuilders/SatelliteAlertsWidgetBuilder";
 import { ServiceStatusWidgetBuilder } from "../models/widgetBuilders/ServiceStatusWidgetBuilder";
 import { WebAPIActivityWidgetBuilder } from "../models/widgetBuilders/WebAPIActivityWidgetBuilder";
+import {TableWidgetBuilder} from "../models/widgetBuilders/TableWidgetBuilder";
 
 
 /**
@@ -44,4 +45,8 @@ export const builderClassIdToBuilderClassMap = {
     name: "Web API Widget",
     BuilderClass: WebAPIActivityWidgetBuilder
   },
+  "table-widget": {
+    name: "Table Widget",
+    BuilderClass: TableWidgetBuilder
+  }
 };
