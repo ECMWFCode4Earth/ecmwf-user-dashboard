@@ -12,6 +12,7 @@ import { builderClassIdToBuilderClassMap } from "../widgetUtils";
 import axios from "axios";
 import { AuthContext } from "./AuthContext";
 import { ChartWidgetConfiguration } from "../../components/widgets/ChartWidgetBlueprint";
+import {GenericWidgetConfiguration} from "../../components/widgets/GenericWidgetBlueprint";
 
 
 /**
@@ -282,6 +283,30 @@ const useTabManager = (initialState: TabManager) => {
 
   };
 
+  const addNewWidgetFromBrowserToCurrentTab = (widgetType: string, widgetTitle:string, widgetName: string, widgetHref: string, widgetAppURL: string) => {
+    console.log(widgetAppURL)
+    const newTabManagerState = _.cloneDeep(tabManager);
+
+    const newWidgetConfiguration: GenericWidgetConfiguration = {
+      widgetType: widgetType,
+      widgetTitle: widgetTitle,
+      widgetName: widgetName,
+      widgetHref: widgetHref,
+      widgetAppURL: widgetAppURL
+    };
+    console.log('-----------cloning---------')
+    const currentTab = newTabManagerState.activeTab;
+    //TODO: builder class is being kept as the widgetType
+    const newWidgetId = WidgetBuilder.generateWidgetId(widgetType);
+    console.log('-----------newWidgetId---------')
+    newTabManagerState.tabs[currentTab].widgetIds.push(newWidgetId);
+    newTabManagerState.widgetConfigurations[newWidgetId] = newWidgetConfiguration;
+    // Set state
+    console.log('-----------setstate---------')
+    setTabManager(newTabManagerState);
+    console.log('-----------setTabManager---------')
+  };
+
 
   // Remove widget from current tab.
   const removeWidgetFromCurrentTab = (widgetIdToRemove: string) => {
@@ -338,14 +363,56 @@ const useTabManager = (initialState: TabManager) => {
   const buildAllWidgetsOfCurrentTab = () => {
     const currentTab = tabManager.activeTab;
     const widgetIdsOfCurrentTab = tabManager.tabs[currentTab].widgetIds;
+    // newTabManagerState.widgetConfigurations[newWidgetId] = newWidgetConfiguration;
+    // const widgetTitle = tabManager.widgetConfigurations[currentTab].widgetTitle;
+    // const widgetHref = tabManager.widgetConfigurations[currentTab].widgetHref;
 
-    return widgetIdsOfCurrentTab
-      .map((widgetId) => WidgetBuilder.splitWidgetId(widgetId))
-      .filter(({ builderClassId }) => builderClassId in builderClassIdToBuilderClassMap)
-      .map(({ builderClassId, uuid }) => {
-        return (new builderClassIdToBuilderClassMap[builderClassId as keyof typeof builderClassIdToBuilderClassMap].BuilderClass(uuid));
+    // we have a widget ID -> and a configuration corresponding to that widget ID
+    // that configuration contains the widget information
+    interface CombinedID{
+      builderClassID : string,
+      uuid : string,
+      title : string,
+      href : string,
+      appUrl : string
+    }
+    // console.log(tabManager.tabs[currentTab])
+    // console.log("---------------widgetIdsofCurrentTab----------------")
+    // console.log(widgetIdsOfCurrentTab)
+    const combinedId : CombinedID[] = [];
+    widgetIdsOfCurrentTab.forEach(widgetId => {
+      combinedId.push({
+        builderClassID : WidgetBuilder.splitWidgetId(widgetId).builderClassId,
+        uuid : WidgetBuilder.splitWidgetId(widgetId).uuid,
+        title:  tabManager.widgetConfigurations[widgetId].widgetTitle,
+        href: tabManager.widgetConfigurations[widgetId].widgetHref,
+        appUrl : tabManager.widgetConfigurations[widgetId].widgetAppURL
       })
-      .map((widgetBuilder) => widgetBuilder.build());
+    })
+    // console.log("<--------------combinedID---------->")
+    // console.log(combinedId)
+    return combinedId.filter((elt) => {
+      return elt.builderClassID in builderClassIdToBuilderClassMap
+    }).map(obj => {
+      return (new builderClassIdToBuilderClassMap[obj.builderClassID as keyof typeof builderClassIdToBuilderClassMap].BuilderClass(obj.uuid, obj.title, obj.href, obj.appUrl));
+    }).map(widgetBuilder => widgetBuilder.build());
+    // filterMap.forEach(build(title, href));
+    // function buildWidget(widgetBuilder, item){
+    //   widgetBuilder.build(item.title, item.href);
+    // }
+    // console.log("<-------------filterMap-------------->")
+    // // console.log(filterMap);
+    // const a = widgetIdsOfCurrentTab.map((widgetId) => WidgetBuilder.splitWidgetId(widgetId))
+    //   .filter(({ builderClassId }) => builderClassId in builderClassIdToBuilderClassMap)
+    //   .map(({ builderClassId, uuid }) => {
+    //     return (new builderClassIdToBuilderClassMap[builderClassId as keyof typeof builderClassIdToBuilderClassMap].BuilderClass(uuid));
+    //   })
+    // console.log(a);
+    //
+    //     // .map((widgetBuilder) => widgetBuilder.build());
+    // console.log("---------------wbuild----------------")
+    // console.log(wbuild)
+      // .map((widgetBuilder) => widgetBuilder.build('buildtitle', 'buildhref'));
   };
 
 
@@ -384,6 +451,7 @@ const useTabManager = (initialState: TabManager) => {
     saveLayoutsOfCurrentTab,
     addNewWidgetToCurrentTab,
     addNewChartWidgetToCurrentTab,
+    addNewWidgetFromBrowserToCurrentTab,
     removeWidgetFromCurrentTab,
     saveWidgetConfiguration,
     loadWidgetConfiguration,
@@ -396,6 +464,7 @@ const useTabManager = (initialState: TabManager) => {
 
 const TabManagerContext = createContext<ReturnType<typeof useTabManager>>(
   {
+
     ready: false,
     tabManager: initialTabManagerState,
     clearTabManager: async () => {},
@@ -411,6 +480,7 @@ const TabManagerContext = createContext<ReturnType<typeof useTabManager>>(
     addNewChartWidgetToCurrentTab: () => {},
     removeWidgetFromCurrentTab: () => {},
     saveWidgetConfiguration: () => {},
+    addNewWidgetFromBrowserToCurrentTab: () => {},
     loadWidgetConfiguration: () => ({}),
     buildAllWidgetsOfCurrentTab: () => [],
     buildAllWidgetsOfSharedTab: () => []
