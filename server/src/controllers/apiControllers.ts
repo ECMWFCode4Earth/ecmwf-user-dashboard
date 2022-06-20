@@ -99,12 +99,21 @@ export const serviceStatusController: RequestHandler = async (req, res, next) =>
 export const openChartsProductsController: RequestHandler = async (req, res, next) => {
   try {
     const data = (await axios.get("https://apps.ecmwf.int/webapps/opencharts-api/v1/packages/opencharts/products/")).data;
+    console.log(data);
     res.status(200).json({ success: false, message: "Success", data: data });
   } catch (err) {
     next(err);
   }
 };
 
+export const getAllWidgetsController: RequestHandler = async (req, res, next) => {
+  try{
+    const data = (await axios.get("https://apps-dev.ecmwf.int/webapps/opencharts-api/v1/soc/user-dashboard/GetWidgets/")).data;
+    res.status(200).json({success:true, message:"success", data: data});
+  } catch (err){
+    next(err);
+  }
+}
 
 export const eventsController: RequestHandler = async (req, res, next) => {
   try {

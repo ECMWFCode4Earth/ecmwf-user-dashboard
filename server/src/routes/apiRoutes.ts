@@ -13,7 +13,7 @@ import {
   loadTabManagerController,
   clearTabManagerController,
   apiTokensController,
-  updateApiTokensController, sharedTabController
+  updateApiTokensController, sharedTabController, getAllWidgetsController
 } from "../controllers/apiControllers";
 
 
@@ -55,6 +55,9 @@ noAuthRouter.get("/service-status", serviceStatusController);
 
 // * Open Charts products - Proxy
 noAuthRouter.get("/open-charts/products", openChartsProductsController);
+
+// * Widgets *//
+noAuthRouter.get('/getAllWidgets', getAllWidgetsController);
 
 
 // * Events - Proxy (Uses API token)
