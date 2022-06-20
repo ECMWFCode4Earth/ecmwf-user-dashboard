@@ -5,7 +5,9 @@ import { Layout } from "react-grid-layout";
 export abstract class WidgetBuilder {
 
   public readonly uuid: string;
-
+  public readonly title : string;
+  public readonly href : string;
+  public readonly appURL : string;
   // Make sure to define this when creating sub class.
   public abstract builderClassId: string;
   public abstract layout: Layout;
@@ -15,8 +17,11 @@ export abstract class WidgetBuilder {
    * Do not define constructor in sub class.
    * */
 
-  public constructor(uuid: string | undefined = undefined) {
+  public constructor(uuid: string | undefined = undefined, title ?: string, href ?: string, appURL ?: string) {
     this.uuid = uuid || uuidv4(); // Generate a random uuid.
+    this.title = title!==undefined ? title : '';
+    this.href = href!==undefined ? href : '';
+    this.appURL = appURL !== undefined ? appURL : '';
   }
 
 
@@ -42,6 +47,6 @@ export abstract class WidgetBuilder {
     return `${this.builderClassId}/${this.uuid}`;
   }
 
-  public abstract build(): JSX.Element;
+  public abstract build(title?: string, src?: string): JSX.Element;
 
 }
