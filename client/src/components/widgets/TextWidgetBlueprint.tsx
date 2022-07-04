@@ -33,13 +33,13 @@ const TextWidgetBlueprint: React.FC<TextWidgetBlueprintProps> = ({ builder }) =>
 
   const saveTextWidgetConfiguration = useRef(_.debounce((textWidgetConfiguration) => saveWidgetConfiguration(builder.widgetId, textWidgetConfiguration), 1000));
 
-
+//TODO: see if this dependency is the one causing the error
   useEffect(() => {
     const textWidgetConfiguration = loadWidgetConfiguration(builder.widgetId) as TextWidgetConfiguration;
     if (textWidgetConfiguration) {
       setEditorState(EditorState.createWithContent(convertFromRaw(textWidgetConfiguration.rawContentState)));
     }
-  }, []);
+  }, [builder.widgetId, loadWidgetConfiguration]);
 
 
   useEffect(() => {
@@ -63,15 +63,15 @@ const TextWidgetBlueprint: React.FC<TextWidgetBlueprintProps> = ({ builder }) =>
 
 
   return (
-    <WidgetContainer>
+      <WidgetContainer>
 
-      <WidgetTitleBar title={"Text Widget"} onClose={removeWidget}/>
+        <WidgetTitleBar title={"Text Widget"} onClose={removeWidget}/>
 
-      <WidgetBody px={1} py={1}>
-        <Editor editorState={editorState} onChange={setEditorState} handleKeyCommand={handleKeyCommand}/>
-      </WidgetBody>
+        <WidgetBody px={1} py={1}>
+          <Editor editorState={editorState} onChange={setEditorState} handleKeyCommand={handleKeyCommand}/>
+        </WidgetBody>
 
-    </WidgetContainer>
+      </WidgetContainer>
   );
 
 };

@@ -17,7 +17,7 @@ const WidgetToolbar: React.FC = () => {
   const router = useRouter();
   const classes = useStyles();
 
-  const { addNewWidgetToCurrentTab, removeCurrentTab } = useContext(TabManagerContext);
+  const { addNoteWidgetToCurrentTab, removeCurrentTab } = useContext(TabManagerContext);
 
   const { open: openRenameTabDialog, onClose: onCloseRenameTabDialog, onOpen: onOpenRenameTabDialog } = useDrawer();
   const { open: openShareTabDialog, onClose: onCloseShareTabDialog, onOpen: onOpenShareTabDialog } = useDrawer();
@@ -46,9 +46,9 @@ const WidgetToolbar: React.FC = () => {
     router.push("/dashboard");
   };
 
-  const addNewWidget = (builderClassId: string) => {
-    addNewWidgetToCurrentTab(builderClassId);
-    closeAddWidgetMenu();
+  const addNewWidget = (builderClassId?: string) => {
+    addNoteWidgetToCurrentTab();
+    // closeAddWidgetMenu();
   };
 
   const renameTab = () => {
@@ -73,7 +73,11 @@ const WidgetToolbar: React.FC = () => {
         <Toolbar className={classes.toolbar}>
 
           <Box flexGrow={1}>
-
+            {
+                router.pathname === "/dashboard" && (
+                    <Button onClick={()=> addNewWidget()}>New Note</Button>
+                )
+            }
             {
               router.pathname !== "/charts" && (
                 <Button onClick={navigateToChartBrowser}>Chart Browser</Button>
