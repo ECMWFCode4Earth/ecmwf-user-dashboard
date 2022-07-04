@@ -12,7 +12,7 @@ import { builderClassIdToBuilderClassMap } from "../widgetUtils";
 import axios from "axios";
 import { AuthContext } from "./AuthContext";
 import { ChartWidgetConfiguration } from "../../components/widgets/ChartWidgetBlueprint";
-import {GenericWidgetConfiguration} from "../../components/widgets/GenericWidgetBlueprint";
+import {GenericWidgetConfiguration, /*NoteWidgetConfiguration*/} from "../../components/widgets/GenericWidgetBlueprint";
 
 
 /**
@@ -263,25 +263,49 @@ const useTabManager = (initialState: TabManager) => {
     return newWidgetId;
   };
 
-
-  // Special case -  add chart widget to current tab.
-  const addNewChartWidgetToCurrentTab = (chartName: string) => {
+  const addNoteWidgetToCurrentTab = () => {
+    const currentTab = tabManager.activeTab;
+    // const newWidgetConfiguration: GenericWidgetConfiguration = {
+    //   widgetType: 'text-widget',
+    //   widgetTitle: 'Note',
+    //   widgetName: 'Note',
+    //   widgetHref: '',
+    //   widgetAppURL: '',
+    //   // rawContentState: '',
+    // };
+    // Generate new widget id
+    const newWidgetId = WidgetBuilder.generateWidgetId('text-widget');
 
     const newTabManagerState = _.cloneDeep(tabManager);
-
-    const chartWidgetConfiguration: ChartWidgetConfiguration = {
-      chartName: chartName,
-    };
-
-    const currentTab = newTabManagerState.activeTab;
-    const newChartWidgetId = WidgetBuilder.generateWidgetId("chart-widget");
-    newTabManagerState.tabs[currentTab].widgetIds.push(newChartWidgetId);
-    newTabManagerState.widgetConfigurations[newChartWidgetId] = chartWidgetConfiguration;
+    newTabManagerState.tabs[currentTab].widgetIds.push(newWidgetId);
+    // newTabManagerState.widgetConfigurations[newWidgetId] = newWidgetConfiguration;
 
     // Set state
     setTabManager(newTabManagerState);
+    console.log('tabmanager widget configuration')
+    console.log("added note widget to the tabmanager")
+    return newWidgetId;
+  }
 
-  };
+
+  // Special case -  add chart widget to current tab.
+  // const addNewChartWidgetToCurrentTab = (chartName: string) => {
+  //
+  //   const newTabManagerState = _.cloneDeep(tabManager);
+  //
+  //   const chartWidgetConfiguration: ChartWidgetConfiguration = {
+  //     chartName: chartName,
+  //   };
+  //
+  //   const currentTab = newTabManagerState.activeTab;
+  //   const newChartWidgetId = WidgetBuilder.generateWidgetId("chart-widget");
+  //   newTabManagerState.tabs[currentTab].widgetIds.push(newChartWidgetId);
+  //   newTabManagerState.widgetConfigurations[newChartWidgetId] = chartWidgetConfiguration;
+  //
+  //   // Set state
+  //   setTabManager(newTabManagerState);
+  //
+  // };
 
   const addNewWidgetFromBrowserToCurrentTab = (widgetType: string, widgetTitle:string, widgetName: string, widgetHref: string, widgetAppURL: string) => {
     console.log(widgetAppURL)
@@ -322,7 +346,9 @@ const useTabManager = (initialState: TabManager) => {
     // Remove widget configuration if any
     if (widgetIdToRemove in newTabManagerState.widgetConfigurations) {
       delete newTabManagerState.widgetConfigurations[widgetIdToRemove];
+      console.log("newTabManagerState after deleting: ",newTabManagerState)
     }
+
 
     // Set state
     setTabManager(newTabManagerState);
@@ -384,9 +410,9 @@ const useTabManager = (initialState: TabManager) => {
       combinedId.push({
         builderClassID : WidgetBuilder.splitWidgetId(widgetId).builderClassId,
         uuid : WidgetBuilder.splitWidgetId(widgetId).uuid,
-        title:  tabManager.widgetConfigurations[widgetId].widgetTitle,
-        href: tabManager.widgetConfigurations[widgetId].widgetHref,
-        appUrl : tabManager.widgetConfigurations[widgetId].widgetAppURL
+        title:  tabManager.widgetConfigurations[widgetId] !== undefined ? tabManager.widgetConfigurations[widgetId].widgetTitle : '',
+        href: tabManager.widgetConfigurations[widgetId] !== undefined ? tabManager.widgetConfigurations[widgetId].widgetHref : '',
+        appUrl : tabManager.widgetConfigurations[widgetId] !== undefined ? tabManager.widgetConfigurations[widgetId].widgetAppURL : ''
       })
     })
     // console.log("<--------------combinedID---------->")
@@ -450,7 +476,8 @@ const useTabManager = (initialState: TabManager) => {
     loadLayoutsForCurrentTab,
     saveLayoutsOfCurrentTab,
     addNewWidgetToCurrentTab,
-    addNewChartWidgetToCurrentTab,
+    addNoteWidgetToCurrentTab,
+    // addNewChartWidgetToCurrentTab,
     addNewWidgetFromBrowserToCurrentTab,
     removeWidgetFromCurrentTab,
     saveWidgetConfiguration,
@@ -464,7 +491,6 @@ const useTabManager = (initialState: TabManager) => {
 
 const TabManagerContext = createContext<ReturnType<typeof useTabManager>>(
   {
-
     ready: false,
     tabManager: initialTabManagerState,
     clearTabManager: async () => {},
@@ -477,7 +503,8 @@ const TabManagerContext = createContext<ReturnType<typeof useTabManager>>(
     loadLayoutsForCurrentTab: () => ({}),
     saveLayoutsOfCurrentTab: () => {},
     addNewWidgetToCurrentTab: () => "",
-    addNewChartWidgetToCurrentTab: () => {},
+    addNoteWidgetToCurrentTab: () => "",
+    // addNewChartWidgetToCurrentTab: () => {},
     removeWidgetFromCurrentTab: () => {},
     saveWidgetConfiguration: () => {},
     addNewWidgetFromBrowserToCurrentTab: () => {},
