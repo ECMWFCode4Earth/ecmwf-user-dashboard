@@ -18,6 +18,15 @@ export interface GenericWidgetConfiguration {
     widgetHref: string;
     widgetAppURL: string;
 }
+
+// export interface NoteWidgetConfiguration{
+//     widgetName: string;
+//     widgetType: string;
+//     widgetTitle: string;
+//     widgetHref: string;
+//     widgetAppURL: string;
+//     rawContentState: string;
+// }
 //
 //
 // interface GenericWidgetBuilderProps {
