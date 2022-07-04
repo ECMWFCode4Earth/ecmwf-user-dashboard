@@ -21,7 +21,7 @@ export const builderClassIdToBuilderClassMap = {
     name: "Text Widget",
     BuilderClass: TextWidgetBuilder
   },
-  "chart-widget": {
+  "iframe-widget": {
     name: "Chart Widget",
     BuilderClass: ChartWidgetBuilder
   },
