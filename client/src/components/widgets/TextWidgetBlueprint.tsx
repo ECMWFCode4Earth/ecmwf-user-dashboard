@@ -1,80 +1,122 @@
-import React, { useContext, useEffect, useRef } from "react";
-import { DraftEditorCommand, Editor, EditorState, RichUtils, convertFromRaw, convertToRaw } from "draft-js";
-import "draft-js/dist/Draft.css";
+import React, { useContext, useEffect, useState } from "react";
+import {
+    IconButton,
+    makeStyles,
+} from "@material-ui/core";
+import ExitToAppIcon from "@material-ui/icons/ExitToApp";
+import axios from "axios";
 
 import WidgetContainer from "../common/WidgetContainer";
 import WidgetTitleBar from "../common/WidgetTitleBar";
 import WidgetBody from "../common/WidgetBody";
+import WidgetLoading from "../common/WidgetLoading";
+import WidgetError from "../common/WidgetError";
 
-import { TextWidgetBuilder } from "../../models/widgetBuilders/TextWidgetBuilder";
 import { TabManagerContext } from "../../utils/contexts/TabManagerContext";
-import _ from "lodash";
+import {TextWidgetBuilder} from "../../models/widgetBuilders/TextWidgetBuilder";
 
 
-interface TextWidgetConfiguration {
-  rawContentState: any;
+/**
+ * Structure of incoming data from the backend.
+ * */
+// TODO: modify according to the markdown conversion needs
+interface TableDataDetails {
+    Title: string,
+    Status: string,
 }
 
 
-interface TextWidgetBlueprintProps {
-  builder: TextWidgetBuilder;
+interface TextWidgetProps {
+    builder: TextWidgetBuilder;
+    title: string;
+    src: string;
+    appURL: string;
 }
 
 
-const TextWidgetBlueprint: React.FC<TextWidgetBlueprintProps> = ({ builder }) => {
+const TextWidgetBlueprint: React.FC<TextWidgetProps> = ({ builder, title, src, appURL }) => {
+
+    const classes = useStyles();
+    const { removeWidgetFromCurrentTab } = useContext(TabManagerContext);
+
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
+    const [tableData, setTableData] = useState<any[]>([]);
 
 
-  const {
-    removeWidgetFromCurrentTab,
-    saveWidgetConfiguration,
-    loadWidgetConfiguration
-  } = useContext(TabManagerContext);
-  const [editorState, setEditorState] = React.useState(() => EditorState.createEmpty());
-
-  const saveTextWidgetConfiguration = useRef(_.debounce((textWidgetConfiguration) => saveWidgetConfiguration(builder.widgetId, textWidgetConfiguration), 1000));
-
-//TODO: see if this dependency is the one causing the error
-  useEffect(() => {
-    const textWidgetConfiguration = loadWidgetConfiguration(builder.widgetId) as TextWidgetConfiguration;
-    if (textWidgetConfiguration) {
-      setEditorState(EditorState.createWithContent(convertFromRaw(textWidgetConfiguration.rawContentState)));
-    }
-  }, [builder.widgetId, loadWidgetConfiguration]);
-
-
-  useEffect(() => {
-    const textWidgetConfiguration: TextWidgetConfiguration = {
-      rawContentState: convertToRaw(editorState.getCurrentContent()),
+    useEffect(() => {
+        fetchQuery().catch((err) => setError("An error occurred. Failed to fetch data from backend server."));
+    }, []);
+    console.log("received URL: ", appURL)
+    const fetchQuery = async () => {
+        console.log(src)
+        const data = (await axios.get(`${src}`));
+        console.log("from TableWidgetBlueprint")
+        console.log(data)
+        if (data.status === 200) {
+            console.log(Object.keys(data.data.data[0]));
+            setTableData(data.data.data);
+        } else {
+            console.log("query error")
+            throw new Error("Backend query error.");
+        }
+        setLoading(false);
     };
-    saveTextWidgetConfiguration.current(textWidgetConfiguration);
-  }, [editorState]);
+
+    const removeWidget = () => removeWidgetFromCurrentTab(builder.widgetId);
+
+    // const countOk = () => tableData.reduce((ok, data) => data.Status === "Ok" ? ok + 1 : ok, 0);
 
 
-  const removeWidget = () => removeWidgetFromCurrentTab(builder.widgetId);
+    if (error) return <WidgetError message={error} onClose={removeWidget}/>;
 
-  const handleKeyCommand = (command: DraftEditorCommand, editorState: EditorState) => {
-    const newState = RichUtils.handleKeyCommand(editorState, command);
-    if (newState) {
-      setEditorState(newState);
-      return "handled";
-    }
-    return "not-handled";
-  };
+    if (loading) return <WidgetLoading onClose={removeWidget}/>;
 
+    return (
+        <WidgetContainer>
+            <WidgetTitleBar title={title} onClose={removeWidget}>
+                <IconButton href={appURL} target={"_blank"} color={"inherit"} size={"small"}>
+                    <ExitToAppIcon fontSize={"small"}/>
+                </IconButton>
+            </WidgetTitleBar>
 
-  return (
-      <WidgetContainer>
+            <WidgetBody>
 
-        <WidgetTitleBar title={"Text Widget"} onClose={removeWidget}/>
+                <div>
+                    {tableData}
+                </div>
 
-        <WidgetBody px={1} py={1}>
-          <Editor editorState={editorState} onChange={setEditorState} handleKeyCommand={handleKeyCommand}/>
-        </WidgetBody>
+            </WidgetBody>
 
-      </WidgetContainer>
-  );
+        </WidgetContainer>
+    );
 
 };
+
+
+const useStyles = makeStyles(
+    (theme) => (
+        {
+            cellOk: {
+                color: theme.palette.success.dark,
+                fontWeight: "bold"
+            },
+            cellNotOk: {
+                color: theme.palette.error.main,
+            },
+            rowOk: {
+                cursor: "pointer",
+            },
+            rowNotOk: {
+                // backgroundColor: theme.palette.error.light,
+                cursor: "pointer",
+                "&:hover": {
+                    // backgroundColor: theme.palette.error.main,
+                }
+            }
+        }
+    )
+);
 
 
 export default TextWidgetBlueprint;
