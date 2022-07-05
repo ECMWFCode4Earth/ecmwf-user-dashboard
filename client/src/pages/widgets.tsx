@@ -64,7 +64,7 @@ export default function Widgets() {
             name: widget.name,
             thumbnail: !("thumbnail" in widget) ? defaultLogo : widget.thumbnail,
             href: widget.href,
-            type: widget.type,
+            type: widget["widget-type"],
             appURL: !("application_url" in widget) ? '#' : widget.application_url
         }));
         await localStore.setItem(kLocalStoreKey.WIDGET_DETAILS, widgetDetails);
