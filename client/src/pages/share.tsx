@@ -9,6 +9,7 @@ import { AuthContext } from "../utils/contexts/AuthContext";
 import TabPanel from "../components/TabPanel";
 import { TabManagerContext } from "../utils/contexts/TabManagerContext";
 import SharedWidgetCanvas from "../components/SharedWidgetCanvas";
+import {GenericWidgetConfiguration} from "../components/widgets/GenericWidgetBlueprint";
 
 
 const initialTabState = {
@@ -17,7 +18,8 @@ const initialTabState = {
   shared: false,
   sharedWithUsers: [],
   widgetIds: [],
-  layouts: {}
+  layouts: {},
+  widgetConfigurations: {}
 };
 
 
@@ -25,13 +27,13 @@ export default function Share() {
 
   const router = useRouter();
   const { user } = useContext(AuthContext);
-  const { buildAllWidgetsOfSharedTab } = useContext(TabManagerContext);
+  // const { buildAllWidgetsOfSharedTab } = useContext(TabManagerContext);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<Tab>(initialTabState);
-  const [widgetConfigurations, setWidgetConfigurations] = useState<Record<string, Record<string, any>>>({});
+  const [widgetConfigurations, setWidgetConfigurations] = useState<GenericWidgetConfiguration>({} as GenericWidgetConfiguration);
 
-  const memoizedBuildAllWidgetsOfSharedTab = useMemo(() => buildAllWidgetsOfSharedTab(tab, widgetConfigurations), [tab, widgetConfigurations]);
+  // const memoizedBuildAllWidgetsOfSharedTab = useMemo(() => buildAllWidgetsOfSharedTab(tab, widgetConfigurations), [tab, widgetConfigurations]);
 
 
   useEffect(() => {
@@ -57,7 +59,7 @@ export default function Share() {
       {error ? { error } : (
         <TabPanel index={0} value={0}>
           <SharedWidgetCanvas layouts={tab.layouts}>
-            {memoizedBuildAllWidgetsOfSharedTab}
+            {/*{memoizedBuildAllWidgetsOfSharedTab}*/}
           </SharedWidgetCanvas>
         </TabPanel>
       )}
