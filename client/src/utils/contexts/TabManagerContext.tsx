@@ -34,10 +34,10 @@ const initialTabManagerState: TabManager = {
       shared: false,
       sharedWithUsers: [],
       widgetIds: [],
-      layouts: {}
+      layouts: {},
+      widgetConfigurations : {}
     }
-  ],
-  widgetConfigurations: {}
+  ]
 };
 
 
@@ -154,7 +154,8 @@ const useTabManager = (initialState: TabManager) => {
       shared: false,
       sharedWithUsers: [],
       widgetIds: [],
-      layouts: {}
+      layouts: {},
+      widgetConfigurations: {}
     };
 
     const newTabManagerState = _.cloneDeep(tabManager);
@@ -274,7 +275,7 @@ const useTabManager = (initialState: TabManager) => {
     //   // rawContentState: '',
     // };
     // Generate new widget id
-    const newWidgetId = WidgetBuilder.generateWidgetId('text-widget');
+    const newWidgetId = WidgetBuilder.generateWidgetId('note-widget');
 
     const newTabManagerState = _.cloneDeep(tabManager);
     newTabManagerState.tabs[currentTab].widgetIds.push(newWidgetId);
@@ -308,27 +309,26 @@ const useTabManager = (initialState: TabManager) => {
   // };
 
   const addNewWidgetFromBrowserToCurrentTab = (widgetType: string, widgetTitle:string, widgetName: string, widgetHref: string, widgetAppURL: string) => {
-    console.log(widgetAppURL)
     const newTabManagerState = _.cloneDeep(tabManager);
-
+    console.log("adding new widget: ", widgetType)
+    console.log('-----------cloning---------')
+    const currentTab = newTabManagerState.activeTab;
+    //TODO: builder class is being kept as the widgetType
+    const newWidgetId = WidgetBuilder.generateWidgetId(widgetType);
+    console.log("newWidgetId: ", newWidgetId)
+    console.log('-----------newWidgetId---------')
     const newWidgetConfiguration: GenericWidgetConfiguration = {
       widgetType: widgetType,
       widgetTitle: widgetTitle,
       widgetName: widgetName,
       widgetHref: widgetHref,
       widgetAppURL: widgetAppURL
-    };
-    console.log('-----------cloning---------')
-    const currentTab = newTabManagerState.activeTab;
-    //TODO: builder class is being kept as the widgetType
-    const newWidgetId = WidgetBuilder.generateWidgetId(widgetType);
-    console.log('-----------newWidgetId---------')
+  };
+    console.log("newWidgetConfiguration: ", newWidgetConfiguration )
     newTabManagerState.tabs[currentTab].widgetIds.push(newWidgetId);
-    newTabManagerState.widgetConfigurations[newWidgetId] = newWidgetConfiguration;
+    newTabManagerState.tabs[currentTab].widgetConfigurations[newWidgetId] = (newWidgetConfiguration);
     // Set state
-    console.log('-----------setstate---------')
     setTabManager(newTabManagerState);
-    console.log('-----------setTabManager---------')
   };
 
 
@@ -344,11 +344,12 @@ const useTabManager = (initialState: TabManager) => {
     newTabManagerState.tabs[activeTab].widgetIds = widgetIdsOfCurrentTab.filter((widgetId) => widgetId !== widgetIdToRemove);
 
     // Remove widget configuration if any
-    if (widgetIdToRemove in newTabManagerState.widgetConfigurations) {
-      delete newTabManagerState.widgetConfigurations[widgetIdToRemove];
-      console.log("newTabManagerState after deleting: ",newTabManagerState)
-    }
+    // if (widgetIdToRemove in newTabManagerState.widgetConfigurations) {
+    //   delete newTabManagerState.widgetConfigurations[widgetIdToRemove];
+    //   console.log("newTabManagerState after deleting: ",newTabManagerState)
+    // }
 
+    delete newTabManagerState.tabs[activeTab].widgetConfigurations[widgetIdToRemove]
 
     // Set state
     setTabManager(newTabManagerState);
@@ -356,33 +357,38 @@ const useTabManager = (initialState: TabManager) => {
 
 
   // Save widget configuration.
-  const saveWidgetConfiguration = (widgetId: string, widgetConfiguration: Record<string, any>) => {
+  const saveWidgetConfiguration = (widgetId: string, widgetConfiguration: GenericWidgetConfiguration) => {
     const newTabManagerState = _.cloneDeep(tabManager);
-    newTabManagerState.widgetConfigurations[widgetId] = widgetConfiguration;
+    const activeTab = newTabManagerState.activeTab;
+    newTabManagerState.tabs[activeTab].widgetConfigurations[widgetId] = widgetConfiguration;
     setTabManager(newTabManagerState);
   };
 
 
   // Load widget configuration.
   const loadWidgetConfiguration = (widgetId: string) => {
-    return tabManager.widgetConfigurations[widgetId];
+    const activeTab = tabManager.activeTab;
+    return tabManager.tabs[activeTab].widgetConfigurations[widgetId];
   };
 
 
   // Clean up configuration.
-  const cleanUpWidgetConfiguration = () => {
-    const newTabManagerState = _.cloneDeep(tabManager);
-    const widgetConfigurations = newTabManagerState.widgetConfigurations;
-    const allWidgetIds = newTabManagerState.tabs.map(tab => tab.widgetIds).reduce(((previousValue, currentValue) => previousValue.concat(currentValue)), []);
-    const newWidgetConfigurations: Record<string, Record<string, any>> = {};
-    allWidgetIds.forEach((widgetId) => {
-      if (widgetId in widgetConfigurations) {
-        newWidgetConfigurations[widgetId] = widgetConfigurations[widgetId];
-      }
-    });
-    newTabManagerState.widgetConfigurations = newWidgetConfigurations;
-    setTabManager(newTabManagerState);
-  };
+  //TODO: see if it is useful
+
+  // const cleanUpWidgetConfiguration = () => {
+  //   const newTabManagerState = _.cloneDeep(tabManager);
+  //   const activeTab = newTabManagerState.activeTab
+  //   const widgetConfigurations = newTabManagerState.tabs[activeTab].widgetConfigurations;
+  //   const allWidgetIds = newTabManagerState.tabs.map(tab => tab.widgetIds).reduce(((previousValue, currentValue) => previousValue.concat(currentValue)), []);
+  //   const newWidgetConfigurations: GenericWidgetConfiguration = {} as GenericWidgetConfiguration;
+  //   allWidgetIds.forEach((widgetId) => {
+  //     if (widgetId in widgetConfigurations) {
+  //       newWidgetConfigurations[widgetId] = widgetConfigurations[widgetId];
+  //     }
+  //   });
+  //   newTabManagerState.tabs[activeTab].widgetConfigurations = newWidgetConfigurations;
+  //   setTabManager(newTabManagerState);
+  // };
 
 
   // Build widgets from widgets ids.
@@ -410,9 +416,9 @@ const useTabManager = (initialState: TabManager) => {
       combinedId.push({
         builderClassID : WidgetBuilder.splitWidgetId(widgetId).builderClassId,
         uuid : WidgetBuilder.splitWidgetId(widgetId).uuid,
-        title:  tabManager.widgetConfigurations[widgetId] !== undefined ? tabManager.widgetConfigurations[widgetId].widgetTitle : '',
-        href: tabManager.widgetConfigurations[widgetId] !== undefined ? tabManager.widgetConfigurations[widgetId].widgetHref : '',
-        appUrl : tabManager.widgetConfigurations[widgetId] !== undefined ? tabManager.widgetConfigurations[widgetId].widgetAppURL : ''
+        title:  tabManager.tabs[currentTab].widgetConfigurations[widgetId] !== undefined ? tabManager.tabs[currentTab].widgetConfigurations[widgetId].widgetTitle : '',
+        href: tabManager.tabs[currentTab].widgetConfigurations[widgetId] !== undefined ? tabManager.tabs[currentTab].widgetConfigurations[widgetId].widgetHref : '',
+        appUrl : tabManager.tabs[currentTab].widgetConfigurations[widgetId] !== undefined ? tabManager.tabs[currentTab].widgetConfigurations[widgetId].widgetAppURL : ''
       })
     })
     // console.log("<--------------combinedID---------->")
@@ -443,20 +449,24 @@ const useTabManager = (initialState: TabManager) => {
 
 
   // Build widgets for shared tab.
-  const buildAllWidgetsOfSharedTab = (tab: Tab, widgetConfigurations: Record<string, Record<string, any>>) => {
-    const newTabManagerState = _.cloneDeep(tabManager);
-    newTabManagerState.widgetConfigurations = { ...widgetConfigurations, ...newTabManagerState.widgetConfigurations };
 
-    setTabManager(newTabManagerState); // Set state
+  //TODO: See later if it is possible to work on this feature
 
-    return tab.widgetIds
-      .map((widgetId) => WidgetBuilder.splitWidgetId(widgetId))
-      .filter(({ builderClassId }) => builderClassId in builderClassIdToBuilderClassMap)
-      .map(({ builderClassId, uuid }) => {
-        return (new builderClassIdToBuilderClassMap[builderClassId as keyof typeof builderClassIdToBuilderClassMap].BuilderClass(uuid));
-      })
-      .map((widgetBuilder) => widgetBuilder.build());
-  };
+  // const buildAllWidgetsOfSharedTab = (tab: Tab, widgetConfigurations: GenericWidgetConfiguration) => {
+  //   const newTabManagerState = _.cloneDeep(tabManager);
+  //   const activeTab = newTabManagerState.activeTab
+  //   newTabManagerState.tabs[activeTab].widgetConfigurations[widgetId] = { ...widgetConfigurations, ...newTabManagerState.tabs[activeTab].widgetConfigurations };
+  //
+  //   setTabManager(newTabManagerState); // Set state
+  //
+  //   return tab.widgetIds
+  //     .map((widgetId) => WidgetBuilder.splitWidgetId(widgetId))
+  //     .filter(({ builderClassId }) => builderClassId in builderClassIdToBuilderClassMap)
+  //     .map(({ builderClassId, uuid }) => {
+  //       return (new builderClassIdToBuilderClassMap[builderClassId as keyof typeof builderClassIdToBuilderClassMap].BuilderClass(uuid));
+  //     })
+  //     .map((widgetBuilder) => widgetBuilder.build());
+  // };
 
 
   /*
@@ -483,7 +493,7 @@ const useTabManager = (initialState: TabManager) => {
     saveWidgetConfiguration,
     loadWidgetConfiguration,
     buildAllWidgetsOfCurrentTab,
-    buildAllWidgetsOfSharedTab,
+    // buildAllWidgetsOfSharedTab,
   };
 
 };
@@ -508,9 +518,9 @@ const TabManagerContext = createContext<ReturnType<typeof useTabManager>>(
     removeWidgetFromCurrentTab: () => {},
     saveWidgetConfiguration: () => {},
     addNewWidgetFromBrowserToCurrentTab: () => {},
-    loadWidgetConfiguration: () => ({}),
+    loadWidgetConfiguration: () => ({} as GenericWidgetConfiguration),
     buildAllWidgetsOfCurrentTab: () => [],
-    buildAllWidgetsOfSharedTab: () => []
+    // buildAllWidgetsOfSharedTab: () => []
   }
 );
 
