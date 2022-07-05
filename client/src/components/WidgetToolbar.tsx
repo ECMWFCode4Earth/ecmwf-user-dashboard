@@ -34,9 +34,9 @@ const WidgetToolbar: React.FC = () => {
 
   const closeTabSettingsMenu = () => setAnchorTabSettingsMenu(null);
 
-  const navigateToChartBrowser = () => {
-    router.push("/charts");
-  };
+  // const navigateToChartBrowser = () => {
+  //   router.push("/charts");
+  // };
 
   const navigateToWidgetBrowser = () => {
     router.push("/widgets");
@@ -78,11 +78,11 @@ const WidgetToolbar: React.FC = () => {
                     <Button onClick={()=> addNewWidget()}>New Note</Button>
                 )
             }
-            {
-              router.pathname !== "/charts" && (
-                <Button onClick={navigateToChartBrowser}>Chart Browser</Button>
-              )
-            }
+            {/*{*/}
+            {/*  router.pathname !== "/charts" && (*/}
+            {/*    <Button onClick={navigateToChartBrowser}>Chart Browser</Button>*/}
+            {/*  )*/}
+            {/*}*/}
             {
                 router.pathname !== "/widgets" && (
                     <Button onClick={navigateToWidgetBrowser}>Widget Browser</Button>
