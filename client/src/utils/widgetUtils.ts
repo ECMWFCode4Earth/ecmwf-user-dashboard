@@ -1,4 +1,4 @@
-import { TextWidgetBuilder } from "../models/widgetBuilders/TextWidgetBuilder";
+import {NoteWidgetBuilder} from "../models/widgetBuilders/NoteWidgetBuilder";
 import { ChartWidgetBuilder } from "../models/widgetBuilders/ChartWidgetBuilder";
 import { EventsWidgetBuilder } from "../models/widgetBuilders/EventsWidgetBuilder";
 import { MARSActivityWidgetBuilder } from "../models/widgetBuilders/MARSActivityWidgetBuilder";
@@ -6,6 +6,7 @@ import { SatelliteAlertsWidgetBuilder } from "../models/widgetBuilders/Satellite
 import { ServiceStatusWidgetBuilder } from "../models/widgetBuilders/ServiceStatusWidgetBuilder";
 import { WebAPIActivityWidgetBuilder } from "../models/widgetBuilders/WebAPIActivityWidgetBuilder";
 import {TableWidgetBuilder} from "../models/widgetBuilders/TableWidgetBuilder";
+import {TextWidgetBuilder} from "../models/widgetBuilders/TextWidgetBuilder";
 
 
 /**
@@ -17,6 +18,10 @@ import {TableWidgetBuilder} from "../models/widgetBuilders/TableWidgetBuilder";
  * }
  * */
 export const builderClassIdToBuilderClassMap = {
+  "note-widget": {
+    name: "Note Widget",
+    BuilderClass: NoteWidgetBuilder
+  },
   "text-widget": {
     name: "Text Widget",
     BuilderClass: TextWidgetBuilder
