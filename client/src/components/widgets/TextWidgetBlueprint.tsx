@@ -14,7 +14,8 @@ import WidgetError from "../common/WidgetError";
 
 import { TabManagerContext } from "../../utils/contexts/TabManagerContext";
 import {TextWidgetBuilder} from "../../models/widgetBuilders/TextWidgetBuilder";
-
+import Markdown from 'markdown-to-jsx'
+import {RefreshRounded} from "@material-ui/icons";
 
 /**
  * Structure of incoming data from the backend.
@@ -41,13 +42,10 @@ const TextWidgetBlueprint: React.FC<TextWidgetProps> = ({ builder, title, src, a
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
-    const [tableData, setTableData] = useState<any[]>([]);
+    const [tableData, setTableData] = useState<string>('');
+    const [refresh, setRefresh] = useState<boolean>(false);
 
-
-    useEffect(() => {
-        fetchQuery().catch((err) => setError("An error occurred. Failed to fetch data from backend server."));
-    }, []);
-    console.log("received URL: ", appURL)
+/*
     const fetchQuery = async () => {
         console.log(src)
         const data = (await axios.get(`${src}`));
@@ -62,6 +60,26 @@ const TextWidgetBlueprint: React.FC<TextWidgetProps> = ({ builder, title, src, a
         }
         setLoading(false);
     };
+*/
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const data = (await axios.get(`${src}`));
+            console.log("from TableWidgetBlueprint")
+            console.log(data)
+            if (data.status === 200) {
+                console.log(Object.keys(data.data.data[0]));
+                setTableData(data.data.data);
+            } else {
+                console.log("query error")
+                throw new Error("Backend query error.");
+            }
+            setLoading(false);
+        }
+        fetchData().catch((err) => setError("An error occurred. Failed to fetch data from backend server."));
+    }, [refresh]);
+
+
 
     const removeWidget = () => removeWidgetFromCurrentTab(builder.widgetId);
 
@@ -78,12 +96,18 @@ const TextWidgetBlueprint: React.FC<TextWidgetProps> = ({ builder, title, src, a
                 <IconButton href={appURL} target={"_blank"} color={"inherit"} size={"small"}>
                     <ExitToAppIcon fontSize={"small"}/>
                 </IconButton>
+                <IconButton style={{color:"white"}} onClick={()=> {
+                    setRefresh(!refresh)
+                    setLoading(true)
+                }}>
+                    <RefreshRounded></RefreshRounded>
+                </IconButton>
             </WidgetTitleBar>
 
             <WidgetBody>
 
-                <div>
-                    {tableData}
+                <div style={{margin: "auto", padding:"1em"}}>
+                    <Markdown>{tableData}</Markdown>
                 </div>
 
             </WidgetBody>

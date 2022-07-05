@@ -21,6 +21,7 @@ import { kStore } from "../../utils/constants";
 import { TabManagerContext } from "../../utils/contexts/TabManagerContext";
 import {TableWidgetBuilder} from "../../models/widgetBuilders/TableWidgetBuilder";
 import {log} from "util";
+import {RefreshRounded} from "@material-ui/icons";
 
 
 /**
@@ -48,12 +49,13 @@ const TableDataWidgetBlueprint: React.FC<TableDataWidgetProps> = ({ builder, tit
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [tableData, setTableData] = useState<any[]>([]);
+    const [refresh, setRefresh] = useState<boolean>(false);
 
 
-    useEffect(() => {
+/*    useEffect(() => {
         fetchQuery().catch((err) => setError("An error occurred. Failed to fetch data from backend server."));
-    }, []);
-    console.log("received URL: ", appURL)
+    }, [refresh]);
+
     const fetchQuery = async () => {
         console.log(src)
         const data = (await axios.get(`${src}`));
@@ -67,7 +69,25 @@ const TableDataWidgetBlueprint: React.FC<TableDataWidgetProps> = ({ builder, tit
             throw new Error("Backend query error.");
         }
         setLoading(false);
-    };
+    };*/
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const data = (await axios.get(`${src}`));
+            console.log("from TableWidgetBlueprint")
+            console.log(data)
+            if (data.status === 200) {
+                console.log(Object.keys(data.data.data[0]));
+                setTableData(data.data.data);
+            } else {
+                console.log("query error")
+                throw new Error("Backend query error.");
+            }
+            setLoading(false);
+        }
+        fetchData().catch((err) => setError("An error occurred. Failed to fetch data from backend server."));
+    }, [refresh]);
+
 
     const removeWidget = () => removeWidgetFromCurrentTab(builder.widgetId);
 
@@ -83,6 +103,12 @@ const TableDataWidgetBlueprint: React.FC<TableDataWidgetProps> = ({ builder, tit
             <WidgetTitleBar title={title} onClose={removeWidget}>
                 <IconButton href={appURL} target={"_blank"} color={"inherit"} size={"small"}>
                     <ExitToAppIcon fontSize={"small"}/>
+                </IconButton>
+                <IconButton style={{color:"white"}} onClick={()=> {
+                    setRefresh(!refresh)
+                    setLoading(true)
+                }}>
+                    <RefreshRounded></RefreshRounded>
                 </IconButton>
             </WidgetTitleBar>
 
