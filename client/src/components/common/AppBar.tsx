@@ -21,9 +21,11 @@ const AppBar: React.FC = () => {
       <Toolbar variant={"dense"}>
         <Box alignItems={"center"} display={"flex"} flexGrow={1}>
           <Image layout={"fixed"} src={"/ecmwf-logo.png"} width={140} height={24}/>
-          <Typography variant={"h6"} className={classes.title}>
-            User Dashboard
-          </Typography>
+          <Button onClick={()=>handleNavigation("/")} className={classes.title}>
+              <Typography  variant={"h6"} className={classes.title}>
+                  User Dashboard
+              </Typography>
+          </Button>
         </Box>
 
 
@@ -55,6 +57,7 @@ const useStyles = makeStyles(
   (theme) => (
     {
       title: {
+          color: "white",
         marginLeft: theme.spacing(2),
       },
     }
