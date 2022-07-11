@@ -89,7 +89,7 @@ const TableDataWidgetBlueprint: React.FC<TableDataWidgetProps> = ({ builder, tit
             console.log("cols: ", cols)
 
             const colHeadTemp : string[] = [];
-            const styleTemp: Record<string, string> = {};
+            const styleTemp: Record<string,  string> = {};
             const tempObj = [];
 
             //cols is an array
@@ -105,9 +105,17 @@ const TableDataWidgetBlueprint: React.FC<TableDataWidgetProps> = ({ builder, tit
             // })
             //TODO: see if I can make it more column specific
             tempObj.forEach((somearr:any) => {
-                somearr.forEach((nested:any)=>{
-                    styleTemp[nested[0]] = nested[1].colour === undefined ? 'black' : nested[1].colour
-                })
+                for (let i=0; i<somearr.length; i++){
+                    const tempRecord : Record<number, string> = {};
+                    tempRecord[i] = somearr[i][1].colour === undefined ? 'white' : somearr[i][1].colour
+                    styleTemp[somearr[i][0]] = tempRecord[i]//somearr[i][1].colour === undefined ? {i : 'black'} : {i: somearr[i][1].colour as string};
+                    console.log("temprecord: ", tempRecord[i])
+                }
+
+                /*somearr.map((nested:any, index:number)=>{
+                    console.log("nested: ", nested, "index: ", index )
+                    styleTemp[nested[0]] = nested[1].colour === undefined ? {index:'black'} : {index: nested[1].colour as string}
+                })*/
                 // styleTemp[somearr[0]] = styleTemp[somearr[1]?.color]
                 // console.log("key: ", somearr[0], " val: ", styleTemp[somearr[0]])
             })
@@ -186,8 +194,10 @@ const TableDataWidgetBlueprint: React.FC<TableDataWidgetProps> = ({ builder, tit
                             (data, index) => {
                                 return (
                                     <TableRow key={index}>
-                                        {data.map((key:any)=>{
-                                            return (<TableCell key={key} style={{color:style[key]}}>
+                                        {data.map((key:any, index:number)=>{
+                                            //style[key] !== undefined ? style[key][index] : 'black'
+                                            // console.log("style[key][index]: ", style[key][index])
+                                            return (<TableCell key={key} style={{background:style[key]!== undefined ? style[key] : 'white', color: "black"}}>
                                                 {key}
                                             </TableCell>)
                                         })}
