@@ -109,7 +109,7 @@ export const openChartsProductsController: RequestHandler = async (req, res, nex
 export const getAllWidgetsController: RequestHandler = async (req, res, next) => {
   try{
     const data = (await axios.get("https://apps-dev.ecmwf.int/webapps/opencharts-api/v1/soc/user-dashboard/GetWidgets/")).data;
-    res.status(200).json({success:true, message:"success", data: data});
+    res.status(200).json({success:true, message:"success", data: data.data});
   } catch (err){
     next(err);
   }
