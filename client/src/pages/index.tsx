@@ -13,7 +13,7 @@ export default function Home() {
 
           <Typography variant={"h3"} align={"center"}>Welcome to ECMWF User Dashboard</Typography>
           <Typography variant={"h6"} align={"center"}>
-            This project was developed as part of <a href={"https://esowc.ecmwf.int"}>ESoWC 2021</a>
+            This project is being developed as part of <a href={"https://esowc.ecmwf.int"}>ESoWC 2021 and 2022</a>
           </Typography>
 
           <Box mt={4}>
