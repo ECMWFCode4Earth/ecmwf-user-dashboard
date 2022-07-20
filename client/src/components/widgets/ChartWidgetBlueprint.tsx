@@ -9,6 +9,8 @@ import { ChartWidgetBuilder } from "../../models/widgetBuilders/ChartWidgetBuild
 
 import { TabManagerContext } from "../../utils/contexts/TabManagerContext";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
+import axios from "axios";
+import {log} from "util";
 
 
 export interface ChartWidgetConfiguration {
@@ -29,7 +31,7 @@ const ChartWidgetBlueprint: React.FC<ChartWidgetBlueprintProps> = ({ builder , t
   const classes = useStyles();
   const { removeWidgetFromCurrentTab, loadWidgetConfiguration } = useContext(TabManagerContext);
   const [chartName, setChartName] = useState("");
-
+  const [chartSrc, setChartSrc] = useState(""); 
 
   useEffect(() => {
     console.log("widgetConfiguration: ", loadWidgetConfiguration(builder.widgetId))
@@ -37,13 +39,38 @@ const ChartWidgetBlueprint: React.FC<ChartWidgetBlueprintProps> = ({ builder , t
     if (chartWidgetConfiguration) {
       setChartName(chartWidgetConfiguration.widgetTitle);
     }
+    const getSrc = async () => {
+      console.log("src: ", src)
+      await  axios.get(src).then(data => {
+            console.log("data from src: ", data)
+            setChartSrc(data.data.data.src);
+          }
+      ).catch(err => console.log(err))
+    }
+    getSrc()
   }, []);
 
 
-  const chartSrc = src;
+  // useEffect(() => {
+  //   return () => {
+  //     const getSrc = async () => {
+  //       console.log("src: ", src)
+  //       await  axios.get(src).then(data => {
+  //             console.log("data from src: ", data)
+  //             // setChartSrc(data.data.data.src);
+  //           }
+  //       )
+  //     }
+  //     getSrc().catch(err => console.log(err))
+  //   };
+  // }, []);
+
+  console.log("chartSrc: ", chartSrc)
+
 
   const removeWidget = () => removeWidgetFromCurrentTab(builder.widgetId);
 
+  // @ts-ignore
   return (
     <WidgetContainer>
 
@@ -59,10 +86,11 @@ const ChartWidgetBlueprint: React.FC<ChartWidgetBlueprintProps> = ({ builder , t
             <iframe
               width={"100%"}
               height={"100%"}
-              src={appURL}
+              src={chartSrc}
               allow={"autoplay"}
               frameBorder={"0"}
               allowFullScreen
+              sandbox="allow-scripts allow-same-origin"
             />
           )
         }
