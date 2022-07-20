@@ -15,7 +15,7 @@ export class TableWidgetBuilder extends WidgetBuilder {
     public build() {
         return (
             <div key={this.widgetId} data-grid={this.layout} /*style={{"backgroundColor":"black"}}*/>
-                <TableWidgetBlueprint builder={this} title={this.title} src={this.href} appURL={this.appURL}/>
+                <TableWidgetBlueprint builder={this} title={this.title} src={this.href} appURL={this.appURL} authRequired={this.authRequired}/>
             </div>
         );
     }

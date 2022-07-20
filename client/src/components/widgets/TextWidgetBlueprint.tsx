@@ -32,10 +32,11 @@ interface TextWidgetProps {
     title: string;
     src: string;
     appURL: string;
+    authRequired: boolean;
 }
 
 
-const TextWidgetBlueprint: React.FC<TextWidgetProps> = ({ builder, title, src, appURL }) => {
+const TextWidgetBlueprint: React.FC<TextWidgetProps> = ({ builder, title, src, appURL, authRequired }) => {
 
     const classes = useStyles();
     const { removeWidgetFromCurrentTab } = useContext(TabManagerContext);
@@ -64,12 +65,25 @@ const TextWidgetBlueprint: React.FC<TextWidgetProps> = ({ builder, title, src, a
 
     useEffect(() => {
         const fetchData = async () => {
-            const data = (await axios.get(`${src}`));
-            console.log("from TableWidgetBlueprint")
+            console.log("AuthRequired: ",authRequired)
+
+            const data = authRequired ? (await axios.get(`${src}`,{
+                headers: {
+                    'content-type':'application/json',
+                    'X-Auth': process.env.NEXT_PUBLIC_X_AUTH_TOKEN
+                }
+            })) : await axios.get(`${src}`)
+            // const sampleHTMLTable = "<table>  <tr>    <td>Cell 1</td>    <td>Cell 2</td>    <td>Cell 3</td>  </tr>  <tr>    <td>Cell 4</td>    <td>Cell 5</td>    <td>Cell 6</td>  </tr></table>"
+            console.log("from TextWidgetBlueprint")
             console.log(data)
             if (data.status === 200) {
                 console.log(Object.keys(data.data.data[0]));
                 setTableData(data.data.data);
+                /*setTableData("---\n" +
+                    "* Line number one\n" +
+                    "---\n" +
+                    "* Line number [**two**](https://google.com)\n" +
+                    "---")*/
             } else {
                 console.log("query error")
                 throw new Error("Backend query error.");
@@ -107,7 +121,7 @@ const TextWidgetBlueprint: React.FC<TextWidgetProps> = ({ builder, title, src, a
             <WidgetBody>
 
                 <div style={{margin: "auto", padding:"1em"}}>
-                    <Markdown>{tableData}</Markdown>
+                    <Markdown >{tableData}</Markdown>
                 </div>
 
             </WidgetBody>

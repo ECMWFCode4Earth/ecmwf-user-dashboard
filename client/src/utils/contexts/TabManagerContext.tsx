@@ -308,7 +308,7 @@ const useTabManager = (initialState: TabManager) => {
   //
   // };
 
-  const addNewWidgetFromBrowserToCurrentTab = (widgetType: string, widgetTitle:string, widgetName: string, widgetHref: string, widgetAppURL: string) => {
+  const addNewWidgetFromBrowserToCurrentTab = (widgetType: string, widgetTitle:string, widgetName: string, widgetHref: string, widgetAppURL: string, authRequired: boolean) => {
     const newTabManagerState = _.cloneDeep(tabManager);
     console.log("adding new widget: ", widgetType)
     console.log('-----------cloning---------')
@@ -322,7 +322,8 @@ const useTabManager = (initialState: TabManager) => {
       widgetTitle: widgetTitle,
       widgetName: widgetName,
       widgetHref: widgetHref,
-      widgetAppURL: widgetAppURL
+      widgetAppURL: widgetAppURL,
+      authRequired: authRequired
   };
     console.log("newWidgetConfiguration: ", newWidgetConfiguration )
     newTabManagerState.tabs[currentTab].widgetIds.push(newWidgetId);
@@ -406,7 +407,8 @@ const useTabManager = (initialState: TabManager) => {
       uuid : string,
       title : string,
       href : string,
-      appUrl : string
+      appUrl : string,
+      authRequired: boolean
     }
     // console.log(tabManager.tabs[currentTab])
     // console.log("---------------widgetIdsofCurrentTab----------------")
@@ -418,7 +420,8 @@ const useTabManager = (initialState: TabManager) => {
         uuid : WidgetBuilder.splitWidgetId(widgetId).uuid,
         title:  tabManager.tabs[currentTab].widgetConfigurations[widgetId] !== undefined ? tabManager.tabs[currentTab].widgetConfigurations[widgetId].widgetTitle : '',
         href: tabManager.tabs[currentTab].widgetConfigurations[widgetId] !== undefined ? tabManager.tabs[currentTab].widgetConfigurations[widgetId].widgetHref : '',
-        appUrl : tabManager.tabs[currentTab].widgetConfigurations[widgetId] !== undefined ? tabManager.tabs[currentTab].widgetConfigurations[widgetId].widgetAppURL : ''
+        appUrl : tabManager.tabs[currentTab].widgetConfigurations[widgetId] !== undefined ? tabManager.tabs[currentTab].widgetConfigurations[widgetId].widgetAppURL : '',
+        authRequired: tabManager.tabs[currentTab].widgetConfigurations[widgetId] !== undefined ? tabManager.tabs[currentTab].widgetConfigurations[widgetId].authRequired : false
       })
     })
     // console.log("<--------------combinedID---------->")
@@ -426,7 +429,7 @@ const useTabManager = (initialState: TabManager) => {
     return combinedId.filter((elt) => {
       return elt.builderClassID in builderClassIdToBuilderClassMap
     }).map(obj => {
-      return (new builderClassIdToBuilderClassMap[obj.builderClassID as keyof typeof builderClassIdToBuilderClassMap].BuilderClass(obj.uuid, obj.title, obj.href, obj.appUrl));
+      return (new builderClassIdToBuilderClassMap[obj.builderClassID as keyof typeof builderClassIdToBuilderClassMap].BuilderClass(obj.uuid, obj.title, obj.href, obj.appUrl, obj.authRequired));
     }).map(widgetBuilder => widgetBuilder.build());
     // filterMap.forEach(build(title, href));
     // function buildWidget(widgetBuilder, item){

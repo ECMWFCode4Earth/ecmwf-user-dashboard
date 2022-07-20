@@ -39,10 +39,11 @@ interface TableDataWidgetProps {
     title: string;
     src: string;
     appURL: string;
+    authRequired: boolean;
 }
 
 
-const TableDataWidgetBlueprint: React.FC<TableDataWidgetProps> = ({ builder, title, src, appURL }) => {
+const TableDataWidgetBlueprint: React.FC<TableDataWidgetProps> = ({ builder, title, src, appURL , authRequired}) => {
 
     const classes = useStyles();
     const { removeWidgetFromCurrentTab } = useContext(TabManagerContext);
@@ -74,13 +75,17 @@ const TableDataWidgetBlueprint: React.FC<TableDataWidgetProps> = ({ builder, tit
         };*/
 
     useEffect(() => {
+        console.log("in-app-src: ", src)
         const fetchData = async () => {
-            const data = (await axios.get(`${src}`,
-                // {headers: {
-                //         "X-Auth-Token": process.env["X-AUTH-TOKEN"],
-                //         "content-type": "application/json"
-                //     }}
-            ));
+            console.log("AuthRequired: ",authRequired)
+
+            const data = authRequired ? (await axios.get(`${src}`,{
+                headers: {
+                    'content-type':'application/json',
+                    'X-Auth': process.env.NEXT_PUBLIC_X_AUTH_TOKEN
+                }
+            })) : await axios.get(`${src}`)
+
             //fixing the styling first....
             // data->data->styling
             //TODO: ask for the data like the previous format except the keywords

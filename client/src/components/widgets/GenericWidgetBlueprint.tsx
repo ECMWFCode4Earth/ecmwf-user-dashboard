@@ -17,6 +17,7 @@ export interface GenericWidgetConfiguration {
     widgetTitle: string;
     widgetHref: string;
     widgetAppURL: string;
+    authRequired: boolean;
 }
 
 // export interface NoteWidgetConfiguration{

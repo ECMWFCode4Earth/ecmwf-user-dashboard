@@ -14,7 +14,7 @@ export class TextWidgetBuilder extends WidgetBuilder {
     build(): JSX.Element {
         return (
             <div key={this.widgetId} data-grid={this.layout}>
-                <TextWidgetBlueprint builder={this} title={this.title} src={this.href} appURL={this.appURL}/>
+                <TextWidgetBlueprint builder={this} title={this.title} src={this.href} appURL={this.appURL} authRequired={this.authRequired}/>
             </div>
         );
     }

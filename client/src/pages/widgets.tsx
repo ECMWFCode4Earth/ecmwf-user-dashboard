@@ -19,6 +19,7 @@ interface WidgetDetail {
     href: string;
     type: string;
     appURL: string;
+    authRequired: boolean
 }
 
 
@@ -34,11 +35,14 @@ export default function Widgets() {
     const [filteredWidgetDetails, setFilteredWidgetDetails] = useState<WidgetDetail[]>([]);
     const [allWidgetDetails, setAllWidgetDetails] = useState<WidgetDetail[]>([]);
 
-
+    const specificWidgets : Record<string, WidgetDetail[]> = {};
+    const [widgetTypes, setWidgetTypes] = useState<string[]>([]);
     useEffect(() => {
         loadWidgetDetails().catch((err) => setError(err.message));
     }, []);
-
+    const [filterTable, setFilterTable] = useState<boolean>(false);
+    const [filterText, setFilterText] = useState<boolean>(false);
+    const [filterFrame, setFilterFrame] = useState<boolean>(false);
 
     const loadWidgetDetails = async () => {
         const savedWidgetDetails: WidgetDetail[] | null = await localStore.getItem(kLocalStoreKey.WIDGET_DETAILS);
@@ -55,29 +59,99 @@ export default function Widgets() {
 
     const fetchWidgetDetails = async () => {
         setLoading(true);
-        const res = await axios.get(`${kStore.BASE_URL}/api/getAllWidgets/`);
-        console.log(res.data.data.widgets)
-        const widgets = res.data.data.widgets;
         const widgetDetails:WidgetDetail[] = [];
-        widgets.forEach((widget: any) => widgetDetails.push({
-            title: widget.name,
-            name: widget.name,
-            thumbnail: !("thumbnail" in widget) ? defaultLogo : widget.thumbnail,
-            href: widget.href,
-            type: widget["widget-type"],
-            appURL: !("application_url" in widget) ? '#' : widget.application_url
-        }));
+        const tempWidgetTypes: string[] = [];
+
+        const noAuthEndpoints = [`https://apps-dev.ecmwf.int/webapps/opencharts-api/v1/soc/user-dashboard/GetWidgets/`,]
+        const authorisedEndpoints = ['https://apps-dev.ecmwf.int/webapps/openifs-api/v1/get-widgets/']
+        for (const url of noAuthEndpoints) {
+            const res = await axios.get(url);
+            console.log("<-----------------Result of API call---------------------->")
+            console.log(res)
+            console.log(res.data)
+            const widgets = res.data.widgets;
+
+            widgets.forEach((widget: any) => {
+                widgetDetails.push({
+                    title: widget.name,
+                    name: widget.name,
+                    thumbnail: !("thumbnail" in widget) ? defaultLogo : widget.thumbnail,
+                    href: widget.href,
+                    type: widget["widget-type"],
+                    appURL: !("application_url" in widget) ? '#' : widget.application_url,
+                    authRequired: false
+                })
+                if (specificWidgets[widget["widget-type"]] === undefined) {
+                    specificWidgets[widget["widget-type"]] = []
+                    tempWidgetTypes.push(widget['widget-type'])
+                }
+                console.log(tempWidgetTypes)
+                specificWidgets[widget["widget-type"]].push({
+                    title: widget.name,
+                    name: widget.name,
+                    thumbnail: !("thumbnail" in widget) ? defaultLogo : widget.thumbnail,
+                    href: widget.href,
+                    type: widget["widget-type"],
+                    appURL: !("application_url" in widget) ? '#' : widget.application_url,
+                    authRequired: false
+                })
+
+            });
+        }
+        for (const url of authorisedEndpoints) {
+            const res = await axios.get(url, {
+                headers:{
+                    "Access-Control-Allow-Origin": "*",
+                    'X-Auth': process.env.NEXT_PUBLIC_X_AUTH_TOKEN
+                }
+            });
+            console.log("<-----------------Result of API call---------------------->")
+            console.log(res)
+            console.log(res.data)
+            const widgets = res.data.widgets;
+
+            widgets.forEach((widget: any) => {
+                widgetDetails.push({
+                    title: widget.name,
+                    name: widget.name,
+                    thumbnail: !("thumbnail" in widget) ? defaultLogo : widget.thumbnail,
+                    href: widget.href,
+                    type: widget["widget-type"],
+                    appURL: !("application_url" in widget) ? '#' : widget.application_url,
+                    authRequired: true
+                })
+                if (specificWidgets[widget["widget-type"]] === undefined) {
+                    specificWidgets[widget["widget-type"]] = []
+                    tempWidgetTypes.push(widget['widget-type'])
+                }
+                console.log(tempWidgetTypes)
+                specificWidgets[widget["widget-type"]].push({
+                    title: widget.name,
+                    name: widget.name,
+                    thumbnail: !("thumbnail" in widget) ? defaultLogo : widget.thumbnail,
+                    href: widget.href,
+                    type: widget["widget-type"],
+                    appURL: !("application_url" in widget) ? '#' : widget.application_url,
+                    authRequired: true
+                })
+
+            });
+        }
+        console.log("widgetTypes: ", widgetTypes)
+        console.log("specificWidgets: ",specificWidgets)
         await localStore.setItem(kLocalStoreKey.WIDGET_DETAILS, widgetDetails);
         setSearchString("");
         setFilteredWidgetDetails(widgetDetails);
         setAllWidgetDetails(widgetDetails);
         setLoading(false);
+        setWidgetTypes(tempWidgetTypes)
+
     };
 
 
     const addWidget = (widgetDetail:WidgetDetail) => {
         onClose();
-        addNewWidgetFromBrowserToCurrentTab(widgetDetail.type, widgetDetail.title, widgetDetail.name, widgetDetail.href, widgetDetail.appURL);
+        addNewWidgetFromBrowserToCurrentTab(widgetDetail.type, widgetDetail.title, widgetDetail.name, widgetDetail.href, widgetDetail.appURL, widgetDetail.authRequired);
         onOpen();
     };
 
@@ -100,7 +174,7 @@ export default function Widgets() {
         debouncedFilterWidgets(e.target.value);
     };
 
-
+    console.log("widgetTypes: ", widgetTypes)
     if (loading) {
         return (
             <Layout showWidgetToolbar={true}>
@@ -121,9 +195,8 @@ export default function Widgets() {
 
     return (
         <Layout showWidgetToolbar={true}>
+
             <Container maxWidth={"lg"}>
-
-
                 <Box mt={2}>
                     <Typography variant={"h3"} align={"center"}>Widget Browser</Typography>
                 </Box>
@@ -137,14 +210,30 @@ export default function Widgets() {
                     <Button size={"small"} onClick={fetchWidgetDetails}>Refresh Widgets</Button>
                 </Box>
 
-
+                <Box mt={2}>
+                    <Typography>Filters</Typography>
+                    <Box>
+                    <Grid style={{color:"black"}} container spacing={2}>
+                        {
+                            widgetTypes.map((widgetName:string, index)=>{
+                                console.log("widgetName: ",widgetName)
+                                return (
+                                    <Grid key={index} item>
+                                       <button>{widgetName.toUpperCase()}</button>
+                                    </Grid>
+                                )
+                            })
+                        }
+                    </Grid>
+                    </Box>
+                </Box>
                 <Box mt={2}>
                     <Grid container spacing={2}>
                         {
                             filteredWidgetDetails.map(
                                 (widgetDetail, index) => {
                                     return (
-                                        <Grid key={`GridItem-${index}`} item xs={12} md={6} lg={4}>
+                                        <Grid key={`GridItem-${index}`} item xs={12} sm={6} md={4} lg={4}>
                                             <WidgetBrowserItem
                                                 showImages={showImages}
                                                 thumbnail={widgetDetail.thumbnail}
@@ -173,6 +262,14 @@ export default function Widgets() {
             </Container>
         </Layout>
     );
+}
+
+interface selectionButtonProps {
+    widgetName: string
+}
+
+const SelectionButton: React.FC<selectionButtonProps> = ({widgetName}) => {
+    return (<Button>{widgetName}</Button>)
 }
 
 
