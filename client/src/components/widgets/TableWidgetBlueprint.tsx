@@ -9,7 +9,6 @@ import {
 } from "@material-ui/core";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import axios from "axios";
-import _ from "lodash";
 
 import WidgetContainer from "../common/WidgetContainer";
 import WidgetTitleBar from "../common/WidgetTitleBar";
@@ -17,11 +16,8 @@ import WidgetBody from "../common/WidgetBody";
 import WidgetLoading from "../common/WidgetLoading";
 import WidgetError from "../common/WidgetError";
 
-import { ServiceStatusWidgetBuilder } from "../../models/widgetBuilders/ServiceStatusWidgetBuilder";
-import { kStore } from "../../utils/constants";
 import { TabManagerContext } from "../../utils/contexts/TabManagerContext";
 import {TableWidgetBuilder} from "../../models/widgetBuilders/TableWidgetBuilder";
-import {log} from "util";
 import {RefreshRounded} from "@material-ui/icons";
 
 
@@ -55,24 +51,6 @@ const TableDataWidgetBlueprint: React.FC<TableDataWidgetProps> = ({ builder, tit
     const [columnHead, setColumnHead] = useState<string[]>([]);
     const [style, setStyle] = useState<Record<string, string>>({});
 
-    /*    useEffect(() => {
-            fetchQuery().catch((err) => setError("An error occurred. Failed to fetch data from backend server."));
-        }, [refresh]);`
-    
-        const fetchQuery = async () => {
-            console.log(src)
-            const data = (await axios.get(`${src}`));
-            console.log("from TableWidgetBlueprint")
-            console.log(data)
-            if (data.status === 200) {
-                console.log(Object.keys(data.data.data[0]));
-                setTableData(data.data.data);
-            } else {
-                console.log("query error")
-                throw new Error("Backend query error.");
-            }
-            setLoading(false);
-        };*/
 
     useEffect(() => {
         console.log("in-app-src: ", src)
@@ -158,9 +136,6 @@ const TableDataWidgetBlueprint: React.FC<TableDataWidgetProps> = ({ builder, tit
 
     const removeWidget = () => removeWidgetFromCurrentTab(builder.widgetId);
 
-    // const countOk = () => tableData.reduce((ok, data) => data.Status === "Ok" ? ok + 1 : ok, 0);
-
-
     if (error) return <WidgetError message={error} onClose={removeWidget}/>;
 
     if (loading) return <WidgetLoading onClose={removeWidget}/>;
@@ -202,8 +177,8 @@ const TableDataWidgetBlueprint: React.FC<TableDataWidgetProps> = ({ builder, tit
                                         {data.map((key:any, index:number)=>{
                                             //style[key] !== undefined ? style[key][index] : 'black'
                                             // console.log("style[key][index]: ", style[key][index])
-                                            return (<TableCell key={key} style={{background:style[key]!== undefined ? style[key] : 'white', color: "black"}}>
-                                                {key}
+                                            return (<TableCell key={key} >
+                                              <div style={{ borderRadius: "0.1rem",padding: "0.5em" ,display: "flex", alignItems:"center", justifyContent: "center", background:style[key]!== undefined ? style[key] : 'white', color: style[key]!== undefined ? 'white': 'black'}}>{key}</div>
                                             </TableCell>)
                                         })}
                                         {/*{Object.values(data).map((key:any) => {

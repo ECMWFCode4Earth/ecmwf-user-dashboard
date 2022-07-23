@@ -1,8 +1,5 @@
-import React, { useContext, useEffect, useState } from "react";
-import {
-    IconButton,
-    makeStyles,
-} from "@material-ui/core";
+import React, {useContext, useEffect, useState} from "react";
+import {IconButton, makeStyles,} from "@material-ui/core";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import axios from "axios";
 
@@ -12,14 +9,12 @@ import WidgetBody from "../common/WidgetBody";
 import WidgetLoading from "../common/WidgetLoading";
 import WidgetError from "../common/WidgetError";
 
-import { TabManagerContext } from "../../utils/contexts/TabManagerContext";
+import {TabManagerContext} from "../../utils/contexts/TabManagerContext";
 import {TextWidgetBuilder} from "../../models/widgetBuilders/TextWidgetBuilder";
 import Markdown from 'markdown-to-jsx'
 import {RefreshRounded} from "@material-ui/icons";
 
-/**
- * Structure of incoming data from the backend.
- * */
+
 // TODO: modify according to the markdown conversion needs
 interface TableDataDetails {
     Title: string,
@@ -46,22 +41,6 @@ const TextWidgetBlueprint: React.FC<TextWidgetProps> = ({ builder, title, src, a
     const [tableData, setTableData] = useState<string>('');
     const [refresh, setRefresh] = useState<boolean>(false);
 
-/*
-    const fetchQuery = async () => {
-        console.log(src)
-        const data = (await axios.get(`${src}`));
-        console.log("from TableWidgetBlueprint")
-        console.log(data)
-        if (data.status === 200) {
-            console.log(Object.keys(data.data.data[0]));
-            setTableData(data.data.data);
-        } else {
-            console.log("query error")
-            throw new Error("Backend query error.");
-        }
-        setLoading(false);
-    };
-*/
 
     useEffect(() => {
         const fetchData = async () => {
@@ -73,17 +52,11 @@ const TextWidgetBlueprint: React.FC<TextWidgetProps> = ({ builder, title, src, a
                     'X-Auth': process.env.NEXT_PUBLIC_X_AUTH_TOKEN
                 }
             })) : await axios.get(`${src}`)
-            // const sampleHTMLTable = "<table>  <tr>    <td>Cell 1</td>    <td>Cell 2</td>    <td>Cell 3</td>  </tr>  <tr>    <td>Cell 4</td>    <td>Cell 5</td>    <td>Cell 6</td>  </tr></table>"
             console.log("from TextWidgetBlueprint")
             console.log(data)
             if (data.status === 200) {
                 console.log(Object.keys(data.data.data[0]));
                 setTableData(data.data.data);
-                /*setTableData("---\n" +
-                    "* Line number one\n" +
-                    "---\n" +
-                    "* Line number [**two**](https://google.com)\n" +
-                    "---")*/
             } else {
                 console.log("query error")
                 throw new Error("Backend query error.");
