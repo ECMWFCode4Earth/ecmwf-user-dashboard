@@ -70,8 +70,6 @@ const TextWidgetBlueprint: React.FC<TextWidgetProps> = ({ builder, title, src, a
 
     const removeWidget = () => removeWidgetFromCurrentTab(builder.widgetId);
 
-    // const countOk = () => tableData.reduce((ok, data) => data.Status === "Ok" ? ok + 1 : ok, 0);
-
 
     if (error) return <WidgetError message={error} onClose={removeWidget}/>;
 
