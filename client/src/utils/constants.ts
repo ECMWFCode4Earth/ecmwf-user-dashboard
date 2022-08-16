@@ -30,7 +30,8 @@ export const kLocalStoreKey = {
   TAB_MANAGER: "tabManager",
   USER_DETAILS: "userDetails",
   CHART_DETAILS: "chartDetails",
-  WIDGET_DETAILS : "widgetDetails"
+  WIDGET_DETAILS : "widgetDetails",
+  WIDGET_ENDPOINTS : "widgetEndpoints"
 };
 
 
