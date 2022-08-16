@@ -31,4 +31,6 @@ export interface UserDetails {
   username: string,
   token: string,
   tokenExpirationDate: string | Date
+  widgetEndpoints: [{url:string, token:string}]
 }
+

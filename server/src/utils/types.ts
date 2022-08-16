@@ -6,7 +6,15 @@ export interface TabManager {
   activeTab: number;
   lastSavedTimestamp: Date | string;
   tabs: Tab[];
-  widgetConfigurations: Record<string, Record<string, any>>;
+}
+
+export interface GenericWidgetConfiguration {
+  widgetName: string;
+  widgetType: string;
+  widgetTitle: string;
+  widgetHref: string;
+  widgetAppURL: string;
+  authRequired: boolean;
 }
 
 
@@ -17,4 +25,10 @@ export interface Tab {
   sharedWithUsers: string[];
   widgetIds: string[]; // Widget Ids contain useful information separated by "/". (builderClassId/uuid)
   layouts: Layouts
+  widgetConfigurations: Record<string, GenericWidgetConfiguration>
 }
+
+ export interface Endpoint {
+   url: String,
+   token: String
+ }
