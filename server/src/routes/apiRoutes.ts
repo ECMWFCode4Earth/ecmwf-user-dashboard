@@ -13,7 +13,11 @@ import {
   loadTabManagerController,
   clearTabManagerController,
   apiTokensController,
-  updateApiTokensController, sharedTabController, getAllWidgetsController
+  updateApiTokensController,
+  // sharedTabController,
+  getAllWidgetsController,
+  addEndPointsController,
+  loadAPIEndpointsController, deleteEndpointController, deleteAllEndpointsController
 } from "../controllers/apiControllers";
 
 
@@ -44,10 +48,16 @@ authRouter.post("/change-password", changePasswordController);
 // * Update ECMWF API Tokens
 authRouter.post("/update-api-tokens", updateApiTokensController);
 
+authRouter.post("/widget-endpoints", addEndPointsController)
+
+authRouter.get('/widget-endpoints', loadAPIEndpointsController)
+
+authRouter.delete('/widget-endpoints', deleteEndpointController)
+
+authRouter.delete('/delete-widget-endpoints', deleteAllEndpointsController)
 
 // * Get ECMWF API Tokens
 authRouter.get("/api-tokens", apiTokensController);
-
 
 // * Service status - Proxy
 noAuthRouter.get("/service-status", serviceStatusController);
@@ -77,7 +87,7 @@ authRouter.get("/mars-activity", marsActivityController);
 
 
 // * Shared Tab Details from Tab manager
-authRouter.get("/shared-tab", sharedTabController);
+// authRouter.get("/shared-tab", sharedTabController);
 
 
 export { authRouter, noAuthRouter };

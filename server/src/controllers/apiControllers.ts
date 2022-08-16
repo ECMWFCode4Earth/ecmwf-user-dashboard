@@ -14,6 +14,63 @@ export const pingController: RequestHandler = (req, res, _) => {
   res.status(200).json({ success: true, message: "Success" });
 };
 
+export const addEndPointsController: RequestHandler = (req, res, next) => {
+  console.log("request received")
+  console.log("endpoint: ", req.body)
+  try{
+    const user: any = req.user
+    const endpoints = req.body.endpoints;
+    if(!user || !endpoints){
+      return res.status(400).json({ success: false, message: "Incomplete parameters" });
+    }
+    user.addAPIEndpoints(endpoints)
+    res.status(200).json({ success: true, message: "Success" });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export const deleteEndpointController: RequestHandler = (req, res,next) =>{
+  try{
+    const user: any = req.user
+    const endpoint = req.body.endpoint;
+    if(!user || !endpoint){
+      return res.status(400).json({ success: false, message: "Incomplete parameters" });
+    }
+    console.log("req received in controller")
+    user.deleteAPIEndpoint(endpoint)
+
+    res.status(200).json({ success: true, message: "Success" });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export const deleteAllEndpointsController: RequestHandler = (req, res, next) => {
+  try{
+    const user: any = req.user
+    if(!user){
+      return res.status(400).json({ success: false, message: "Incomplete parameters" });
+    }
+    console.log("req received in controller")
+    user.deleteAPIEndpoints()
+
+    res.status(200).json({ success: true, message: "Success" });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export const loadAPIEndpointsController: RequestHandler = (req, res, next) => {
+  try {
+    const user: any = req.user;
+    const endpoints = user.loadAPIEndpoints()
+    res.status(200).json({ success: true, message: "Success", data: { endpoints } });
+  } catch (err) {
+    next(err);
+  }
+}
+
 
 export const saveTabManagerController: RequestHandler = (req, res, next) => {
   try {
@@ -194,60 +251,60 @@ export const marsActivityController: RequestHandler = async (req, res, next) => 
 };
 
 
-export const sharedTabController: RequestHandler = async (req, res, next) => {
-  try {
-
-    const sharingUsername = req.query.u;
-    const tabUuid = req.query.uuid;
-
-    const viewingUser: any = req.user;
-
-    if (!sharingUsername || !tabUuid) {
-      return res.status(400).json({ success: false, message: "Incomplete parameters" });
-    }
-
-    const sharingUser = await User.findOne({ username: sharingUsername });
-
-    if (!sharingUser) {
-      return res.status(400).json({ success: false, message: "Sharing user does not exist" });
-    }
-
-
-    const tabManager = sharingUser.loadTabManager() as TabManager;
-
-    const tab = tabManager.tabs.find(tab => tab.uuid = tabUuid as string);
-
-    if (!tab) {
-      return res.status(400).json({ success: false, message: "Tab does not exist" });
-    }
-
-    let viewingUserHasViewingRight = false;
-    tab.sharedWithUsers.forEach(username => {
-      if (username === viewingUser.username) {
-        viewingUserHasViewingRight = true;
-      }
-    });
-
-    if (!viewingUserHasViewingRight) {
-      return res.status(403).json({ success: false, message: "User not authorised to view this tab." });
-    }
-
-    const widgetConfigurations = {};
-
-    tab.widgetIds.forEach((widgetId) => {
-      if (widgetId in tabManager.widgetConfigurations) {
-        (widgetConfigurations as any)[widgetId] = tabManager.widgetConfigurations[widgetId];
-      }
-    });
-
-    const data = {
-      tab,
-      widgetConfigurations
-    };
-
-    res.status(200).json({ success: false, message: "Success", data: data });
-  } catch (err) {
-    console.log(err);
-    next(err);
-  }
-};
+// export const sharedTabController: RequestHandler = async (req, res, next) => {
+//   try {
+//
+//     const sharingUsername = req.query.u;
+//     const tabUuid = req.query.uuid;
+//
+//     const viewingUser: any = req.user;
+//
+//     if (!sharingUsername || !tabUuid) {
+//       return res.status(400).json({ success: false, message: "Incomplete parameters" });
+//     }
+//
+//     const sharingUser = await User.findOne({ username: sharingUsername });
+//
+//     if (!sharingUser) {
+//       return res.status(400).json({ success: false, message: "Sharing user does not exist" });
+//     }
+//
+//
+//     const tabManager = sharingUser.loadTabManager() as TabManager;
+//
+//     const tab = tabManager.tabs.find(tab => tab.uuid = tabUuid as string);
+//
+//     if (!tab) {
+//       return res.status(400).json({ success: false, message: "Tab does not exist" });
+//     }
+//
+//     let viewingUserHasViewingRight = false;
+//     tab.sharedWithUsers.forEach(username => {
+//       if (username === viewingUser.username) {
+//         viewingUserHasViewingRight = true;
+//       }
+//     });
+//
+//     if (!viewingUserHasViewingRight) {
+//       return res.status(403).json({ success: false, message: "User not authorised to view this tab." });
+//     }
+//
+//     const widgetConfigurations = {};
+//
+//     tab.widgetIds.forEach((widgetId) => {
+//       if (widgetId in tabManager.widgetConfigurations) {
+//         (widgetConfigurations as any)[widgetId] = tabManager.widgetConfigurations[widgetId];
+//       }
+//     });
+//
+//     const data = {
+//       tab,
+//       widgetConfigurations
+//     };
+//
+//     res.status(200).json({ success: false, message: "Success", data: data });
+//   } catch (err) {
+//     console.log(err);
+//     next(err);
+//   }
+// };
