@@ -13,8 +13,8 @@ export const initialTabManagerState: TabManager = {
       shared: false,
       sharedWithUsers: [],
       widgetIds: [],
-      layouts: {}
+      layouts: {},
+      widgetConfigurations: {}
     }
   ],
-  widgetConfigurations: {}
 };
