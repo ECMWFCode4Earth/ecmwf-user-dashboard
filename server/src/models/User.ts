@@ -1,7 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 
 import { initialTabManagerState } from "../utils/defaults";
-import { TabManager } from "../utils/types";
+import {Endpoint, TabManager} from "../utils/types";
 import { generateHash } from "../utils/hashing";
 
 
@@ -29,12 +29,53 @@ const userSchema = new Schema({
       default: ""
     }
   },
+  APIEndpoints: {
+    type: [{
+      url: String,
+      token: String
+    }],
+    default: [{url:`https://apps-dev.ecmwf.int/webapps/opencharts-api/v1/soc/user-dashboard/GetWidgets/`, token:''},
+              {url: 'https://apps-dev.ecmwf.int/webapps/openifs-api/v1/get-widgets/', token:"9614ad4a67154fb89556d733d2610186"}]
+  },
   tabManager: {
     type: String,
     default: JSON.stringify(initialTabManagerState),
   }
 });
 
+// TODO: try delete functionality as well
+
+userSchema.methods.addAPIEndpoints = function addEndpoints(endpoints: [Endpoint]){
+  const user: any = this;
+  console.log("existing endpoints: ", user.APIEndpoints)
+  console.log("new endpoints: ", endpoints)
+  user.APIEndpoints = user.APIEndpoints.concat(endpoints)
+  user.save()
+  console.log(user.APIEndpoints)
+}
+
+userSchema.methods.deleteAPIEndpoints = function(){
+  const user: any = this
+  user.APIEndpoints = [{url:`https://apps-dev.ecmwf.int/webapps/opencharts-api/v1/soc/user-dashboard/GetWidgets/`, token:''},
+    {url: 'https://apps-dev.ecmwf.int/webapps/openifs-api/v1/get-widgets/', token:"9614ad4a67154fb89556d733d2610186"}]
+  user.save()
+}
+
+userSchema.methods.deleteAPIEndpoint = function deleteEndpoint(endpoint: Endpoint){
+  const user: any = this;
+  console.log("request received")
+  console.log(endpoint)
+  user.APIEndpoints = user.APIEndpoints.filter((ep:Endpoint) => {
+    console.log(ep)
+    return ep.url != endpoint.url
+  })
+  user.save()
+}
+
+userSchema.methods.loadAPIEndpoints = function loadEndpoints(){
+  const user: any = this;
+  return user.APIEndpoints
+}
 
 userSchema.methods.saveTabManager = function saveTabManager(tabManager: TabManager) {
   const user: any = this;
