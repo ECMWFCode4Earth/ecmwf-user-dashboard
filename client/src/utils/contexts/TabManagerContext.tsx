@@ -308,7 +308,7 @@ const useTabManager = (initialState: TabManager) => {
   //
   // };
 
-  const addNewWidgetFromBrowserToCurrentTab = (widgetType: string, widgetTitle:string, widgetName: string, widgetHref: string, widgetAppURL: string, authRequired: boolean) => {
+  const addNewWidgetFromBrowserToCurrentTab = (widgetType: string, widgetTitle:string, widgetName: string, widgetHref: string, widgetAppURL: string, authRequired: boolean, token: string) => {
     const newTabManagerState = _.cloneDeep(tabManager);
     console.log("adding new widget: ", widgetType)
     console.log('-----------cloning---------')
@@ -323,7 +323,8 @@ const useTabManager = (initialState: TabManager) => {
       widgetName: widgetName,
       widgetHref: widgetHref,
       widgetAppURL: widgetAppURL,
-      authRequired: authRequired
+      authRequired: authRequired,
+      token: token
   };
     console.log("newWidgetConfiguration: ", newWidgetConfiguration )
     newTabManagerState.tabs[currentTab].widgetIds.push(newWidgetId);
@@ -408,7 +409,8 @@ const useTabManager = (initialState: TabManager) => {
       title : string,
       href : string,
       appUrl : string,
-      authRequired: boolean
+      authRequired: boolean,
+      token: string
     }
     // console.log(tabManager.tabs[currentTab])
     // console.log("---------------widgetIdsofCurrentTab----------------")
@@ -421,7 +423,8 @@ const useTabManager = (initialState: TabManager) => {
         title:  tabManager.tabs[currentTab].widgetConfigurations[widgetId] !== undefined ? tabManager.tabs[currentTab].widgetConfigurations[widgetId].widgetTitle : '',
         href: tabManager.tabs[currentTab].widgetConfigurations[widgetId] !== undefined ? tabManager.tabs[currentTab].widgetConfigurations[widgetId].widgetHref : '',
         appUrl : tabManager.tabs[currentTab].widgetConfigurations[widgetId] !== undefined ? tabManager.tabs[currentTab].widgetConfigurations[widgetId].widgetAppURL : '',
-        authRequired: tabManager.tabs[currentTab].widgetConfigurations[widgetId] !== undefined ? tabManager.tabs[currentTab].widgetConfigurations[widgetId].authRequired : false
+        authRequired: tabManager.tabs[currentTab].widgetConfigurations[widgetId] !== undefined ? tabManager.tabs[currentTab].widgetConfigurations[widgetId].authRequired : false,
+        token: tabManager.tabs[currentTab].widgetConfigurations[widgetId] !== undefined ? tabManager.tabs[currentTab].widgetConfigurations[widgetId].token : ''
       })
     })
     // console.log("<--------------combinedID---------->")
@@ -429,7 +432,7 @@ const useTabManager = (initialState: TabManager) => {
     return combinedId.filter((elt) => {
       return elt.builderClassID in builderClassIdToBuilderClassMap
     }).map(obj => {
-      return (new builderClassIdToBuilderClassMap[obj.builderClassID as keyof typeof builderClassIdToBuilderClassMap].BuilderClass(obj.uuid, obj.title, obj.href, obj.appUrl, obj.authRequired));
+      return (new builderClassIdToBuilderClassMap[obj.builderClassID as keyof typeof builderClassIdToBuilderClassMap].BuilderClass(obj.uuid, obj.title, obj.href, obj.appUrl, obj.authRequired, obj.token));
     }).map(widgetBuilder => widgetBuilder.build());
     // filterMap.forEach(build(title, href));
     // function buildWidget(widgetBuilder, item){

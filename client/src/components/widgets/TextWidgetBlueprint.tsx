@@ -28,10 +28,11 @@ interface TextWidgetProps {
     src: string;
     appURL: string;
     authRequired: boolean;
+    token : string;
 }
 
 
-const TextWidgetBlueprint: React.FC<TextWidgetProps> = ({ builder, title, src, appURL, authRequired }) => {
+const TextWidgetBlueprint: React.FC<TextWidgetProps> = ({ builder, title, src, appURL, authRequired, token }) => {
 
     const classes = useStyles();
     const { removeWidgetFromCurrentTab } = useContext(TabManagerContext);
@@ -45,13 +46,12 @@ const TextWidgetBlueprint: React.FC<TextWidgetProps> = ({ builder, title, src, a
     useEffect(() => {
         const fetchData = async () => {
             console.log("AuthRequired: ",authRequired)
-
-            const data = authRequired ? (await axios.get(`${src}`,{
-                headers: {
-                    'content-type':'application/json',
-                    'X-Auth': process.env.NEXT_PUBLIC_X_AUTH_TOKEN
-                }
-            })) : await axios.get(`${src}`)
+            console.log("token: ", token)
+            const headers_in_request = token.length!=0 ? { 'X-Auth' : token} : {}
+            console.log("reached textwidget")
+            const data = await axios.get(src,{
+                headers: headers_in_request
+            })
             console.log("from TextWidgetBlueprint")
             console.log(data)
             if (data.status === 200) {

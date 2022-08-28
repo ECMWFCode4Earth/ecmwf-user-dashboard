@@ -36,10 +36,11 @@ interface TableDataWidgetProps {
     src: string;
     appURL: string;
     authRequired: boolean;
+    token: string;
 }
 
 
-const TableDataWidgetBlueprint: React.FC<TableDataWidgetProps> = ({ builder, title, src, appURL , authRequired}) => {
+const TableDataWidgetBlueprint: React.FC<TableDataWidgetProps> = ({ builder, title, src, appURL , authRequired, token}) => {
 
     const classes = useStyles();
     const { removeWidgetFromCurrentTab } = useContext(TabManagerContext);
@@ -51,18 +52,19 @@ const TableDataWidgetBlueprint: React.FC<TableDataWidgetProps> = ({ builder, tit
     const [columnHead, setColumnHead] = useState<string[]>([]);
     const [style, setStyle] = useState<Record<string, string>>({});
 
-
+    console.log("token:", token)
     useEffect(() => {
         console.log("in-app-src: ", src)
         const fetchData = async () => {
-            console.log("AuthRequired: ",authRequired)
+            console.log("AuthRequired from table: ",authRequired)
 
-            const data = authRequired ? (await axios.get(`${src}`,{
-                headers: {
-                    'content-type':'application/json',
-                    'X-Auth': process.env.NEXT_PUBLIC_X_AUTH_TOKEN
-                }
-            })) : await axios.get(`${src}`)
+            const headers_in_request = token.length!=0 ? { 'X-Auth' : token} : {}
+
+            const data = await axios.get(src,{
+                headers: headers_in_request
+            })
+            console.log("from TableWidgetBlueprint")
+            console.log(data)
 
             //fixing the styling first....
             // data->data->styling

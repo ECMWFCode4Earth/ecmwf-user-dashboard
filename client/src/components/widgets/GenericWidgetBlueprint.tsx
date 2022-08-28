@@ -12,6 +12,7 @@ import {WidgetBuilder} from "../../models/widgetBuilders/WidgetBuilder";
 
 
 export interface GenericWidgetConfiguration {
+    token: string;
     widgetName: string;
     widgetType: string;
     widgetTitle: string;

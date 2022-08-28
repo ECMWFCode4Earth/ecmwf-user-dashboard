@@ -23,25 +23,29 @@ interface ChartWidgetBlueprintProps {
   title: string;
   src: string;
   appURL: string;
+  authRequired: boolean;
+  token: string;
 }
 
 
-const ChartWidgetBlueprint: React.FC<ChartWidgetBlueprintProps> = ({ builder , title, src, appURL}) => {
+const ChartWidgetBlueprint: React.FC<ChartWidgetBlueprintProps> = ({ builder , title, src, appURL, authRequired, token}) => {
 
   const classes = useStyles();
   const { removeWidgetFromCurrentTab, loadWidgetConfiguration } = useContext(TabManagerContext);
   const [chartName, setChartName] = useState("");
-  const [chartSrc, setChartSrc] = useState(""); 
-
+  const [chartSrc, setChartSrc] = useState("");
   useEffect(() => {
     console.log("widgetConfiguration: ", loadWidgetConfiguration(builder.widgetId))
     const chartWidgetConfiguration = loadWidgetConfiguration(builder.widgetId) as ChartWidgetConfiguration;
     if (chartWidgetConfiguration) {
       setChartName(chartWidgetConfiguration.widgetTitle);
     }
+    const header_in_request = token.length!=0 ? { 'X-Auth' : token}: {}
     const getSrc = async () => {
       console.log("src: ", src)
-      await  axios.get(src).then(data => {
+      await  axios.get(src, {
+        headers: header_in_request
+      }).then(data => {
             console.log("data from src: ", data)
             setChartSrc(data.data.data.src);
           }
