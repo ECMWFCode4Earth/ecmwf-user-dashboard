@@ -23,7 +23,8 @@ interface WidgetDetail {
     href: string;
     type: string;
     appURL: string;
-    authRequired: boolean
+    authRequired: boolean;
+    token: string;
 }
 
 interface Endpoint{
@@ -97,16 +98,17 @@ export default function Widgets() {
         const widgetEndpoints : Endpoint[] = await getWidgetEndpoints()
         console.log("widgetEndpoints: ", widgetEndpoints)
         for (const {url, token} of widgetEndpoints){
-            if (url=="https://apps-dev.ecmwf.int/webapps/opencharts-api/v1/soc/user-dashboard/GetWidgets/")
-                continue
+            // if (url=="https://apps-dev.ecmwf.int/webapps/opencharts-api/v1/soc/user-dashboard/GetWidgets/")
+            //     continue
+            const headers_in_request = token.length == 0 ? {} : { 'X-Auth' : token}
+
             const res = await axios.get(url, {
-                        headers:{
-                            "Access-Control-Allow-Origin": "*",
-                            'X-Auth': token
-                        }
+                        headers:headers_in_request
             });
+            const authRequired = token.length != 0
+            console.log("token: ", token)
             const widgets = res.data.widgets;
-            console.log(res)
+            console.log("tokens from widget: ", token)
             widgets.forEach((widget: any) => {
                 widgetDetails.push({
                     title: widget.name,
@@ -115,7 +117,8 @@ export default function Widgets() {
                     href: widget.href,
                     type: widget["widget-type"],
                     appURL: !("application_url" in widget) ? '#' : widget.application_url,
-                    authRequired: true
+                    authRequired: authRequired,
+                    token: token
                 })
                 if (specificWidgets[widget["widget-type"]] === undefined) {
                     specificWidgets[widget["widget-type"]] = []
@@ -129,7 +132,8 @@ export default function Widgets() {
                     href: widget.href,
                     type: widget["widget-type"],
                     appURL: !("application_url" in widget) ? '#' : widget.application_url,
-                    authRequired: true
+                    authRequired: authRequired,
+                    token: token
                 })
 
             });
@@ -217,15 +221,16 @@ export default function Widgets() {
         setSavedEndpoints(widgetEndpoints)
         setFilteredWidgetDetails(widgetDetails);
         setAllWidgetDetails(widgetDetails);
-        console.log("widgetEndpoints: ",widgetEndpoints)
+        console.log("widgetEndpoints: ",widgetDetails)
         setLoading(false);
         setWidgetTypes(tempWidgetTypes)
     };
 
 
     const addWidget = (widgetDetail:WidgetDetail) => {
+        console.log("from add widget button: ",widgetDetail.token)
         onClose();
-        addNewWidgetFromBrowserToCurrentTab(widgetDetail.type, widgetDetail.title, widgetDetail.name, widgetDetail.href, widgetDetail.appURL, widgetDetail.authRequired);
+        addNewWidgetFromBrowserToCurrentTab(widgetDetail.type, widgetDetail.title, widgetDetail.name, widgetDetail.href, widgetDetail.appURL, widgetDetail.authRequired, widgetDetail.token);
         onOpen();
     };
 

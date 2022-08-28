@@ -15,6 +15,7 @@ export interface GenericWidgetConfiguration {
   widgetHref: string;
   widgetAppURL: string;
   authRequired: boolean;
+  token: string;
 }
 
 
