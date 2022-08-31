@@ -34,8 +34,7 @@ const userSchema = new Schema({
       url: String,
       token: String
     }],
-    default: [{url:`https://apps-dev.ecmwf.int/webapps/opencharts-api/v1/soc/user-dashboard/GetWidgets/`, token:''},
-              {url: 'https://apps-dev.ecmwf.int/webapps/openifs-api/v1/get-widgets/', token:"9614ad4a67154fb89556d733d2610186"}]
+    default: [{url:`https://apps-dev.ecmwf.int/webapps/opencharts-api/v1/soc/user-dashboard/GetWidgets/`, token:''}]
   },
   tabManager: {
     type: String,
@@ -56,8 +55,7 @@ userSchema.methods.addAPIEndpoints = function addEndpoints(endpoints: [Endpoint]
 
 userSchema.methods.deleteAPIEndpoints = function(){
   const user: any = this
-  user.APIEndpoints = [{url:`https://apps-dev.ecmwf.int/webapps/opencharts-api/v1/soc/user-dashboard/GetWidgets/`, token:''},
-    {url: 'https://apps-dev.ecmwf.int/webapps/openifs-api/v1/get-widgets/', token:"9614ad4a67154fb89556d733d2610186"}]
+  user.APIEndpoints = [{url:`https://apps-dev.ecmwf.int/webapps/opencharts-api/v1/soc/user-dashboard/GetWidgets/`, token:''}]
   user.save()
 }
 

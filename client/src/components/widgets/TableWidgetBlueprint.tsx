@@ -8,7 +8,7 @@ import {
     TableRow,
 } from "@material-ui/core";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
-import axios from "axios";
+import axios, {AxiosResponse} from "axios";
 
 import WidgetContainer from "../common/WidgetContainer";
 import WidgetTitleBar from "../common/WidgetTitleBar";
@@ -59,10 +59,15 @@ const TableDataWidgetBlueprint: React.FC<TableDataWidgetProps> = ({ builder, tit
             console.log("AuthRequired from table: ",authRequired)
 
             const headers_in_request = token.length!=0 ? { 'X-Auth' : token} : {}
-
-            const data = await axios.get(src,{
-                headers: headers_in_request
-            })
+            let data : any = {}
+            try {
+                data = await axios.get(src, {
+                    headers: headers_in_request
+                })
+            }
+            catch(e: any){
+                console.log("could not load data for ")
+            }
             console.log("from TableWidgetBlueprint")
             console.log(data)
 

@@ -4,9 +4,12 @@ import { TabManagerContext } from "../utils/contexts/TabManagerContext";
 import {AuthContext} from "../utils/contexts/AuthContext";
 import * as Url from "url";
 import DoneIcon from '@material-ui/icons/Done';
+import CheckIcon from '@material-ui/icons/Check';
+import CloseIcon from '@material-ui/icons/Close'
 import DeleteIcon from '@material-ui/icons/Delete'
 import AddIcon from '@material-ui/icons/Add'
 import {AddEndpointInstance} from "./AddEndpointInstance";
+import axios from "axios"
 import {log} from "util";
 
 interface AddWidgetDialogProps {
@@ -23,6 +26,7 @@ const AddWidgetDialog: React.FC<AddWidgetDialogProps> = ({ open, onClose }) => {
 
     const { user, addWidgetEndpoints, deleteWidgetEndpoint, deleteAllWidgetEndpoints, getWidgetEndpoints } = useContext(AuthContext);
     const [url, setUrl] = useState("");
+    const [tick, setTick] = useState(false);
     const [token, setToken] = useState("");
     const [endpointArray, setEndpointArray] = useState<Endpoint[]>([]);
     const callBackLogger = () => {
@@ -36,7 +40,7 @@ const AddWidgetDialog: React.FC<AddWidgetDialogProps> = ({ open, onClose }) => {
         if (reason === 'clickaway') {
             return;
         }
-
+        setTick(false)
         setOpenSnack(false);
     };
 
@@ -65,6 +69,26 @@ const AddWidgetDialog: React.FC<AddWidgetDialogProps> = ({ open, onClose }) => {
     //     onClose();
     // };
     //
+    const verifyEndpoint = async (e: Endpoint) => {
+        if(e.url.trim().length == 0){
+            setOpenMessage("url can't be empty")
+            setOpenSnack(true)
+            setUrl("")
+            return;
+        }
+        // try making a call to the endpoint and see if it returns anything
+        const headers_in_request = token.length != 0 ? {'X-Auth': e.token} : {}
+        try {
+            const try_request = await axios.get(e.url, {
+                headers: headers_in_request
+            })
+            setTick(true)
+        }
+        catch (e: any){
+            setOpenMessage("Invalid credentials, retry again!!")
+            setOpenSnack(true)
+        }
+    }
     const saveEndpoint = (e: Endpoint) => {
         if(e.url != '') {
             addWidgetEndpoints([e]).then(res => {
@@ -84,6 +108,7 @@ const AddWidgetDialog: React.FC<AddWidgetDialogProps> = ({ open, onClose }) => {
         }else{
             setOpenMessage("url can't be empty!")
             setOpenSnack(true)
+            setTick(false)
         }
     }
     const handleUrlChange= (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -124,11 +149,15 @@ const AddWidgetDialog: React.FC<AddWidgetDialogProps> = ({ open, onClose }) => {
             </DialogContent>
             <DialogActions>
                 {/*<Button onClick={() => setNoc(noc+1)}><AddIcon/></Button>*/}
-                <Button onClick={()=>{onClose(); setToken(""); setUrl("")}} color={"primary"}>
-                    Cancel
+                <Button onClick={() => {verifyEndpoint({url, token})}} color={"primary"}>
+                    {!tick && <p>Verify</p>}
+                    {tick && <CheckIcon style={{color:'green'}}/>}
                 </Button>
-                <Button onClick={() => {saveEndpoint({url, token})}} color={"primary"}>
+                <Button disabled={!tick} onClick={() => {saveEndpoint({url, token})}} color={"primary"}>
                     Save
+                </Button>
+                <Button onClick={()=>{onClose(); setToken(""); setUrl(""); setTick(false)}} color={"primary"}>
+                    Cancel
                 </Button>
                 <Snackbar
                     anchorOrigin={{

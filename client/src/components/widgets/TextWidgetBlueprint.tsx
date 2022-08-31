@@ -49,9 +49,15 @@ const TextWidgetBlueprint: React.FC<TextWidgetProps> = ({ builder, title, src, a
             console.log("token: ", token)
             const headers_in_request = token.length!=0 ? { 'X-Auth' : token} : {}
             console.log("reached textwidget")
-            const data = await axios.get(src,{
-                headers: headers_in_request
-            })
+            let data : any = {}
+            try {
+                data = await axios.get(src, {
+                    headers: headers_in_request
+                })
+            }
+            catch(e: any){
+                console.log("could not load data for ")
+            }
             console.log("from TextWidgetBlueprint")
             console.log(data)
             if (data.status === 200) {
