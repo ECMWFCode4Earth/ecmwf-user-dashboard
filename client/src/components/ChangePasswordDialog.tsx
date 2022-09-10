@@ -1,8 +1,20 @@
 import React, { useContext, useState } from "react";
-import { Box, Button, Dialog, DialogActions, DialogContent, TextField } from "@material-ui/core";
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent, FormControl, IconButton,
+  Input,
+  InputAdornment,
+  InputLabel,
+  TextField
+} from "@material-ui/core";
 import Alert from "@material-ui/lab/Alert";
 
 import { AuthContext } from "../utils/contexts/AuthContext";
+import Visibility from "@material-ui/icons/Visibility";
+import VisibilityOff from "@material-ui/icons/VisibilityOff";
 
 
 interface ChangePasswordDialogProps {
@@ -19,6 +31,10 @@ const ChangePasswordDialog: React.FC<ChangePasswordDialogProps> = ({ open, onClo
 
 
   const handleChangePassword = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    if(newPassword.length==0){
+      setMessage({severity:"error", text: "New Password can't be empty"})
+      return;
+    }
     try {
       await changePassword(newPassword);
       setMessage({ severity: "success", text: "Password changed successfully." });
@@ -30,7 +46,7 @@ const ChangePasswordDialog: React.FC<ChangePasswordDialogProps> = ({ open, onClo
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setNewPassword(e.target.value);
   };
-
+ const [showPassword, setShowPassword] = useState(false);
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth={true}>
@@ -38,18 +54,28 @@ const ChangePasswordDialog: React.FC<ChangePasswordDialogProps> = ({ open, onClo
         <Box mb={1}>
           {message.text && (<Alert severity={message.severity as any}>{message.text}</Alert>)}
         </Box>
-        <TextField
-          onChange={handleOnChange}
-          value={newPassword}
-          autoFocus
-          margin={"dense"}
-          label={"New Password"}
-          type={"text"}
-          fullWidth
-        />
+        <FormControl fullWidth variant="filled">
+          <InputLabel htmlFor="filled-adornment-password" style={{marginLeft:"-0.7em"}}>New Password</InputLabel>
+          <Input
+              id="standard-adornment-password"
+              type={showPassword ? 'text' : 'password'}
+              value={newPassword}
+              onChange={handleOnChange}
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <Visibility /> : <VisibilityOff />}
+                  </IconButton>
+                </InputAdornment>
+              }
+          />
+        </FormControl>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} color={"primary"}>
+        <Button onClick={() => {onClose(); setMessage({severity: "", text: ""})}} color={"primary"}>
           Cancel
         </Button>
         <Button onClick={handleChangePassword} color={"primary"}>

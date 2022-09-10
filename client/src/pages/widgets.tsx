@@ -219,7 +219,7 @@ export default function Widgets() {
                             <Button size={"small"} onClick={fetchWidgetDetails}>Refresh Widgets</Button>
                         </Box>
                     </Box>
-                    <AddWidgetDialog open={openAddWidget} onClose={onCloseAddWidget} callback={fetchWidgetDetails}/>
+                    <AddWidgetDialog open={openAddWidget} onClose={onCloseAddWidget} callback={fetchWidgetDetails} endpointsArray={savedEndpoints} />
                     <ViewWidgetEndpointsDialog open={openViewWidget} onClose={onCloseViewWidget} endpoints={savedEndpoints} />
                     <Box mt={2} display={"flex"} justifyContent={"center"} alignItems={"center"}>
                         <CircularProgress/>
@@ -251,7 +251,7 @@ export default function Widgets() {
                         <Button size={"small"} onClick={fetchWidgetDetails}>Refresh Widgets</Button>
                     </Box>
                 </Box>
-                <AddWidgetDialog open={openAddWidget} onClose={onCloseAddWidget} callback={fetchWidgetDetails} />
+                <AddWidgetDialog open={openAddWidget} onClose={onCloseAddWidget} callback={fetchWidgetDetails} endpointsArray={savedEndpoints} />
                 <ViewWidgetEndpointsDialog open={openViewWidget} onClose={onCloseViewWidget} endpoints={savedEndpoints}/>
 
                 <Box mt={2}>

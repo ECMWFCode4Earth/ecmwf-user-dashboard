@@ -32,6 +32,7 @@ interface AddWidgetDialogProps {
     open: boolean;
     onClose: () => void;
     callback: () => void;
+    endpointsArray: Endpoint[]
 }
 
 interface Endpoint{
@@ -39,19 +40,17 @@ interface Endpoint{
     token: string
 }
 
-const AddWidgetDialog: React.FC<AddWidgetDialogProps> = ({ open, onClose, callback }) => {
+const AddWidgetDialog: React.FC<AddWidgetDialogProps> = ({ open, onClose, callback, endpointsArray }) => {
 
     const { user, addWidgetEndpoints, deleteWidgetEndpoint, deleteAllWidgetEndpoints, getWidgetEndpoints } = useContext(AuthContext);
     const [url, setUrl] = useState("");
     const [tick, setTick] = useState(false);
     const [token, setToken] = useState("");
     const [endpointArray, setEndpointArray] = useState<Endpoint[]>([]);
-    const callBackLogger = () => {
-        console.log("endpointArray: ", endpointArray)
-    }
 
     const [openSnack, setOpenSnack] = useState(false);
     const [openMessage, setOpenMessage] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const handleClose = (event: React.SyntheticEvent | Event, reason?: string) => {
         if (reason === 'clickaway') {
@@ -78,11 +77,25 @@ const AddWidgetDialog: React.FC<AddWidgetDialogProps> = ({ open, onClose, callba
     }
 
     const verifyEndpoint = async (e: Endpoint) => {
-        if(e.url.trim().length == 0){
+        setLoading(true)
+        e.url = e.url.trim()
+        if(e.url.length == 0){
             setOpenMessage("url can't be empty")
             setOpenSnack(true)
             setUrl("")
+            setLoading(false)
+            setToken("")
             return;
+        }
+        const res = endpointsArray.find((ep:Endpoint) => {
+            return ep.url == e.url && ep.token == e.token
+        })
+
+        if (res){
+            setOpenMessage("url with specified token already exists!!")
+            setOpenSnack(true)
+            setLoading(false)
+            return
         }
         // try making a call to the endpoint and see if it returns anything
         const headers_in_request = token.length != 0 ? {'X-Auth': e.token} : {}
@@ -90,16 +103,18 @@ const AddWidgetDialog: React.FC<AddWidgetDialogProps> = ({ open, onClose, callba
             const try_request = await axios.get(e.url, {
                 headers: headers_in_request
             })
-            setTick(true)
             setLoading(false)
+            setTick(true)
         }
         catch (e: any){
             setOpenMessage("Invalid credentials, retry again!!")
             setOpenSnack(true)
+            setLoading(false)
         }
     }
     const saveEndpoint = (e: Endpoint) => {
         if(e.url != '') {
+            e.url = e.url.trim()
             addWidgetEndpoints([e]).then(res => {
                 console.log("success adding the endpoint. Res: ", res)
                 setOpenMessage("success adding the endpoint.")
@@ -120,6 +135,7 @@ const AddWidgetDialog: React.FC<AddWidgetDialogProps> = ({ open, onClose, callba
             setOpenSnack(true)
         }
         setTick(false)
+        setLoading(false)
     }
     const handleUrlChange= (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setUrl(e.target.value)  ;
@@ -130,7 +146,6 @@ const AddWidgetDialog: React.FC<AddWidgetDialogProps> = ({ open, onClose, callba
 
     const [showPassword, setShowPassword] = useState(false);
 
-    const [loading, setLoading] = useState(false);
 
     // @ts-ignore
     return (
@@ -174,15 +189,19 @@ const AddWidgetDialog: React.FC<AddWidgetDialogProps> = ({ open, onClose, callba
             </DialogContent>
             <DialogActions>
                 {/*<Button onClick={() => setNoc(noc+1)}><AddIcon/></Button>*/}
-                <Button onClick={() => {verifyEndpoint({url, token}); setLoading(true)}} color={"primary"}>
-                    {!tick && !loading && <p>Verify</p>}
-                    {loading && <CircularProgress />}
+                <Button disabled={tick || loading} onClick={() => {verifyEndpoint({url, token})}} color={"primary"}>
+                    {!tick && !loading &&
+                        <Button color={"primary"}>
+                        Verify
+                        </Button>
+                    }
+                    {loading && <CircularProgress size={'1.5rem'}/>}
                     {tick && <CheckIcon style={{color:'green'}}/>}
                 </Button>
                 <Button disabled={!tick} onClick={() => {saveEndpoint({url, token}) }} color={"primary"}>
                     Save
                 </Button>
-                <Button onClick={()=>{onClose(); setToken(""); setUrl(""); setTick(false)}} color={"primary"}>
+                <Button onClick={()=>{onClose(); setToken(""); setUrl(""); setTick(false); setLoading(false)}} color={"primary"}>
                     Cancel
                 </Button>
                 <Snackbar
