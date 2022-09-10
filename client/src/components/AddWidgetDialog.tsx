@@ -1,5 +1,19 @@
 import React, { useContext, useEffect, useState } from "react";
-import {Button, Dialog, DialogActions, DialogContent, DialogTitle, Snackbar, TextField} from "@material-ui/core";
+import {
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    Snackbar,
+    TextField,
+    Input,
+    InputAdornment,
+    IconButton,
+    FormControl,
+    InputLabel,
+    CircularProgress
+} from "@material-ui/core";
 import { TabManagerContext } from "../utils/contexts/TabManagerContext";
 import {AuthContext} from "../utils/contexts/AuthContext";
 import * as Url from "url";
@@ -10,11 +24,14 @@ import DeleteIcon from '@material-ui/icons/Delete'
 import AddIcon from '@material-ui/icons/Add'
 import {AddEndpointInstance} from "./AddEndpointInstance";
 import axios from "axios"
+import Visibility from "@material-ui/icons/Visibility"
+import VisibilityOff from "@material-ui/icons/VisibilityOff"
 import {log} from "util";
 
 interface AddWidgetDialogProps {
     open: boolean;
     onClose: () => void;
+    callback: () => void;
 }
 
 interface Endpoint{
@@ -22,7 +39,7 @@ interface Endpoint{
     token: string
 }
 
-const AddWidgetDialog: React.FC<AddWidgetDialogProps> = ({ open, onClose }) => {
+const AddWidgetDialog: React.FC<AddWidgetDialogProps> = ({ open, onClose, callback }) => {
 
     const { user, addWidgetEndpoints, deleteWidgetEndpoint, deleteAllWidgetEndpoints, getWidgetEndpoints } = useContext(AuthContext);
     const [url, setUrl] = useState("");
@@ -59,16 +76,7 @@ const AddWidgetDialog: React.FC<AddWidgetDialogProps> = ({ open, onClose }) => {
         await setEndpointArray(endpointArray => endpointArray.filter(epa=> (epa.url!=ep.url && epa.token != ep.token)))
         console.log(endpointArray)
     }
-    // useEffect(() => {
-    //     setName(tabManager.tabs[tabManager.activeTab].name);
-    // }, [open]);
-    //
-    //
-    // const renameTab = (e: React.MouseEvent<HTMLButtonElement>) => {
-    //     renameCurrentTab(name);
-    //     onClose();
-    // };
-    //
+
     const verifyEndpoint = async (e: Endpoint) => {
         if(e.url.trim().length == 0){
             setOpenMessage("url can't be empty")
@@ -83,6 +91,7 @@ const AddWidgetDialog: React.FC<AddWidgetDialogProps> = ({ open, onClose }) => {
                 headers: headers_in_request
             })
             setTick(true)
+            setLoading(false)
         }
         catch (e: any){
             setOpenMessage("Invalid credentials, retry again!!")
@@ -100,6 +109,7 @@ const AddWidgetDialog: React.FC<AddWidgetDialogProps> = ({ open, onClose }) => {
                 setTimeout(()=>{
                     onClose()
                 }, 1700)
+                callback()
             }).catch(err => {
                 console.log(err)
                 setOpenMessage("Could not add the endpoint.")
@@ -108,15 +118,19 @@ const AddWidgetDialog: React.FC<AddWidgetDialogProps> = ({ open, onClose }) => {
         }else{
             setOpenMessage("url can't be empty!")
             setOpenSnack(true)
-            setTick(false)
         }
+        setTick(false)
     }
     const handleUrlChange= (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setUrl(e.target.value);
+        setUrl(e.target.value)  ;
     };
     const handleTokenChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setToken(e.target.value);
     };
+
+    const [showPassword, setShowPassword] = useState(false);
+
+    const [loading, setLoading] = useState(false);
 
     // @ts-ignore
     return (
@@ -127,19 +141,30 @@ const AddWidgetDialog: React.FC<AddWidgetDialogProps> = ({ open, onClose }) => {
                     onChange={handleUrlChange}
                     value={url}
                     autoFocus
-                    style={{margin:"1em"}}
                     label={"URL"}
                     type={"text"}
                     required={true}
-
+                    fullWidth
                 />
-                <TextField
-                    onChange={handleTokenChange}
-                    value={token}
-                    style={{margin:"1em"}}
-                    label={"Token"}
-                    type={"text"}
-                />
+                <FormControl fullWidth variant="filled">
+                    <InputLabel htmlFor="filled-adornment-password" style={{marginLeft:"-0.7em"}}>Token</InputLabel>
+                    <Input
+                        id="standard-adornment-password"
+                        type={showPassword ? 'text' : 'password'}
+                        value={token}
+                        onChange={handleTokenChange}
+                        endAdornment={
+                            <InputAdornment position="end">
+                                <IconButton
+                                    aria-label="toggle password visibility"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                >
+                                    {showPassword ? <Visibility /> : <VisibilityOff />}
+                                </IconButton>
+                            </InputAdornment>
+                        }
+                    />
+                </FormControl>
                 {/*{(() => {*/}
                 {/*    for (let i = 0; i < noc; i++) {*/}
                 {/*        <AddEndpointInstance addEndpointHandler={addEndpoint} removeEndpointHandler={removeEndpoint} />*/}
@@ -149,11 +174,12 @@ const AddWidgetDialog: React.FC<AddWidgetDialogProps> = ({ open, onClose }) => {
             </DialogContent>
             <DialogActions>
                 {/*<Button onClick={() => setNoc(noc+1)}><AddIcon/></Button>*/}
-                <Button onClick={() => {verifyEndpoint({url, token})}} color={"primary"}>
-                    {!tick && <p>Verify</p>}
+                <Button onClick={() => {verifyEndpoint({url, token}); setLoading(true)}} color={"primary"}>
+                    {!tick && !loading && <p>Verify</p>}
+                    {loading && <CircularProgress />}
                     {tick && <CheckIcon style={{color:'green'}}/>}
                 </Button>
-                <Button disabled={!tick} onClick={() => {saveEndpoint({url, token})}} color={"primary"}>
+                <Button disabled={!tick} onClick={() => {saveEndpoint({url, token}) }} color={"primary"}>
                     Save
                 </Button>
                 <Button onClick={()=>{onClose(); setToken(""); setUrl(""); setTick(false)}} color={"primary"}>
