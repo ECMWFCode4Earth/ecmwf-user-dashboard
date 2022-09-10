@@ -80,6 +80,9 @@ const useAuth = () => {
 
   const logout = async () => {
     await localStore.removeItem(kLocalStoreKey.USER_DETAILS);
+    await localStore.removeItem(kLocalStoreKey.WIDGET_ENDPOINTS)
+    await localStore.removeItem(kLocalStoreKey.TAB_MANAGER)
+    await localStore.removeItem(kLocalStoreKey.WIDGET_DETAILS)
     setUser(null);
   };
 
@@ -159,7 +162,10 @@ const useAuth = () => {
   }
 
   const deleteWidgetEndpoint = async(endpoint : {url: string, token:string}) => {
-    const res = await axios.post(`${kStore.BASE_URL}/api/widget-endpoints`, endpoint, {
+    const res = await axios.delete(`${kStore.BASE_URL}/api/widget-endpoints`,{
+      data: {
+        endpoint: endpoint
+      },
       headers: {
         Authorization: user?.token
       }
