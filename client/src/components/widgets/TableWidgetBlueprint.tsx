@@ -188,11 +188,6 @@ const TableDataWidgetBlueprint: React.FC<TableDataWidgetProps> = ({ builder, tit
                                               <div style={{ borderRadius: "0.1rem",padding: "0.5em" ,display: "flex", alignItems:"center", justifyContent: "center", background:style[key]!== undefined ? style[key] : 'white', color: style[key]!== undefined ? 'white': 'black'}}>{key}</div>
                                             </TableCell>)
                                         })}
-                                        {/*{Object.values(data).map((key:any) => {
-                                            return (<TableCell key={key}>
-                                                {key}
-                                            </TableCell>)
-                                        })}*/}
                                     </TableRow>
                                 );
                             }
