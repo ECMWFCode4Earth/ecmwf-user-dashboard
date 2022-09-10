@@ -14,6 +14,7 @@ import defaultLogo from "../../public/defaultLogo.png"
 import AddWidgetDialog from "../components/AddWidgetDialog";
 import {AuthContext} from "../utils/contexts/AuthContext";
 import ViewWidgetEndpointsDialog from "../components/ViewWidgetEndpointsDialog";
+import {useRouter} from "next/router";
 
 
 interface WidgetDetail {
@@ -40,6 +41,13 @@ export default function Widgets() {
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(true);
     const {open, onClose, onOpen} = useDrawer();
+
+    const router = useRouter();
+    const { isAuthenticated } = useContext(AuthContext);
+
+    const handleNavigation = (route: string) => {
+        router.push(route);
+    };
 
     // modal for adding the widget
     const {open: openAddWidget, onClose: onCloseAddWidget, onOpen: onOpenAddWidget} = useDrawer()
@@ -95,11 +103,12 @@ export default function Widgets() {
         setLoading(true);
         const widgetDetails:WidgetDetail[] = [];
         const tempWidgetTypes: string[] = [];
-        const widgetEndpoints : Endpoint[] = await getWidgetEndpoints()
+        let widgetEndpoints : Endpoint[] = await getWidgetEndpoints().catch(e => {
+                return [{_id:"0", url: "https://apps-dev.ecmwf.int/webapps/opencharts-api/v1/soc/user-dashboard/GetWidgets/", token:"" } as Endpoint]
+            })
         console.log("widgetEndpoints: ", widgetEndpoints)
         for (const {url, token} of widgetEndpoints){
-            // if (url=="https://apps-dev.ecmwf.int/webapps/opencharts-api/v1/soc/user-dashboard/GetWidgets/")
-            //     continue
+
             const headers_in_request = token.length == 0 ? {} : { 'X-Auth' : token}
 
             const res = await axios.get(url, {
@@ -138,81 +147,6 @@ export default function Widgets() {
 
             });
         }
-        // const noAuthEndpoints = [`https://apps-dev.ecmwf.int/webapps/opencharts-api/v1/soc/user-dashboard/GetWidgets/`,]
-        // const authorisedEndpoints = ['https://apps-dev.ecmwf.int/webapps/openifs-api/v1/get-widgets/']
-        // for (const url of noAuthEndpoints) {
-        //     const res = await axios.get(url);
-        //     console.log("<-----------------Result of API call---------------------->")
-        //     console.log(res)
-        //     console.log(res.data)
-        //     const widgets = res.data.widgets;
-        //
-        //     widgets.forEach((widget: any) => {
-        //         widgetDetails.push({
-        //             title: widget.name,
-        //             name: widget.name,
-        //             thumbnail: !("thumbnail" in widget) ? defaultLogo : widget.thumbnail,
-        //             href: widget.href,
-        //             type: widget["widget-type"],
-        //             appURL: !("application_url" in widget) ? '#' : widget.application_url,
-        //             authRequired: false
-        //         })
-        //         if (specificWidgets[widget["widget-type"]] === undefined) {
-        //             specificWidgets[widget["widget-type"]] = []
-        //             tempWidgetTypes.push(widget['widget-type'])
-        //         }
-        //         console.log(tempWidgetTypes)
-        //         specificWidgets[widget["widget-type"]].push({
-        //             title: widget.name,
-        //             name: widget.name,
-        //             thumbnail: !("thumbnail" in widget) ? defaultLogo : widget.thumbnail,
-        //             href: widget.href,
-        //             type: widget["widget-type"],
-        //             appURL: !("application_url" in widget) ? '#' : widget.application_url,
-        //             authRequired: false
-        //         })
-        //
-        //     });
-        // }
-        // for (const url of authorisedEndpoints) {
-        //     const res = await axios.get(url, {
-        //         headers:{
-        //             "Access-Control-Allow-Origin": "*",
-        //             'X-Auth': process.env.NEXT_PUBLIC_X_AUTH_TOKEN
-        //         }
-        //     });
-        //     console.log("<-----------------Result of API call---------------------->")
-        //     console.log(res)
-        //     console.log(res.data)
-        //     const widgets = res.data.widgets;
-        //
-        //     widgets.forEach((widget: any) => {
-        //         widgetDetails.push({
-        //             title: widget.name,
-        //             name: widget.name,
-        //             thumbnail: !("thumbnail" in widget) ? defaultLogo : widget.thumbnail,
-        //             href: widget.href,
-        //             type: widget["widget-type"],
-        //             appURL: !("application_url" in widget) ? '#' : widget.application_url,
-        //             authRequired: true
-        //         })
-        //         if (specificWidgets[widget["widget-type"]] === undefined) {
-        //             specificWidgets[widget["widget-type"]] = []
-        //             tempWidgetTypes.push(widget['widget-type'])
-        //         }
-        //         console.log(tempWidgetTypes)
-        //         specificWidgets[widget["widget-type"]].push({
-        //             title: widget.name,
-        //             name: widget.name,
-        //             thumbnail: !("thumbnail" in widget) ? defaultLogo : widget.thumbnail,
-        //             href: widget.href,
-        //             type: widget["widget-type"],
-        //             appURL: !("application_url" in widget) ? '#' : widget.application_url,
-        //             authRequired: true
-        //         })
-        //
-        //     });
-        // }
         console.log("widgetTypes: ", widgetTypes)
         console.log("specificWidgets: ",specificWidgets)
         await localStore.setItem(kLocalStoreKey.WIDGET_DETAILS, widgetDetails);
@@ -280,12 +214,12 @@ export default function Widgets() {
                         <Button size={"small"} onClick={toggleShowImages}>Turn {showImages ? "Off" : "On"} Images</Button>
                         <Box mt={2} display={"flex"} justifyContent={"space-between"} alignItems={"center"}>
                             {/*<AddWidgetDialog open={openAddWidget} onClose={onCloseAddWidget}/>*/}
-                            <Button size={"small"} onClick={viewWidgetDialog}>View Widget Endpoints</Button>
+                            <Button size={"small"} onClick={()=>handleNavigation("/endpoint_manager")}>Endpoint Manager</Button>
                             <Button size={"small"} onClick={addwidgetDialog}>Add Widget Endpoint</Button>
                             <Button size={"small"} onClick={fetchWidgetDetails}>Refresh Widgets</Button>
                         </Box>
                     </Box>
-                    <AddWidgetDialog open={openAddWidget} onClose={onCloseAddWidget} />
+                    <AddWidgetDialog open={openAddWidget} onClose={onCloseAddWidget} callback={fetchWidgetDetails}/>
                     <ViewWidgetEndpointsDialog open={openViewWidget} onClose={onCloseViewWidget} endpoints={savedEndpoints} />
                     <Box mt={2} display={"flex"} justifyContent={"center"} alignItems={"center"}>
                         <CircularProgress/>
@@ -312,31 +246,14 @@ export default function Widgets() {
                     <Button size={"small"} onClick={toggleShowImages}>Turn {showImages ? "Off" : "On"} Images</Button>
                     <Box mt={2} display={"flex"} marginTop={"0px"} justifyContent={"space-between"} alignItems={"center"}>
                         {/*<AddWidgetDialog open={openAddWidget} onClose={onCloseAddWidget}/>*/}
-                        <Button size={"small"} onClick={viewWidgetDialog}>View Widget Endpoints</Button>
-                         <Button size={"small"} onClick={addwidgetDialog}>Add Widget Endpoint</Button>
+                        <Button size={"small"} onClick={()=>handleNavigation("/endpoint_manager")}>Endpoint Manager</Button>
+                        <Button size={"small"} onClick={addwidgetDialog} disabled={!isAuthenticated()}>Add Widget Endpoint</Button>
                         <Button size={"small"} onClick={fetchWidgetDetails}>Refresh Widgets</Button>
                     </Box>
                 </Box>
-                <AddWidgetDialog open={openAddWidget} onClose={onCloseAddWidget} />
+                <AddWidgetDialog open={openAddWidget} onClose={onCloseAddWidget} callback={fetchWidgetDetails} />
                 <ViewWidgetEndpointsDialog open={openViewWidget} onClose={onCloseViewWidget} endpoints={savedEndpoints}/>
 
-                {/*<Box mt={2}>*/}
-                {/*    <Typography>Filters</Typography>*/}
-                {/*    <Box>*/}
-                {/*    <Grid style={{color:"black"}} container spacing={2}>*/}
-                {/*        {*/}
-                {/*            widgetTypes.map((widgetName:string, index)=>{*/}
-                {/*                console.log("widgetName: ",widgetName)*/}
-                {/*                return (*/}
-                {/*                    <Grid key={index} item>*/}
-                {/*                       <button>{widgetName.toUpperCase()}</button>*/}
-                {/*                    </Grid>*/}
-                {/*                )*/}
-                {/*            })*/}
-                {/*        }*/}
-                {/*    </Grid>*/}
-                {/*    </Box>*/}
-                {/*</Box>*/}
                 <Box mt={2}>
                     <Grid container spacing={2}>
                         {

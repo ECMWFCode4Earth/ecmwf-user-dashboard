@@ -10,12 +10,18 @@ import { builderClassIdToBuilderClassMap } from "../utils/widgetUtils";
 import { TabManagerContext } from "../utils/contexts/TabManagerContext";
 import { useDrawer } from "../utils/hooks/useDrawer";
 import ShareTabDialog from "./ShareTabDialog";
+import {AuthContext} from "../utils/contexts/AuthContext";
 
 
 const WidgetToolbar: React.FC = () => {
 
   const router = useRouter();
   const classes = useStyles();
+  const { isAuthenticated } = useContext(AuthContext);
+
+  const handleNavigation = (route: string) => {
+    router.push(route);
+  };
 
   const { addNoteWidgetToCurrentTab, removeCurrentTab } = useContext(TabManagerContext);
 
@@ -93,6 +99,12 @@ const WidgetToolbar: React.FC = () => {
               router.pathname !== "/dashboard" && (
                 <Button onClick={navigateToDashboard}>Dashboard</Button>
               )
+            }
+
+            {
+                (router.pathname !== "/endpoint_manager") && (
+                    <Button color={"inherit"} onClick={() => handleNavigation("/endpoint_manager")}>Endpoint Manager</Button>
+                )
             }
 
           </Box>
