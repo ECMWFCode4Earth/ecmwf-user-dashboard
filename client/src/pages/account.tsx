@@ -101,8 +101,6 @@ const Account: React.FC = () => {
                 <form onChange={handleFormOnChange}>
                   <FullWidthTextField label={"Name"} name={"name"} value={user?.name} readOnly={true}/>
                   <FullWidthTextField label={"Username"} name={"username"} value={user?.username} readOnly={true}/>
-                  <FullWidthTextField label={"Token 1"} name={"token1"} value={apiTokens.token1} readOnly={readOnly}/>
-                  <FullWidthTextField label={"Token 2"} name={"token2"} value={apiTokens.token2} readOnly={readOnly}/>
                 </form>
               </Box>
 
@@ -110,13 +108,6 @@ const Account: React.FC = () => {
 
             <CardActions>
               <Box px={1} mb={0.5} width={"100%"} textAlign={"center"}>
-                {
-                  readOnly ? (
-                    <FullWidthButton  onClick={toggleReadOnly}>Edit Tokens</FullWidthButton>
-                  ) : (
-                    <FullWidthButton variant={"success"} onClick={updateTokens}>Save Tokens</FullWidthButton>
-                  )
-                }
                 <CustomDivider my={1}/>
                 <FullWidthButton variant={"info"} my={1} onClick={openChangePasswordDialog}>Change
                   Password</FullWidthButton>
