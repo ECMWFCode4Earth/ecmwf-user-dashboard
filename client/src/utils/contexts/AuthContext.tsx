@@ -133,9 +133,9 @@ const useAuth = () => {
     url: string;
     token: string;
   }
-  const addWidgetEndpoints = async (endpoints:Endpoint[]) => {
+  const addWidgetEndpoint = async (endpoint:Endpoint) => {
     const body = {
-      endpoints: endpoints
+      endpoint
     }
     const res = await axios.post(`${kStore.BASE_URL}/api/widget-endpoints`, body, {
       headers: {
@@ -193,7 +193,7 @@ const useAuth = () => {
     changePassword,
     fetchApiTokens,
     updateApiTokens,
-    addWidgetEndpoints,
+    addWidgetEndpoint,
     getWidgetEndpoints,
     deleteWidgetEndpoint,
     deleteAllWidgetEndpoints
@@ -211,7 +211,7 @@ const AuthContext = createContext<ReturnType<typeof useAuth>>(
     changePassword: async () => {},
     fetchApiTokens: async () => {},
     updateApiTokens: async () => {},
-    addWidgetEndpoints: async () => {},
+    addWidgetEndpoint: async () => {},
     getWidgetEndpoints: async () => [],
     deleteAllWidgetEndpoints: async () => {},
     deleteWidgetEndpoint: async () => {}

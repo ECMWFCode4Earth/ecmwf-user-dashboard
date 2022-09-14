@@ -19,13 +19,15 @@ export const addEndPointsController: RequestHandler = (req, res, next) => {
   console.log("endpoint: ", req.body)
   try{
     const user: any = req.user
-    const endpoints = req.body.endpoints;
-    if(!user || !endpoints){
+    const endpoint = req.body.endpoint;
+    if(!user || !endpoint){
       return res.status(400).json({ success: false, message: "Incomplete parameters" });
     }
-    user.addAPIEndpoints(endpoints)
+    delete endpoint._id
+    user.addAPIEndpoints(endpoint)
     res.status(200).json({ success: true, message: "Success" });
   } catch (err) {
+    console.log(err)
     next(err);
   }
 }

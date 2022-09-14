@@ -44,11 +44,11 @@ const userSchema = new Schema({
 
 // TODO: try delete functionality as well
 
-userSchema.methods.addAPIEndpoints = function addEndpoints(endpoints: [Endpoint]){
+userSchema.methods.addAPIEndpoints = function addEndpoints(endpoint: Endpoint){
   const user: any = this;
   console.log("existing endpoints: ", user.APIEndpoints)
-  console.log("new endpoints: ", endpoints)
-  user.APIEndpoints = user.APIEndpoints.concat(endpoints)
+  console.log("new endpoints: ", endpoint)
+  user.APIEndpoints = user.APIEndpoints.concat(endpoint)
   user.save()
   console.log(user.APIEndpoints)
 }

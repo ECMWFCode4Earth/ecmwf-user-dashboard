@@ -26,23 +26,38 @@ import {AddEndpointInstance} from "./AddEndpointInstance";
 import axios from "axios"
 import Visibility from "@material-ui/icons/Visibility"
 import VisibilityOff from "@material-ui/icons/VisibilityOff"
+import defaultLogo from "../../public/defaultLogo.png"
 import {log} from "util";
+import localStore from "../utils/localStore";
+import {kLocalStoreKey} from "../utils/constants";
+
+interface WidgetDetail {
+    title: string;
+    name: string;
+    thumbnail: string;
+    href: string;
+    type: string;
+    appURL: string;
+    authRequired: boolean;
+    token: string;
+}
 
 interface AddWidgetDialogProps {
     open: boolean;
     onClose: () => void;
-    callback: () => void;
+    callback: (e: Endpoint) => void;
     endpointsArray: Endpoint[]
 }
 
 interface Endpoint{
+    _id: string,
     url: string,
     token: string
 }
 
 const AddWidgetDialog: React.FC<AddWidgetDialogProps> = ({ open, onClose, callback, endpointsArray }) => {
 
-    const { user, addWidgetEndpoints, deleteWidgetEndpoint, deleteAllWidgetEndpoints, getWidgetEndpoints } = useContext(AuthContext);
+    const { user, addWidgetEndpoint, deleteWidgetEndpoint, deleteAllWidgetEndpoints, getWidgetEndpoints } = useContext(AuthContext);
     const [url, setUrl] = useState("");
     const [tick, setTick] = useState(false);
     const [token, setToken] = useState("");
@@ -115,16 +130,17 @@ const AddWidgetDialog: React.FC<AddWidgetDialogProps> = ({ open, onClose, callba
     const saveEndpoint = (e: Endpoint) => {
         if(e.url != '') {
             e.url = e.url.trim()
-            addWidgetEndpoints([e]).then(res => {
+            addWidgetEndpoint(e).then(res => {
                 console.log("success adding the endpoint. Res: ", res)
                 setOpenMessage("success adding the endpoint.")
+                //make a call to getWidgetEndpoint
+                callback(e)
                 setOpenSnack(true)
                 setUrl("")
                 setToken("")
-                setTimeout(()=>{
+                setTimeout(() => {
                     onClose()
                 }, 1700)
-                callback()
             }).catch(err => {
                 console.log(err)
                 setOpenMessage("Could not add the endpoint.")
@@ -189,7 +205,7 @@ const AddWidgetDialog: React.FC<AddWidgetDialogProps> = ({ open, onClose, callba
             </DialogContent>
             <DialogActions>
                 {/*<Button onClick={() => setNoc(noc+1)}><AddIcon/></Button>*/}
-                <Button disabled={tick || loading} onClick={() => {verifyEndpoint({url, token})}} color={"primary"}>
+                <Button disabled={tick || loading} onClick={() => {verifyEndpoint({_id:'0', url, token})}} color={"primary"}>
                     {!tick && !loading &&
                         <Button color={"primary"}>
                         Verify
@@ -198,7 +214,7 @@ const AddWidgetDialog: React.FC<AddWidgetDialogProps> = ({ open, onClose, callba
                     {loading && <CircularProgress size={'1.5rem'}/>}
                     {tick && <CheckIcon style={{color:'green'}}/>}
                 </Button>
-                <Button disabled={!tick} onClick={() => {saveEndpoint({url, token}) }} color={"primary"}>
+                <Button disabled={!tick} onClick={() => {saveEndpoint({_id:'0', url, token}) }} color={"primary"}>
                     Save
                 </Button>
                 <Button onClick={()=>{onClose(); setToken(""); setUrl(""); setTick(false); setLoading(false)}} color={"primary"}>
