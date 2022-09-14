@@ -4,6 +4,7 @@ import DoneIcon from "@material-ui/icons/Done";
 import DeleteIcon from "@material-ui/icons/Delete";
 
 interface Endpoint{
+    _id: string,
     url: string,
     token: string
 }
