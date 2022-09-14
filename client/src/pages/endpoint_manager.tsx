@@ -24,8 +24,6 @@ import { useDrawer } from "../utils/hooks/useDrawer";
 import defaultLogo from "../../public/defaultLogo.png"
 import AddWidgetDialog from "../components/AddWidgetDialog";
 import {AuthContext} from "../utils/contexts/AuthContext";
-import ViewWidgetEndpointsDialog from "../components/ViewWidgetEndpointsDialog";
-
 
 interface WidgetDetail {
     title: string;
@@ -49,7 +47,7 @@ export default function Widgets() {
 
     const { isAuthenticated } = useContext(AuthContext);
 
-    const { user, addWidgetEndpoints, deleteWidgetEndpoint, deleteAllWidgetEndpoints, getWidgetEndpoints } = useContext(AuthContext);
+    const { user, addWidgetEndpoint, deleteWidgetEndpoint, deleteAllWidgetEndpoints, getWidgetEndpoints } = useContext(AuthContext);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(true);
     const {open, onClose, onOpen} = useDrawer();
@@ -160,7 +158,7 @@ export default function Widgets() {
                         </Box>
                     </Box>
                     <AddWidgetDialog open={openAddWidget} onClose={onCloseAddWidget} callback={fetchEndpoints} endpointsArray={savedEndpoints}/>
-                    <ViewWidgetEndpointsDialog open={openViewWidget} onClose={onCloseViewWidget} endpoints={savedEndpoints} />
+                    {/*<ViewWidgetEndpointsDialog open={openViewWidget} onClose={onCloseViewWidget} endpoints={savedEndpoints} />*/}
                     <Box mt={2} display={"flex"} justifyContent={"center"} alignItems={"center"}>
                         <CircularProgress/>
                     </Box>
@@ -188,7 +186,7 @@ export default function Widgets() {
                     </Box>
                 </Box>
                 <AddWidgetDialog open={openAddWidget} onClose={onCloseAddWidget} callback={fetchEndpoints} endpointsArray={savedEndpoints} />
-                <ViewWidgetEndpointsDialog open={openViewWidget} onClose={onCloseViewWidget} endpoints={savedEndpoints}/>
+                {/*<ViewWidgetEndpointsDialog open={openViewWidget} onClose={onCloseViewWidget} endpoints={savedEndpoints}/>*/}
                 <Box mt={2}>
                     <Grid container spacing={2}>
                         <TableContainer>

@@ -13,7 +13,6 @@ import { useDrawer } from "../utils/hooks/useDrawer";
 import defaultLogo from "../../public/defaultLogo.png"
 import AddWidgetDialog from "../components/AddWidgetDialog";
 import {AuthContext} from "../utils/contexts/AuthContext";
-import ViewWidgetEndpointsDialog from "../components/ViewWidgetEndpointsDialog";
 import {useRouter} from "next/router";
 
 
@@ -29,14 +28,14 @@ interface WidgetDetail {
 }
 
 interface Endpoint{
-    _id:string,
+    _id: string,
     url: string,
     token: string
 }
 
 export default function Widgets() {
 
-    const { user, addWidgetEndpoints, deleteWidgetEndpoint, deleteAllWidgetEndpoints, getWidgetEndpoints } = useContext(AuthContext);
+    const { user, addWidgetEndpoint, deleteWidgetEndpoint, deleteAllWidgetEndpoints, getWidgetEndpoints } = useContext(AuthContext);
     const { addNewWidgetFromBrowserToCurrentTab } = useContext(TabManagerContext);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(true);
@@ -160,6 +159,39 @@ export default function Widgets() {
         setWidgetTypes(tempWidgetTypes)
     };
 
+    const fetchWidgetsFromEndpoint = async (e: Endpoint) => {
+        const widgetDetails: WidgetDetail[] = [];
+        const token = e.token
+        const url = e.url
+        const headers_in_request = token.length == 0 ? {} : {'X-Auth': token}
+        const res = await axios.get(url, {
+            headers: headers_in_request
+        });
+        const authRequired = token.length != 0
+        console.log("token: ", token)
+        const widgets = res.data.widgets;
+        console.log("tokens from widget: ", token)
+        widgets.forEach((widget: any) => {
+            widgetDetails.push({
+                title: widget.name,
+                name: widget.name,
+                thumbnail: !("thumbnail" in widget) ? defaultLogo : widget.thumbnail,
+                href: widget.href,
+                type: widget["widget-type"],
+                appURL: !("application_url" in widget) ? '#' : widget.application_url,
+                authRequired: authRequired,
+                token: token
+            })
+        });
+        const newFilteredWidgets = [...filteredWidgetDetails, ...widgetDetails]
+        const newAllWidgets = [...allWidgetDetails, ...widgetDetails]
+        const newEndpoints = [...savedEndpoints, e]
+        setFilteredWidgetDetails(newFilteredWidgets)
+        setAllWidgetDetails(newAllWidgets)
+        setSavedEndpoints(newEndpoints)
+        await localStore.setItem(kLocalStoreKey.WIDGET_DETAILS, newAllWidgets);
+        await localStore.setItem(kLocalStoreKey.WIDGET_ENDPOINTS, newEndpoints)
+    }
 
     const addWidget = (widgetDetail:WidgetDetail) => {
         console.log("from add widget button: ",widgetDetail.token)
@@ -219,8 +251,8 @@ export default function Widgets() {
                             <Button size={"small"} onClick={fetchWidgetDetails}>Refresh Widgets</Button>
                         </Box>
                     </Box>
-                    <AddWidgetDialog open={openAddWidget} onClose={onCloseAddWidget} callback={fetchWidgetDetails} endpointsArray={savedEndpoints} />
-                    <ViewWidgetEndpointsDialog open={openViewWidget} onClose={onCloseViewWidget} endpoints={savedEndpoints} />
+                    <AddWidgetDialog open={openAddWidget} onClose={onCloseAddWidget} callback={fetchWidgetsFromEndpoint} endpointsArray={savedEndpoints} />
+                    {/*<ViewWidgetEndpointsDialog open={openViewWidget} onClose={onCloseViewWidget} endpoints={savedEndpoints} />*/}
                     <Box mt={2} display={"flex"} justifyContent={"center"} alignItems={"center"}>
                         <CircularProgress/>
                     </Box>
@@ -251,8 +283,8 @@ export default function Widgets() {
                         <Button size={"small"} onClick={fetchWidgetDetails}>Refresh Widgets</Button>
                     </Box>
                 </Box>
-                <AddWidgetDialog open={openAddWidget} onClose={onCloseAddWidget} callback={fetchWidgetDetails} endpointsArray={savedEndpoints} />
-                <ViewWidgetEndpointsDialog open={openViewWidget} onClose={onCloseViewWidget} endpoints={savedEndpoints}/>
+                <AddWidgetDialog open={openAddWidget} onClose={onCloseAddWidget} callback={fetchWidgetsFromEndpoint} endpointsArray={savedEndpoints} />
+                {/*<ViewWidgetEndpointsDialog open={openViewWidget} onClose={onCloseViewWidget} endpoints={savedEndpoints}/>*/}
 
                 <Box mt={2}>
                     <Grid container spacing={2}>
