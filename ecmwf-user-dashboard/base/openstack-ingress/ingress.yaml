@@ -1,0 +1,24 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: openstack
+    octavia.ingress.kubernetes.io/internal: "false"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+  name: octavia-ingress
+spec:
+  rules:
+  - host: user-dashboard.example.com
+    http:
+      paths:
+      - backend:
+          serviceName: frontend
+          servicePort: 3000
+        path: /
+  - host: dashboard-api.example.com
+    http:
+      paths:
+      - backend:
+          serviceName: api
+          servicePort: 80
+        path: /
