@@ -20,7 +20,7 @@ const AppBar: React.FC = () => {
     <MaterialAppBar color={"primary"} elevation={0} position={"static"}>
       <Toolbar variant={"dense"}>
         <Box alignItems={"center"} display={"flex"} flexGrow={1}>
-          <Image layout={"fixed"} src={"/ecmwf-logo.png"} width={140} height={24}/>
+          <Image layout={"fixed"} src={`${router.basePath}/ecmwf-logo.png`} width={140} height={24}/>
           <Button onClick={()=>handleNavigation("/")} className={classes.title}>
               <Typography  variant={"h6"} className={classes.title}>
                   User Dashboard
