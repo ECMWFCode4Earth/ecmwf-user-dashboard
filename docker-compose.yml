@@ -6,11 +6,14 @@ services:
       context: client
       dockerfile: Dockerfile
       args:
-        - NODE_ENV=production
+        - NODE_ENV=development
         - NEXT_PUBLIC_SERVER_URL=http://localhost:8000 # Server URL, this has to be publicly accessible
     environment: 
       - NEXT_PUBLIC_SERVER_URL=http://localhost:8000 # override the env at runtime
-    command: sh -c 'npm run build && npm run start'  # and rebuild with the new server url before starting the server
+      - NODE_ENV=development
+    command: sh -c 'npm install && npm run dev'  # install and run with the new server url
+    volumes:
+      - ./client/:/usr/src/client
     ports:
       - '3000:3000'
     depends_on: 

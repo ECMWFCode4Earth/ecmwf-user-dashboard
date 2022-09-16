@@ -35,5 +35,3 @@ spec:
       volumes:
       - name: ephemeral-data-volume
         emptyDir: {}
-        # emptyDir:
-        #   medium: Memory

@@ -3,4 +3,5 @@ module.exports = {
   images: {
     domains: ['apps.ecmwf.int', 'apps-dev.ecmwf.int'],
   },
+  basePath: '',
 }

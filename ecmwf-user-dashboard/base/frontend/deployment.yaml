@@ -21,8 +21,12 @@ spec:
         env:
         - name: NEXT_PUBLIC_SERVER_URL
           value: 'http://dashboard-api.example.com:80'
+        - name: ALLOWED_DOMAINS
+          value: "'apps.ecmwf.int','apps-dev.ecmwf.int'"
+        - name: BASE_PATH
+          value: 'frontend-mount-point'
         command:
         - "bash"
         - "-c"
-        - "cd /usr/src/client && /usr/local/bin/npm run build && /usr/local/bin/npm run start"
+        - "cd /usr/src/client && echo \"module.exports={reactStrictMode:true,images:{domains:[${ALLOWED_DOMAINS}],},basePath:'/${BASE_PATH}',assetPrefix:'/${BASE_PATH}',}\" > next.config.js && /usr/local/bin/npm run build && /usr/local/bin/npm run start"
         imagePullPolicy: Always
