@@ -247,7 +247,7 @@ export default function Widgets() {
                         <Box mt={2} display={"flex"} justifyContent={"space-between"} alignItems={"center"}>
                             {/*<AddWidgetDialog open={openAddWidget} onClose={onCloseAddWidget}/>*/}
                             <Button size={"small"} onClick={()=>handleNavigation("/endpoint_manager")}>Endpoint Manager</Button>
-                            <Button size={"small"} onClick={addwidgetDialog}>Add Widget Endpoint</Button>
+                            <Button size={"small"} onClick={addwidgetDialog} disabled={!isAuthenticated()}>Add Widget Endpoint</Button>
                             <Button size={"small"} onClick={fetchWidgetDetails}>Refresh Widgets</Button>
                         </Box>
                     </Box>
