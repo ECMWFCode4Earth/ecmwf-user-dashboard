@@ -175,7 +175,7 @@ const useAuth = () => {
     }
   }
   const deleteAllWidgetEndpoints = async() => {
-    const res = await axios.post(`${kStore.BASE_URL}/api/delete-widget-endpoints`, {
+    const res = await axios.delete(`${kStore.BASE_URL}/api/delete-widget-endpoints`, {
       headers: {
         Authorization: user?.token
       }

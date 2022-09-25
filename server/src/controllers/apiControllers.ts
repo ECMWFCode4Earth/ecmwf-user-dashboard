@@ -54,7 +54,7 @@ export const deleteAllEndpointsController: RequestHandler = (req, res, next) => 
     if(!user){
       return res.status(400).json({ success: false, message: "Incomplete parameters" });
     }
-    console.log("req received in controller")
+    console.log("req to delete received in controller")
     user.deleteAPIEndpoints()
 
     res.status(200).json({ success: true, message: "Success" });

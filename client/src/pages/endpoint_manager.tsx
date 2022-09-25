@@ -54,7 +54,6 @@ export default function Widgets() {
 
     // modal for adding the widget
     const {open: openAddWidget, onClose: onCloseAddWidget, onOpen: onOpenAddWidget} = useDrawer()
-    const {open: openViewWidget, onClose: onCloseViewWidget, onOpen: onOpenViewWidget} = useDrawer()
 
     const [searchString, setSearchString] = useState("");
     const [filteredEndpoints, setFilteredEndpoints] = useState<Endpoint[]>([]);
@@ -119,9 +118,15 @@ export default function Widgets() {
         closeAnchorTabSettingMenu()
     }
 
-    const viewWidgetDialog = () => {
-        onOpenViewWidget()
-        closeAnchorTabSettingMenu()
+    const DeleteAllConfirmationScreenDialog = () => {
+        const deleteAll = confirm("WARNING: This will delete all the endpoints for this account. Proceed?")
+        if (deleteAll) {
+            deleteAllWidgetEndpoints().then(r => alert("Deleted all the endpoints."))
+                .catch(e => {
+                    console.log(e)
+                    alert("ERROR: could not delete the endpoints")
+                })
+        }
     }
 
     console.log("endpoints: ", filteredEndpoints)
@@ -155,6 +160,7 @@ export default function Widgets() {
                         <Box mt={2} display={"flex"} justifyContent={"space-between"} alignItems={"center"}>
                             <Button size={"small"} onClick={addwidgetDialog} disabled={!isAuthenticated()}>Add Widget Endpoint</Button>
                             <Button size={"small"} onClick={fetchEndpoints}>Refresh Endpoints</Button>
+                            <Button size={"small"} onClick={DeleteAllConfirmationScreenDialog} disabled={!isAuthenticated()}>Delete All Endpoints</Button>
                         </Box>
                     </Box>
                     <AddWidgetDialog open={openAddWidget} onClose={onCloseAddWidget} callback={fetchEndpoints} endpointsArray={savedEndpoints}/>
@@ -183,6 +189,7 @@ export default function Widgets() {
                     <Box mt={2} display={"flex"} marginTop={"0px"} justifyContent={"space-between"} alignItems={"center"}>
                         <Button size={"small"} onClick={addwidgetDialog} disabled={!isAuthenticated()}>Add Widget Endpoint</Button>
                         <Button size={"small"} onClick={fetchEndpoints}>Refresh Endpoints</Button>
+                        <Button size={"small"} onClick={DeleteAllConfirmationScreenDialog} disabled={!isAuthenticated()}>Delete All Endpoints</Button>
                     </Box>
                 </Box>
                 <AddWidgetDialog open={openAddWidget} onClose={onCloseAddWidget} callback={fetchEndpoints} endpointsArray={savedEndpoints} />
@@ -298,5 +305,3 @@ const WidgetBrowserItem: React.FC<WidgetBrowserItemProps> = ({ showImages, thumb
         </Box>
     );
 };
-
-

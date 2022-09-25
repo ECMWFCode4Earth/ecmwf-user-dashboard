@@ -167,7 +167,7 @@ const AddWidgetDialog: React.FC<AddWidgetDialogProps> = ({ open, onClose, callba
     return (
         <Dialog open={open} onClose={onClose} fullWidth={true}>
             <DialogContent>
-                <DialogTitle style={{margin:"auto", textAlign:"center"}}>URL Endpoints Manager</DialogTitle>
+                <DialogTitle style={{margin:"auto", textAlign:"center"}}>Add URL</DialogTitle>
                 <TextField
                     onChange={handleUrlChange}
                     value={url}
