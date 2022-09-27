@@ -148,7 +148,7 @@ const useAuth = () => {
   }
 
   const getWidgetEndpoints = async() => {
-    console.log("received the request to get endpoints")
+    // console.log("received the request to get endpoints")
     const res = await axios.get(`${kStore.BASE_URL}/api/widget-endpoints`, {
       headers: {
         Authorization: user?.token
@@ -157,7 +157,7 @@ const useAuth = () => {
     if (res.status !== 200) {
       throw new Error(res.data.message);
     }
-    console.log("Endpoints:", res.data.data.endpoints)
+    // console.log("Endpoints:", res.data.data.endpoints)
     return res.data.data.endpoints
   }
 

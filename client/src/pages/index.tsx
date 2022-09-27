@@ -19,7 +19,7 @@ export default function Home() {
           <Box mt={4}>
             <Grid container spacing={2} justifyContent={"center"}>
               <GridItem title={"User Dashboard"} href={"/dashboard"}/>
-              <GridItem title={"Shared Dashboard"} href={"/shared-dashboard"}/>
+              <GridItem title={"Widget Browser"} href={"/widgets"}/>
               <GridItem title={"GitHub Repository & Documentation"} href={"https://github.com/esowc/ecmwf-user-dashboard"}/>
             </Grid>
           </Box>

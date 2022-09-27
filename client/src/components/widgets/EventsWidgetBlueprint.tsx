@@ -52,7 +52,11 @@ const EventsWidgetBlueprint: React.FC<EventsWidgetBlueprintProps> = ({ builder }
   const removeWidget = () => removeWidgetFromCurrentTab(builder.widgetId);
 
 
-  if (error) return <WidgetError message={error} onClose={removeWidget}/>;
+  const callback = () => {
+    setLoading(true)
+  }
+
+  if (error) return <WidgetError callback={callback} message={error} onClose={removeWidget}/>;
 
   if (loading) return <WidgetLoading onClose={removeWidget}/>;
 

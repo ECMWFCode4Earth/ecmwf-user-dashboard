@@ -45,10 +45,10 @@ const TextWidgetBlueprint: React.FC<TextWidgetProps> = ({ builder, title, src, a
 
     useEffect(() => {
         const fetchData = async () => {
-            console.log("AuthRequired: ",authRequired)
-            console.log("token: ", token)
+            // console.log("AuthRequired: ",authRequired)
+            // console.log("token: ", token)
             const headers_in_request = token.length!=0 ? { 'X-Auth' : token} : {}
-            console.log("reached textwidget")
+            // console.log("reached textwidget")
             let data : any = {}
             try {
                 data = await axios.get(src, {
@@ -56,15 +56,17 @@ const TextWidgetBlueprint: React.FC<TextWidgetProps> = ({ builder, title, src, a
                 })
             }
             catch(e: any){
-                console.log("could not load data for ")
+                setError(e)
+                // console.log("could not load data for ")
+                return
             }
-            console.log("from TextWidgetBlueprint")
-            console.log(data)
+            // console.log("from TextWidgetBlueprint")
+            // console.log(data)
             if (data.status === 200) {
-                console.log(Object.keys(data.data.data[0]));
+                // console.log(Object.keys(data.data.data[0]));
                 setTableData(data.data.data);
             } else {
-                console.log("query error")
+                // console.log("query error")
                 throw new Error("Backend query error.");
             }
             setLoading(false);
@@ -75,9 +77,14 @@ const TextWidgetBlueprint: React.FC<TextWidgetProps> = ({ builder, title, src, a
 
 
     const removeWidget = () => removeWidgetFromCurrentTab(builder.widgetId);
+    const setRefreshFromError = () => {
+        setRefresh(!refresh)
+        setLoading(true)
+    }
 
 
-    if (error) return <WidgetError message={error} onClose={removeWidget}/>;
+
+    if (error) return <WidgetError callback={setRefreshFromError} title={title} message={error} onClose={removeWidget}/>;
 
     if (loading) return <WidgetLoading onClose={removeWidget}/>;
 

@@ -35,18 +35,18 @@ const ChartWidgetBlueprint: React.FC<ChartWidgetBlueprintProps> = ({ builder , t
   const [chartName, setChartName] = useState("");
   const [chartSrc, setChartSrc] = useState("");
   useEffect(() => {
-    console.log("widgetConfiguration: ", loadWidgetConfiguration(builder.widgetId))
+    // console.log("widgetConfiguration: ", loadWidgetConfiguration(builder.widgetId))
     const chartWidgetConfiguration = loadWidgetConfiguration(builder.widgetId) as ChartWidgetConfiguration;
     if (chartWidgetConfiguration) {
       setChartName(chartWidgetConfiguration.widgetTitle);
     }
     const header_in_request = token.length!=0 ? { 'X-Auth' : token}: {}
     const getSrc = async () => {
-      console.log("src: ", src)
+      // console.log("src: ", src)
       await  axios.get(src, {
         headers: header_in_request
       }).then(data => {
-            console.log("data from src: ", data)
+            // console.log("data from src: ", data)
             setChartSrc(data.data.data.src);
           }
       ).catch(err => console.log(err))
@@ -69,7 +69,7 @@ const ChartWidgetBlueprint: React.FC<ChartWidgetBlueprintProps> = ({ builder , t
   //   };
   // }, []);
 
-  console.log("chartSrc: ", chartSrc)
+  // console.log("chartSrc: ", chartSrc)
 
 
   const removeWidget = () => removeWidgetFromCurrentTab(builder.widgetId);

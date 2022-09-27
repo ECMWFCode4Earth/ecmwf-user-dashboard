@@ -38,15 +38,17 @@ const MARSActivityWidgetBlueprint: React.FC<MARSActivityWidgetBlueprintProps> = 
 
   const fetchMARSActivity = async () => {
     const res = await axios.get(`${kStore.BASE_URL}/api/mars-activity`, { headers: { Authorization: user?.token } });
-    console.log(res.data.data);
+    // console.log(res.data.data);
     setActivity(Object.keys(res.data.data).filter((key) => key !== "uid" && key !== "tracker").map((key) => [key, res.data.data[key]]));
     setLoading(false);
   };
 
   const removeWidget = () => removeWidgetFromCurrentTab(builder.widgetId);
+  const callback = () => {
+    setLoading(true)
+  }
 
-
-  if (error) return <WidgetError message={error} onClose={removeWidget}/>;
+  if (error) return <WidgetError callback={callback} message={error} onClose={removeWidget}/>;
 
   if (loading) return <WidgetLoading onClose={removeWidget}/>;
 

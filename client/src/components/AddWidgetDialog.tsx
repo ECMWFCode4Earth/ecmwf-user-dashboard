@@ -77,18 +77,18 @@ const AddWidgetDialog: React.FC<AddWidgetDialogProps> = ({ open, onClose, callba
 
     const [noc, setNoc] = useState<number>(1);
     const addEndpoint = async (ep : Endpoint) => {
-        console.log("received the request")
+        // console.log("received the request")
         if(ep.url!=''){
-            console.log("ep: ", ep)
+            // console.log("ep: ", ep)
             await setEndpointArray(endpointArray => ([...endpointArray, ep]))
         }
-        else{
-            console.log("url can't be empty")
-        }
+        // else{
+        //     // console.log("url can't be empty")
+        // }
     }
     const removeEndpoint = async (ep: Endpoint) => {
         await setEndpointArray(endpointArray => endpointArray.filter(epa=> (epa.url!=ep.url && epa.token != ep.token)))
-        console.log(endpointArray)
+        // console.log(endpointArray)
     }
 
     const verifyEndpoint = async (e: Endpoint) => {
@@ -131,7 +131,7 @@ const AddWidgetDialog: React.FC<AddWidgetDialogProps> = ({ open, onClose, callba
         if(e.url != '') {
             e.url = e.url.trim()
             addWidgetEndpoint(e).then(res => {
-                console.log("success adding the endpoint. Res: ", res)
+                // console.log("success adding the endpoint. Res: ", res)
                 setOpenMessage("success adding the endpoint.")
                 //make a call to getWidgetEndpoint
                 callback(e)
@@ -244,7 +244,7 @@ interface AddEndpointInstanceProps{
 }
 
 const addComponent = ({addEndpoint, removeEndpoint}: AddEndpointInstanceProps) => {
-    console.log("request to add instance received")
+    // console.log("request to add instance received")
     return(
         <AddEndpointInstance addEndpointHandler={addEndpoint} removeEndpointHandler={removeEndpoint} />
     )

@@ -67,7 +67,7 @@ const useTabManager = (initialState: TabManager) => {
   useEffect(() => {
     if (ready) {
       saveTabManager()
-        .then(() => console.log("Debug", tabManager))
+        .then(() => console.log("Debug", /*tabManager*/))
         .catch((err) => console.error(err));
     }
   }, [tabManager]);
@@ -283,8 +283,8 @@ const useTabManager = (initialState: TabManager) => {
 
     // Set state
     setTabManager(newTabManagerState);
-    console.log('tabmanager widget configuration')
-    console.log("added note widget to the tabmanager")
+    // console.log('tabmanager widget configuration')
+    // console.log("added note widget to the tabmanager")
     return newWidgetId;
   }
 
@@ -326,7 +326,7 @@ const useTabManager = (initialState: TabManager) => {
       authRequired: authRequired,
       token: token
   };
-    console.log("newWidgetConfiguration: ", newWidgetConfiguration )
+    // console.log("newWidgetConfiguration: ", newWidgetConfiguration )
     newTabManagerState.tabs[currentTab].widgetIds.push(newWidgetId);
     newTabManagerState.tabs[currentTab].widgetConfigurations[newWidgetId] = (newWidgetConfiguration);
     // Set state

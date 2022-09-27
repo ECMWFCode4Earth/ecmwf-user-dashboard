@@ -67,8 +67,12 @@ const ServiceStatusWidgetBlueprint: React.FC<ServiceStatusWidgetBlueprintProps> 
 
   const title = `Service Status (${countOk()}/${serviceStatusDetails.length} Ok)`;
 
+  const callback = () => {
+    setLoading(true)
+  }
 
-  if (error) return <WidgetError message={error} onClose={removeWidget}/>;
+  if (error) return <WidgetError callback={callback} message={error} onClose={removeWidget}/>;
+
 
   if (loading) return <WidgetLoading onClose={removeWidget}/>;
 

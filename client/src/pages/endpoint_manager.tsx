@@ -123,17 +123,17 @@ export default function Widgets() {
         if (deleteAll) {
             deleteAllWidgetEndpoints().then(r => alert("Deleted all the endpoints."))
                 .catch(e => {
-                    console.log(e)
+                    // console.log(e)
                     alert("ERROR: could not delete the endpoints")
                 })
         }
     }
 
-    console.log("endpoints: ", filteredEndpoints)
+    // console.log("endpoints: ", filteredEndpoints)
 
     const tableHeader = [
         { label: "URL", data: "url" },
-        { label: "Token", data: "token" }
+        // { label: "Token", data: "token" }
     ];
 
     const deleteEndpoint = async (endpoint: Endpoint) => {
@@ -265,9 +265,9 @@ const EndpointInstance: React.FC<EndpointInstanceProps> = ({url, token}) => {
     return(
         <>
             <TableCell><Typography>{url}</Typography></TableCell>
-            <TableCell><Typography>{tokenToShow}</Typography></TableCell>
-            {!showToken && <Button onClick={() => setShowToken(!showToken)}><VisibilityIcon></VisibilityIcon></Button>}
-            {showToken && <Button onClick={() => setShowToken(!showToken)}><VisibilityOffIcon></VisibilityOffIcon></Button>}
+            {/*<TableCell><Typography>{tokenToShow}</Typography></TableCell>*/}
+            {/*{!showToken && <Button onClick={() => setShowToken(!showToken)}><VisibilityIcon></VisibilityIcon></Button>}*/}
+            {/*{showToken && <Button onClick={() => setShowToken(!showToken)}><VisibilityOffIcon></VisibilityOffIcon></Button>}*/}
         </>
     )
 }

@@ -52,31 +52,34 @@ const TableDataWidgetBlueprint: React.FC<TableDataWidgetProps> = ({ builder, tit
     const [columnHead, setColumnHead] = useState<string[]>([]);
     const [style, setStyle] = useState<Record<string, string>>({});
 
-    console.log("token:", token)
+    // console.log("token:", token)
     useEffect(() => {
-        console.log("in-app-src: ", src)
+        // console.log("in-app-src: ", src)
         const fetchData = async () => {
-            console.log("AuthRequired from table: ",authRequired)
+            // console.log("AuthRequired from table: ",authRequired)
 
             const headers_in_request = token.length!=0 ? { 'X-Auth' : token} : {}
             let data : any = {}
             try {
+                // console.log("making the call")
                 data = await axios.get(src, {
                     headers: headers_in_request
                 })
             }
             catch(e: any){
-                console.log("could not load data for ")
+                // console.log("setting the error in catch block")
+                setError(e)
+                return
             }
-            console.log("from TableWidgetBlueprint")
-            console.log(data)
+            // console.log("from TableWidgetBlueprint")
+            // console.log(data)
 
             //fixing the styling first....
             // data->data->styling
             //TODO: ask for the data like the previous format except the keywords
             //getting the columns first
             const cols = data.data.styling.columns;
-            console.log("cols: ", cols)
+            // console.log("cols: ", cols)
 
             const colHeadTemp : string[] = [];
             const styleTemp: Record<string,  string> = {};
@@ -89,7 +92,7 @@ const TableDataWidgetBlueprint: React.FC<TableDataWidgetProps> = ({ builder, tit
                 tempObj.push(Object.entries(cols[i]));
                 // let obj = cols[i];
             }
-            console.log("tempObj: ", tempObj)
+            // console.log("tempObj: ", tempObj)
             // tempObj.forEach((obj:any) => {
             //     styleTemp[obj.key] = obj?.color
             // })
@@ -99,7 +102,7 @@ const TableDataWidgetBlueprint: React.FC<TableDataWidgetProps> = ({ builder, tit
                     const tempRecord : Record<number, string> = {};
                     tempRecord[i] = somearr[i][1].colour === undefined ? 'white' : somearr[i][1].colour
                     styleTemp[somearr[i][0]] = tempRecord[i]//somearr[i][1].colour === undefined ? {i : 'black'} : {i: somearr[i][1].colour as string};
-                    console.log("temprecord: ", tempRecord[i])
+                    // console.log("temprecord: ", tempRecord[i])
                 }
 
                 /*somearr.map((nested:any, index:number)=>{
@@ -109,17 +112,17 @@ const TableDataWidgetBlueprint: React.FC<TableDataWidgetProps> = ({ builder, tit
                 // styleTemp[somearr[0]] = styleTemp[somearr[1]?.color]
                 // console.log("key: ", somearr[0], " val: ", styleTemp[somearr[0]])
             })
-            console.log("styleTemp",styleTemp);
+            // console.log("styleTemp",styleTemp);
 
 
 
             setColumnHead(colHeadTemp)
             setStyle(styleTemp)
-            console.log("from TableWidgetBlueprint")
+            // console.log("from TableWidgetBlueprint")
 
             if (data.status === 200) {
-                console.log(Object.keys(data.data.data[0]));
-                console.log("Table data: ",data.data.data)
+                // console.log(Object.keys(data.data.data[0]));
+                // console.log("Table data: ",data.data.data)
                 const dataToRender = data.data.data;
                 const obj:any[] = []
                 for(let i=0; i<dataToRender[0].length; i++){
@@ -129,10 +132,10 @@ const TableDataWidgetBlueprint: React.FC<TableDataWidgetProps> = ({ builder, tit
                     }
                     obj.push(tempObj);
                 }
-                console.log("object:",obj)
+                // console.log("object:",obj)
                 setTableData(obj);
             } else {
-                console.log("query error")
+                // console.log("query error")
                 throw new Error("Backend query error.");
             }
             setLoading(false);
@@ -140,13 +143,18 @@ const TableDataWidgetBlueprint: React.FC<TableDataWidgetProps> = ({ builder, tit
         fetchData().catch((err) => setError(err));
     }, [refresh]);
 
+    const setRefreshFromError = () => {
+        setRefresh(!refresh)
+        setLoading(true)
+    }
+
 
     const removeWidget = () => removeWidgetFromCurrentTab(builder.widgetId);
 
-    if (error) return <WidgetError message={error} onClose={removeWidget}/>;
+    if (error) return <WidgetError callback={setRefreshFromError} title={title} message={error} onClose={removeWidget}/>;
 
-    if (loading) return <WidgetLoading onClose={removeWidget}/>;
-    console.log("columnHead: ", columnHead)
+    if (loading) return <WidgetLoading title={title} onClose={removeWidget}/>;
+    // console.log("columnHead: ", columnHead)
     return (
         <WidgetContainer>
             <WidgetTitleBar title={title} onClose={removeWidget}>

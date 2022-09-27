@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@material-ui/core";
 import axios from "axios";
 
@@ -50,8 +50,12 @@ const WebAPIActivityWidgetBlueprint: React.FC<WebAPIActivityWidgetBlueprintProps
 
   const removeWidget = () => removeWidgetFromCurrentTab(builder.widgetId);
 
+  const callback = () => {
+    setLoading(true)
+  }
 
-  if (error) return <WidgetError message={error} onClose={removeWidget}/>;
+  if (error) return <WidgetError callback={callback} message={error} onClose={removeWidget}/>;
+
 
   if (loading) return <WidgetLoading onClose={removeWidget}/>;
 

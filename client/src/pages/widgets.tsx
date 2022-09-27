@@ -105,7 +105,7 @@ export default function Widgets() {
         let widgetEndpoints : Endpoint[] = await getWidgetEndpoints().catch(e => {
                 return [{_id:"0", url: "https://apps-dev.ecmwf.int/webapps/opencharts-api/v1/soc/user-dashboard/GetWidgets/", token:"" } as Endpoint]
             })
-        console.log("widgetEndpoints: ", widgetEndpoints)
+        // console.log("widgetEndpoints: ", widgetEndpoints)
         for (const {url, token} of widgetEndpoints){
 
             const headers_in_request = token.length == 0 ? {} : { 'X-Auth' : token}
@@ -114,9 +114,9 @@ export default function Widgets() {
                         headers:headers_in_request
             });
             const authRequired = token.length != 0
-            console.log("token: ", token)
+            // console.log("token: ", token)
             const widgets = res.data.widgets;
-            console.log("tokens from widget: ", token)
+            // console.log("tokens from widget: ", token)
             widgets.forEach((widget: any) => {
                 widgetDetails.push({
                     title: widget.name,
@@ -132,7 +132,7 @@ export default function Widgets() {
                     specificWidgets[widget["widget-type"]] = []
                     tempWidgetTypes.push(widget['widget-type'])
                 }
-                console.log(tempWidgetTypes)
+                // console.log(tempWidgetTypes)
                 specificWidgets[widget["widget-type"]].push({
                     title: widget.name,
                     name: widget.name,
@@ -146,15 +146,15 @@ export default function Widgets() {
 
             });
         }
-        console.log("widgetTypes: ", widgetTypes)
-        console.log("specificWidgets: ",specificWidgets)
+        // console.log("widgetTypes: ", widgetTypes)
+        // console.log("specificWidgets: ",specificWidgets)
         await localStore.setItem(kLocalStoreKey.WIDGET_DETAILS, widgetDetails);
         await localStore.setItem(kLocalStoreKey.WIDGET_ENDPOINTS, widgetEndpoints)
         setSearchString("");
         setSavedEndpoints(widgetEndpoints)
         setFilteredWidgetDetails(widgetDetails);
         setAllWidgetDetails(widgetDetails);
-        console.log("widgetEndpoints: ",widgetDetails)
+        // console.log("widgetEndpoints: ",widgetDetails)
         setLoading(false);
         setWidgetTypes(tempWidgetTypes)
     };
@@ -168,9 +168,9 @@ export default function Widgets() {
             headers: headers_in_request
         });
         const authRequired = token.length != 0
-        console.log("token: ", token)
+        // console.log("token: ", token)
         const widgets = res.data.widgets;
-        console.log("tokens from widget: ", token)
+        // console.log("tokens from widget: ", token)
         widgets.forEach((widget: any) => {
             widgetDetails.push({
                 title: widget.name,
@@ -194,7 +194,7 @@ export default function Widgets() {
     }
 
     const addWidget = (widgetDetail:WidgetDetail) => {
-        console.log("from add widget button: ",widgetDetail.token)
+        // console.log("from add widget button: ",widgetDetail.token)
         onClose();
         addNewWidgetFromBrowserToCurrentTab(widgetDetail.type, widgetDetail.title, widgetDetail.name, widgetDetail.href, widgetDetail.appURL, widgetDetail.authRequired, widgetDetail.token);
         onOpen();
@@ -230,7 +230,7 @@ export default function Widgets() {
         closeAnchorTabSettingMenu()
     }
 
-    console.log("widgetTypes: ", widgetTypes)
+    // console.log("widgetTypes: ", widgetTypes)
     if (loading) {
         return (
             <Layout showWidgetToolbar={true}>
